@@ -10,6 +10,7 @@ import html, json, pathlib, re, sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE, DOCS = ROOT / "site", ROOT / "docs"
 B = json.loads((SITE / "brand.json").read_text(encoding="utf-8"))
+B["author"] = " · ".join(f'<span style="white-space:nowrap">{a}</span>' for a in B.get("authors", [B["author"]]))
 
 SRC_LOGO = '<img src="logo.png" alt="Dr VIT">'
 SRC_ORG = '<span class="org">Siam edu.</span>'
@@ -55,7 +56,8 @@ def build():
 
     gate = (SITE / "gate.template.js").read_text(encoding="utf-8")
     gate = (gate.replace("__GATE_HASH__", B["gate_hash"]).replace("__BOOK__", B["book"])
-            .replace("__GATE_LOGO__", B.get("logo_stacked", B["logo"])).replace("__ALT__", B["logo_alt"]))
+            .replace("__GATE_LOGO__", B.get("logo_stacked", B["logo"])).replace("__ALT__", B["logo_alt"])
+            .replace("__AUTHOR__", B["author"]))
     (DOCS / "gate.js").write_text(gate, encoding="utf-8")
 
     rows = "\n".join(

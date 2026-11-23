@@ -19,6 +19,7 @@
     "#atx-lock .brandbar{text-align:center;margin:0 0 16px}" +
     "#atx-lock .brandbar img{width:220px;max-width:70%;height:auto}" +
     "#atx-lock h1,#atx-lock p{text-align:center}" +
+    "#atx-lock .by{font-size:.88rem;color:#15233a;margin:-4px 0 10px}" +
     "#atx-lock h1{font-family:'Noto Serif Thai',Georgia,serif;font-size:1.3rem;margin:0 0 6px}" +
     "#atx-lock p{margin:0 0 14px;color:#5a6678;font-size:.95rem}" +
     "#atx-lock .row{display:flex;gap:8px}" +
@@ -43,6 +44,7 @@
       '<form class="box" autocomplete="off">' +
       '<div class="brandbar"><img src="brand/logo-stacked.png" alt="Dr.VIT & PD | TaxBiz Clear"></div>' +
       "<h1>แอปประจำเล่ม " + BOOK + "</h1>" +
+      '<p class="by"><span style="white-space:nowrap">ดร.วิทยา อรุณศิริเพ็ชร</span> · <span style="white-space:nowrap">อ.พงษ์ธร ดวงปัญญา</span> · <span style="white-space:nowrap">อ.วิไล วัชรชัยสิริกุล</span></p>' +
       "<p>สำหรับผู้ซื้อตำรา ใส่รหัสเข้าแอปที่พิมพ์ไว้ในตำรา</p>" +
       '<div class="row"><input id="atx-code" type="password" aria-label="รหัสเข้าแอป" placeholder="รหัสเข้าแอป">' +
       '<button type="button" class="show">แสดง</button></div>' +

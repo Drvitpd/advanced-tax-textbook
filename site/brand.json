@@ -5,8 +5,13 @@
   "org": "",
   "series": "Dr.VIT & PD | TaxBiz Clear",
   "book": "ตำราภาษีชั้นสูง",
-  "author": "ดร.วิทยา อรุณศิริเพ็ชร",
+  "author": "ดร.วิทยา อรุณศิริเพ็ชร · อ.พงษ์ธร ดวงปัญญา · อ.วิไล วัชรชัยสิริกุล",
   "site_url": "https://drvitpd.github.io/advanced-tax-textbook/",
   "gate_hash": "1d94962852d6990bcb6d65e5de56f091d9a6aaef5494a979013e6f7311c1eca3",
-  "logo_stacked": "brand/logo-stacked.png"
+  "logo_stacked": "brand/logo-stacked.png",
+  "authors": [
+    "ดร.วิทยา อรุณศิริเพ็ชร",
+    "อ.พงษ์ธร ดวงปัญญา",
+    "อ.วิไล วัชรชัยสิริกุล"
+  ]
 }
