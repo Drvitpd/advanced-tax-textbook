@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แอปบทที่ 9 ภาษีหัก ณ ที่จ่ายสำหรับนิติบุคคล</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#15233a; --muted:#5a6678; --line:#d5dbe3;
+  --accent:#0d6466; --accent-soft:#e1efef; --gate:#a86a12; --gate-soft:#f7ecd9;
+  --ok:#2f7d32; --stop:#b3261e; --stop-soft:#f8e3e1;
+  --display:"Noto Serif Thai",Georgia,serif; --body:"Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1620; --paper:#17212d; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2c3a4a;
+  --accent:#4fb8b4; --accent-soft:#163334; --gate:#e2a54a; --gate-soft:#3a2c14;
+  --ok:#74c27a; --stop:#f08a80; --stop-soft:#3c1d1b; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.brand img{height:40px;width:auto;display:block}
+.brand .org{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#15233a;border-left:2px solid #d5dbe3;padding-left:12px;line-height:1.2}
+header h1{font-family:var(--display);font-size:1.7rem;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+header p{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--gate);padding:4px 10px;background:var(--gate-soft);border-radius:0 6px 6px 0}
+section.lab{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.lab h2{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
+.lab-tag{font-size:.8rem;color:var(--accent);font-weight:700}
+.lab > p{margin:4px 0 14px;color:var(--muted);max-width:72ch}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+legend{font-weight:700;font-size:.92rem;padding:0 4px}
+label.opt{display:flex;gap:8px;align-items:flex-start;padding:2px 0;cursor:pointer;font-size:.95rem}
+.gate{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.gate .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--muted)}
+.gate.pass{border-color:var(--ok)} .gate.pass .dot{background:var(--ok)}
+.gate.stop{border-color:var(--stop);background:var(--stop-soft)} .gate.stop .dot{background:var(--stop)}
+.gate.skip{opacity:.45}
+.gate b{display:block} .gate small{color:var(--muted)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.num{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num label{display:block;font-size:.85rem;color:var(--muted)}
+.num input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.82rem;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.mark{font-weight:700;white-space:nowrap}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--stop)}
+button{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gate);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+textarea{width:100%;min-height:220px;font:inherit;font-size:.9rem;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.q .stem{font-weight:500;margin-bottom:6px}
+.q .lo{font-size:.78rem;color:var(--gate);font-weight:700}
+.q .fb{margin-top:6px;font-size:.92rem;padding:6px 10px;border-radius:6px;display:none}
+.q .fb.show{display:block}
+.q .fb.ok{background:var(--accent-soft)} .q .fb.no{background:var(--stop-soft)}
+.score{font-weight:700}
+footer{font-size:.85rem;color:var(--muted)}
+footer ul{padding-left:20px}
+.dim{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.dim div{border:1px solid var(--line);border-radius:8px;padding:8px;font-size:.88rem}
+.dim .pass{border-color:var(--ok)} .dim .fail{border-color:var(--stop);background:var(--stop-soft)} .dim .na{opacity:.6}
+.dim b{display:block}
+input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%}
+</style></head><body>
+<main>
+<header>
+  <div class="brand"><img src="logo.png" alt="Dr VIT"><span class="org">Siam edu.</span></div>
+  <h1>แอปบทที่ 9 ภาษีหัก ณ ที่จ่ายสำหรับนิติบุคคล</h1>
+  <p>แอปนี้ใช้คู่กับบทที่ 9 ฝึกตอบสี่คำถามของผู้จ่ายด้วยตัวเลขจริงจากตัวอย่างในบท: อัตราปกติเทียบ e-WHT ภาษีออกแทนและอัตราตามอนุสัญญา และความรับผิดเมื่อไม่หักภาษี ป้าย LO คือผลลัพธ์การเรียนรู้ (Learning Outcome: LO) ตามตารางหน้าเปิดบท</p>
+  <p class="note">ตัวเลขในแอปเป็นข้อมูลจำลองตามตัวอย่างในบท ใช้เพื่อการสอน ห้ามนำข้อมูลผู้เสียภาษีหรือผู้ตอบจริงใส่แอปหรือ GenAI สถานะกฎหมาย ณ 20 พฤศจิกายน 2569</p>
+</header>
+
+<section class="lab"><span class="lab-tag">ใบงาน 1 · LO2</span><h2>จ่ายปกติหรือผ่าน e-WHT (ตัวอย่าง 9.1)</h2>
+<p>ใส่จำนวนเงินที่จ่ายให้บริษัทไทยในเดือนเดียว แอปคำนวณภาษีที่หักตามอัตราปกติในคำสั่ง ท.ป.4/2528 เทียบกับอัตราร้อยละ 1 เมื่อจ่ายผ่านระบบภาษีหัก ณ ที่จ่ายอิเล็กทรอนิกส์ (Electronic Withholding Tax: e-WHT)</p>
+<div class="cols"><div class="num">
+<label>ค่าเช่าอาคาร (5%)<input id="a1" type="number" value="100000"></label>
+<label>ค่าบริการ (3%)<input id="a2" type="number" value="50000"></label>
+<label>ค่าขนส่ง (1%)<input id="a3" type="number" value="20000"></label>
+<label>ค่าโฆษณา (2%)<input id="a4" type="number" value="30000"></label>
+</div><div class="tbl"><table><thead><tr><th>รายการ</th><th class="n">จำนวนเงิน</th><th class="n">อัตราปกติ</th><th class="n">ผ่าน e-WHT</th></tr></thead><tbody id="t1"></tbody></table><div class="verdict" id="v1"></div></div></div></section>
+
+<section class="lab"><span class="lab-tag">ใบงาน 2 · LO2 · LO3</span><h2>ภาษีออกแทนและอัตราตามอนุสัญญา (ตัวอย่าง 9.2)</h2>
+<p>ผู้รับได้เงินสุทธิตามสัญญา ผู้จ่ายออกภาษีแทน ฐานภาษีจึงเท่ากับเงินสุทธิหารด้วย (1 ลบอัตรา) ตามมาตรา 40 วรรคท้าย</p>
+<div class="cols"><div><div class="num"><label>เงินสุทธิที่ผู้รับได้ (บาท)<input id="g1" type="number" value="850000"></label></div>
+<fieldset><legend>กรณี</legend>
+<label class="opt"><input type="radio" name="gr" value="0.03"> ค่าบริการผู้รับในประเทศ ร้อยละ 3</label>
+<label class="opt"><input type="radio" name="gr" value="0.15" checked> ค่าสิทธิซอฟต์แวร์ ผู้รับไม่แสดงหนังสือรับรองถิ่นที่อยู่ ร้อยละ 15 (มาตรา 70)</label>
+<label class="opt"><input type="radio" name="gr" value="0.05"> ผู้รับในสหรัฐอเมริกาแสดงหนังสือรับรองถิ่นที่อยู่ ร้อยละ 5 (ข้อ 12 อนุสัญญาไทย-สหรัฐอเมริกา)</label>
+</fieldset></div><div class="tbl"><table><tbody id="t2"></tbody></table><div class="verdict" id="v2"></div></div></div></section>
+
+<section class="lab"><span class="lab-tag">ใบงาน 3 · LO5</span><h2>เมทริกซ์ความรับผิดเมื่อไม่หักภาษี (ตัวอย่าง 9.4)</h2>
+<p>ผู้จ่ายไม่ได้หักภาษีค่าบริการ เลือกสถานการณ์ตามคำสั่งกรมสรรพากรที่ ป.91/2542 แล้วดูภาระของผู้จ่าย เงินเพิ่มร้อยละ 1.5 ต่อเดือนตามมาตรา 27</p>
+<div class="cols"><div><div class="num">
+<label>เงินที่จ่าย (บาท)<input id="l1" type="number" value="2000000"></label>
+<label>อัตราที่ควรหัก<input id="l2" type="number" step="0.01" value="0.03"></label>
+<label>จำนวนเดือนนับแต่วันครบกำหนดนำส่ง<input id="l3" type="number" value="10"></label>
+</div><fieldset><legend>สถานการณ์</legend>
+<label class="opt"><input type="radio" name="lm" value="payer" checked> ผู้จ่ายชำระภาษีเอง (ข้อ 2 และ 9)</label>
+<label class="opt"><input type="radio" name="lm" value="recipient"> ผู้รับนำเงินได้ไปเสียภาษีครบแล้ว ผู้จ่ายเสียเฉพาะเงินเพิ่มถึงวันที่ผู้รับชำระ (ข้อ 10)</label>
+</fieldset></div><div class="tbl"><table><tbody id="t3"></tbody></table><div class="verdict" id="v3"></div></div></div></section>
+
+<section class="lab"><span class="lab-tag">แบบทดสอบท้ายบท</span><h2>แบบทดสอบ 8 ข้อ</h2><p>เลือกคำตอบแล้วดูคำอธิบายทันที คะแนน <span class="score" id="score">0 / 8</span></p><div id="quiz"></div></section>
+<footer><p><b>ที่มาของตัวเลขตั้งต้น:</b> ตัวอย่าง 9.1 (7,300 / 2,000 / 5,300 บาท), ตัวอย่าง 9.2 (100,000 / 3,000; 1,000,000 / 150,000; 894,736.84 / 44,736.84 บาท), ตัวอย่าง 9.4 (69,000 / 3,600 บาท) ในบทที่ 9 ฉบับ 20 พ.ย. 2569</p>
+<p><b>เรื่องที่ยังรอผู้เขียนตัดสินหรือตรวจต้นฉบับ:</b></p><ul><li>คำสั่ง ท.ป. ที่รองรับอัตราร้อยละ 1 ผ่าน e-WHT สำหรับผู้รับที่เป็นบริษัท และวันประกาศในราชกิจจานุเบกษาของกฎกระทรวง ฉบับที่ 402</li><li>เลขข้อในคำสั่ง ท.ป.4/2528 ของค่าเช่าและค่าจ้างทำของ</li></ul>
+<p>Dr VIT · Siam edu. ใช้คู่กับตำราภาษีชั้นสูง บทที่ 9</p></footer>
+</main>
+<script>
+// ตรรกะแอปบทที่ 9 (ฟังก์ชันบริสุทธิ์)
+function r2(x){return Math.round(x*100)/100}
+// ใบงาน 1: อัตราปกติเทียบ e-WHT (ตัวอย่าง 9.1)
+function ewht(items){ // [{amt, rate, eRate}]
+  let n=0,e=0,base=0;
+  const rows=items.map(i=>{const a=r2(i.amt*i.rate),b=r2(i.amt*i.eRate);n+=a;e+=b;base+=i.amt;return {amt:i.amt,norm:a,e:b}});
+  return {rows,base,norm:r2(n),e:r2(e),diff:r2(n-e)};
+}
+// ใบงาน 2: ภาษีออกแทน (ตัวอย่าง 9.2)
+function grossUp(net,rate){const base=r2(net/(1-rate));return {base,tax:r2(base-net)}}
+// ใบงาน 3: เงินเพิ่มเมื่อไม่หัก (ตัวอย่าง 9.4) มาตรา 27 ร้อยละ 1.5 ต่อเดือน
+function liability(amt,rate,mode,months){
+  const tax=r2(amt*rate), sur=r2(tax*0.015*months);
+  if(mode==='payer') return {tax,pay:tax,sur,total:r2(tax+sur)};
+  return {tax,pay:0,sur,total:sur}; // ผู้รับเสียภาษีครบแล้ว (ป.91/2542 ข้อ 10)
+}
+// module
+if(typeof module!=='undefined') module.exports={ewht,grossUp,liability};
+
+const $=id=>document.getElementById(id);
+const fmt=n=>Number(n).toLocaleString("th-TH",{minimumFractionDigits:0,maximumFractionDigits:2});
+const v=id=>Number($(id).value)||0;
+
+function renderQuiz(Q){const box=$('quiz');Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';
+d.innerHTML='<div class="lo">ข้อ '+(i+1)+' · '+q.lo+'</div><div class="stem">'+q.stem+'</div>'+q.opts.map((o,j)=>'<label class="opt"><input type="radio" name="q'+i+'" value="'+j+'"> '+'กขคง'[j]+'. '+o+'</label>').join('')+'<div class="fb"></div>';
+box.appendChild(d);d.querySelectorAll('input').forEach(inp=>inp.addEventListener('change',()=>{const fb=d.querySelector('.fb');const ok=Number(inp.value)===q.ans;fb.className='fb show '+(ok?'ok':'no');fb.textContent=(ok?'ถูกต้อง: ':'ยังไม่ถูก คำตอบคือ '+'กขคง'[q.ans]+': ')+q.why;d.dataset.ok=ok?1:0;let s=0;box.querySelectorAll('.q').forEach(x=>s+=Number(x.dataset.ok||0));$('score').textContent=s+' / '+Q.length;}))});}
+
+function w1(){const names=['ค่าเช่าอาคาร','ค่าบริการ','ค่าขนส่ง','ค่าโฆษณา'],rates=[.05,.03,.01,.02];
+const r=ewht([1,2,3,4].map((k,i)=>({amt:v('a'+k),rate:rates[i],eRate:.01})));
+$('t1').innerHTML=r.rows.map((x,i)=>'<tr><td>'+names[i]+'</td><td class="n">'+fmt(x.amt)+'</td><td class="n">'+fmt(x.norm)+'</td><td class="n">'+fmt(x.e)+'</td></tr>').join('')+'<tr class="total"><td>รวม</td><td class="n">'+fmt(r.base)+'</td><td class="n">'+fmt(r.norm)+'</td><td class="n">'+fmt(r.e)+'</td></tr>';
+$('v1').textContent='จ่ายผ่าน e-WHT ลดภาษีที่หักลง '+fmt(r.diff)+' บาท ภาระภาษีสุดท้ายของผู้รับไม่เปลี่ยน เพราะภาษีที่ถูกหักเป็นเครดิตใน ภ.ง.ด.50 อัตราร้อยละ 1 สำหรับผู้รับที่เป็นบริษัทต้องมีคำสั่ง ท.ป. รองรับ (หัวข้อ 9.2)';}
+function w2(){const rate=Number(document.querySelector('input[name=gr]:checked').value);const net=v('g1');const r=grossUp(net,rate);
+$('t2').innerHTML='<tr><td>เงินสุทธิที่ผู้รับได้</td><td class="n">'+fmt(net)+'</td></tr><tr><td>ฐานภาษี (เงินสุทธิ ÷ (1 − '+rate+'))</td><td class="n">'+fmt(r.base)+'</td></tr><tr class="total"><td>ภาษีที่หักและนำส่ง</td><td class="n">'+fmt(r.tax)+'</td></tr>';
+$('v2').textContent=rate===0.03?'ยื่น ภ.ง.ด.53':'ยื่น ภ.ง.ด.54 ภายใน 7 วันนับแต่สิ้นเดือนที่จ่าย ภาษีที่ออกแทนเป็นส่วนหนึ่งของค่าตอบแทน บันทึกรวมในค่าใช้สิทธิ';}
+function w3(){const mode=document.querySelector('input[name=lm]:checked').value;const r=liability(v('l1'),v('l2'),mode,v('l3'));
+$('t3').innerHTML='<tr><td>ภาษีที่ควรหัก</td><td class="n">'+fmt(r.tax)+'</td></tr><tr><td>ภาษีที่ผู้จ่ายต้องชำระ</td><td class="n">'+fmt(r.pay)+'</td></tr><tr><td>เงินเพิ่ม</td><td class="n">'+fmt(r.sur)+'</td></tr><tr class="total"><td>ภาระของผู้จ่าย</td><td class="n">'+fmt(r.total)+'</td></tr>';
+$('v3').textContent='เงินเพิ่มหักเป็นรายจ่ายไม่ได้ตามมาตรา 65 ตรี (6) ภาษีที่ผู้จ่ายชำระแทนเป็นเงินได้ของผู้รับ (หัวข้อ 9.10) ผู้จ่ายควรขอหนังสือยืนยันจากผู้รับว่ารวมเงินได้ใน ภ.ง.ด.50 แล้ว';}
+document.querySelectorAll('#a1,#a2,#a3,#a4').forEach(e=>e.addEventListener('input',w1));
+document.querySelectorAll('#g1,input[name=gr]').forEach(e=>e.addEventListener('input',w2));
+document.querySelectorAll('#l1,#l2,#l3,input[name=lm]').forEach(e=>e.addEventListener('input',w3));
+w1();w2();w3();
+
+renderQuiz([{"lo": "LO1 · เข้าใจ", "stem": "บริษัทไทยจ่ายค่าบริการให้บริษัทไทยอีกรายหนึ่ง หน้าที่หักภาษีมาจากบทบัญญัติใด", "opts": ["มาตรา 3 เตรส ประกอบคำสั่ง ท.ป.4/2528", "มาตรา 69 ทวิ", "มาตรา 70", "มาตรา 50 (1)"], "ans": 0, "why": "อัตราระหว่างบริษัทไทยอยู่ในคำสั่งที่อธิบดีออกตามมาตรา 3 เตรส คือ ท.ป.4/2528 มาตรา 69 ทวิ ใช้กับหน่วยงานราชการ"}, {"lo": "LO1 · เข้าใจ", "stem": "หน่วยงานราชการจ่ายค่าจ้างให้บริษัท ต้องหักภาษีตามมาตราใด", "opts": ["มาตรา 70", "มาตรา 69 ทวิ", "มาตรา 70 ทวิ", "ไม่ต้องหัก"], "ans": 1, "why": "มาตรา 69 ทวิ ใช้เมื่อหน่วยงานราชการ องค์การของรัฐ หรือเทศบาลจ่ายให้บริษัท (หัวข้อ 9.3)"}, {"lo": "LO2 · ประยุกต์", "stem": "ตกลงจ่ายค่าบริการให้ผู้รับในประเทศสุทธิ 97,000 บาท อัตราร้อยละ 3 ภาษีที่ผู้จ่ายต้องนำส่งเท่าใด", "opts": ["2,910 บาท", "3,000 บาท", "2,829 บาท", "3,090 บาท"], "ans": 1, "why": "ฐาน 97,000 ÷ 0.97 = 100,000 บาท ภาษี 3,000 บาท (ตัวอย่าง 9.2 กรณี ก)"}, {"lo": "LO2 · ประยุกต์", "stem": "ผู้จ่ายไม่หักภาษี 60,000 บาท และชำระเองในเดือนที่ 10 นับแต่วันครบกำหนดนำส่ง ภาระรวมเท่าใด", "opts": ["60,000 บาท", "63,600 บาท", "69,000 บาท", "78,000 บาท"], "ans": 2, "why": "เงินเพิ่ม 60,000 × 1.5% × 10 = 9,000 บาท รวม 69,000 บาท (ตัวอย่าง 9.4)"}, {"lo": "LO3 · วิเคราะห์", "stem": "บริษัทแม่ในสิงคโปร์ให้บริการบริหารทั่วไปจากสิงคโปร์ ไม่มีพนักงานเข้ามาไทย และไม่ถ่ายทอดความรู้ ผลคือข้อใด", "opts": ["ค่าสิทธิ หักร้อยละ 15", "กำไรจากธุรกิจตามข้อ 7 ไม่มีสถานประกอบการถาวร ไม่ต้องหัก", "ดอกเบี้ย หักร้อยละ 10", "เงินได้ตามมาตรา 40 (8) หักร้อยละ 5"], "ans": 1, "why": "ตัวอย่าง 9.3: บริการทั่วไปเป็นกำไรธุรกิจ ไทยไม่มีสิทธิเก็บเมื่อไม่มีสถานประกอบการถาวร แต่ต้องเก็บหลักฐาน"}, {"lo": "LO4 · วิเคราะห์", "stem": "เงินเพิ่มที่ผู้จ่ายเสียเพราะไม่หักภาษี ปรับกำไรสุทธิทางบัญชีอย่างไร", "opts": ["หักเป็นรายจ่ายได้เต็มจำนวน", "บวกกลับเป็นรายจ่ายต้องห้ามตามมาตรา 65 ตรี (6)", "ถือเป็นต้นทุนทรัพย์สิน", "ทยอยหักห้ารอบบัญชี"], "ans": 1, "why": "เบี้ยปรับและเงินเพิ่มเป็นรายจ่ายต้องห้ามตามมาตรา 65 ตรี (6) เป็นผลแตกต่างถาวร (หัวข้อ 9.10)"}, {"lo": "LO5 · ประเมิน", "stem": "ผู้รับนำเงินได้ไปเสียภาษีครบแล้วในเดือนที่ 4 ผู้จ่ายที่ไม่หักภาษี 60,000 บาท รับภาระเท่าใด", "opts": ["0 บาท", "3,600 บาท", "60,000 บาท", "69,000 บาท"], "ans": 1, "why": "ตาม ป.91/2542 ข้อ 10 ผู้จ่ายเสียเฉพาะเงินเพิ่มถึงวันที่ผู้รับชำระ 60,000 × 1.5% × 4 = 3,600 บาท"}, {"lo": "LO6 · สร้างสรรค์", "stem": "บันทึกความเห็นทางภาษีเรื่องค่าสิทธิซอฟต์แวร์ที่จ่ายไปสหรัฐอเมริกา ควรขอเอกสารใดจากผู้รับก่อนใช้อัตราร้อยละ 5", "opts": ["ใบกำกับภาษี", "หนังสือรับรองถิ่นที่อยู่และหลักฐานความเป็นเจ้าของผลประโยชน์", "หนังสือรับรองการหักภาษี ณ ที่จ่าย", "ใบอนุญาตทำงาน"], "ans": 1, "why": "ข้อ 12 ของอนุสัญญาใช้ได้เมื่อผู้รับมีถิ่นที่อยู่ในสหรัฐอเมริกาและเป็นเจ้าของผลประโยชน์ ไม่มีหนังสือรับรองต้องใช้ร้อยละ 15 (ตัวอย่าง 9.2)"}]);
+</script>
+</body></html>

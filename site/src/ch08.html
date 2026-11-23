@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แอปบทที่ 8 การปรับโครงสร้างกิจการ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#15233a; --muted:#5a6678; --line:#d5dbe3;
+  --accent:#0d6466; --accent-soft:#e1efef; --gate:#a86a12; --gate-soft:#f7ecd9;
+  --ok:#2f7d32; --stop:#b3261e; --stop-soft:#f8e3e1;
+  --display:"Noto Serif Thai",Georgia,serif; --body:"Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1620; --paper:#17212d; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2c3a4a;
+  --accent:#4fb8b4; --accent-soft:#163334; --gate:#e2a54a; --gate-soft:#3a2c14;
+  --ok:#74c27a; --stop:#f08a80; --stop-soft:#3c1d1b; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.brand img{height:40px;width:auto;display:block}
+.brand .org{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#15233a;border-left:2px solid #d5dbe3;padding-left:12px;line-height:1.2}
+header h1{font-family:var(--display);font-size:1.7rem;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+header p{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--gate);padding:4px 10px;background:var(--gate-soft);border-radius:0 6px 6px 0}
+section.lab{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.lab h2{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
+.lab-tag{font-size:.8rem;color:var(--accent);font-weight:700}
+.lab > p{margin:4px 0 14px;color:var(--muted);max-width:72ch}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+legend{font-weight:700;font-size:.92rem;padding:0 4px}
+label.opt{display:flex;gap:8px;align-items:flex-start;padding:2px 0;cursor:pointer;font-size:.95rem}
+.gate{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.gate .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--muted)}
+.gate.pass{border-color:var(--ok)} .gate.pass .dot{background:var(--ok)}
+.gate.stop{border-color:var(--stop);background:var(--stop-soft)} .gate.stop .dot{background:var(--stop)}
+.gate.skip{opacity:.45}
+.gate b{display:block} .gate small{color:var(--muted)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.num{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num label{display:block;font-size:.85rem;color:var(--muted)}
+.num input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.82rem;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.mark{font-weight:700;white-space:nowrap}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--stop)}
+button{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gate);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+textarea{width:100%;min-height:220px;font:inherit;font-size:.9rem;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.q .stem{font-weight:500;margin-bottom:6px}
+.q .lo{font-size:.78rem;color:var(--gate);font-weight:700}
+.q .fb{margin-top:6px;font-size:.92rem;padding:6px 10px;border-radius:6px;display:none}
+.q .fb.show{display:block}
+.q .fb.ok{background:var(--accent-soft)} .q .fb.no{background:var(--stop-soft)}
+.score{font-weight:700}
+footer{font-size:.85rem;color:var(--muted)}
+footer ul{padding-left:20px}
+.dim{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.dim div{border:1px solid var(--line);border-radius:8px;padding:8px;font-size:.88rem}
+.dim .pass{border-color:var(--ok)} .dim .fail{border-color:var(--stop);background:var(--stop-soft)} .dim .na{opacity:.6}
+.dim b{display:block}
+input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%}
+</style></head><body>
+<main>
+<header>
+  <div class="brand"><img src="logo.png" alt="Dr VIT"><span class="org">Siam edu.</span></div>
+  <h1>แอปบทที่ 8 การปรับโครงสร้างกิจการและหลักทดสอบความต่อเนื่องสามมิติ</h1>
+  <p>แอปนี้ใช้คู่กับบทที่ 8 ของตำราภาษีชั้นสูง ผู้เรียนเลือกรูปแบบธุรกรรมแล้วดูผลในกรอบแกนกลาง 4 ชั้นและสามมิติของหลักทดสอบ เปรียบเทียบภาระภาษีของสามเส้นทางจากตัวเลขเดียวกัน ตรวจกำหนดเวลาแบบ ค.อ. และคำนวณเงินคืนผู้ถือหุ้นเมื่อเลิกบริษัท</p>
+  <p class="note">สถานะกฎหมาย ณ วันที่ 18 พฤศจิกายน 2569 ตัวเลขทุกตัวมาจากตัวอย่างสมมติในบท ใช้เพื่อการเรียนรู้ ไม่ใช่คำปรึกษาภาษีสำหรับกรณีจริง และห้ามนำข้อมูลลูกค้าจริงใส่แอปหรือเครื่องมือปัญญาประดิษฐ์</p>
+</header>
+
+<section class="lab" id="w1">
+  <span class="lab-tag">ใบงาน 1 · LO1 LO5</span>
+  <h2>เลือกรูปแบบธุรกรรม แล้วทดสอบสามมิติ</h2>
+  <p>เปลี่ยนคำตอบทีละข้อเพื่อดูว่าเงื่อนไขใดทำให้ธุรกรรมไม่เป็นกลางทางภาษี มิติกิจการไม่เป็นเงื่อนไขของการควบและการโอนกิจการทั้งหมดในกฎหมายไทย แอปจึงแสดงเป็นสีจาง</p>
+  <div class="cols">
+    <div>
+      <fieldset><legend>รูปแบบธุรกรรม</legend>
+        <label class="opt"><input type="radio" name="form" value="merger2" checked> ควบโดยให้บริษัทหนึ่งคงอยู่ มาตรา 1238 (2)</label>
+        <label class="opt"><input type="radio" name="form" value="merger1"> ควบเป็นบริษัทใหม่ มาตรา 1238 (1)</label>
+        <label class="opt"><input type="radio" name="form" value="entire"> โอนกิจการทั้งหมด</label>
+        <label class="opt"><input type="radio" name="form" value="partial"> โอนกิจการบางส่วน</label>
+        <label class="opt"><input type="radio" name="form" value="sale"> ขายทรัพย์สินตามปกติ</label>
+      </fieldset>
+      <fieldset id="f_whole"><legend>ควบหรือโอนกิจการทั้งหมด</legend>
+        <label class="opt"><input type="checkbox" id="o_dissolve" checked> ผู้โอนจดทะเบียนเลิกและชำระบัญชีในรอบที่โอน</label>
+        <label class="opt"><input type="checkbox" id="o_filed" checked> แจ้งแบบ ค.อ. ภายใน 30 วัน</label>
+        <label class="opt"><input type="checkbox" id="o_exchange" checked> ผู้ถือหุ้นแลกหุ้นในรอบบัญชีเดียวกัน</label>
+        <label class="opt"><input type="checkbox" id="o_registered" checked> ผู้รับเป็นผู้ประกอบการจดทะเบียนภาษีมูลค่าเพิ่ม</label>
+      </fieldset>
+      <fieldset id="f_part"><legend>โอนกิจการบางส่วน</legend>
+        <label class="opt"><input type="checkbox" id="o_group" checked> เป็นเครือร้อยละ 50 ขึ้นไป ต่อเนื่องหกเดือนหลังรอบที่โอน</label>
+        <label class="opt"><input type="checkbox" id="o_price" checked> ราคาไม่ต่ำกว่าราคาตลาด</label>
+        <label class="opt"><input type="checkbox" id="o_complete" checked> โอนเสร็จภายในวันสิ้นรอบที่ตกลงโอน</label>
+      </fieldset>
+    </div>
+    <div>
+      <div class="verdict" id="r_title" aria-live="polite"></div>
+      <div class="tbl"><table><tbody id="r_layers"></tbody></table></div>
+      <div class="dim" id="r_dims"></div>
+      <p id="r_sec" style="font-size:.88rem;color:var(--muted)"></p>
+    </div>
+  </div>
+</section>
+
+<section class="lab" id="w2">
+  <span class="lab-tag">ใบงาน 2 · LO2 LO3</span>
+  <h2>ภาระภาษีสี่ชั้นของสามเส้นทางจากตัวเลขเดียวกัน</h2>
+  <p>ค่าตั้งต้นคือตัวอย่าง 8.2 ผลที่ถูกต้องคือภาระสุทธิ 5,485,000 บาทเมื่อขายตามปกติ และ 4,000,000 บาทเมื่อโอนกิจการบางส่วน คอลัมน์โอนกิจการทั้งหมดแสดงเพื่อเปรียบเทียบ และใช้ได้เฉพาะเมื่อผู้โอนเลิกในรอบที่โอน</p>
+  <div class="cols">
+    <div class="num">
+      <div><label for="b_lb">ที่ดิน มูลค่าตามบัญชี</label><input id="b_lb" type="number" value="8000000"></div>
+      <div><label for="b_lm">ที่ดิน ราคาตลาด</label><input id="b_lm" type="number" value="20000000"></div>
+      <div><label for="b_bb">อาคาร มูลค่าตามบัญชี</label><input id="b_bb" type="number" value="17000000"></div>
+      <div><label for="b_bm">อาคาร ราคาตลาด</label><input id="b_bm" type="number" value="25000000"></div>
+      <div><label for="b_mb">เครื่องจักร มูลค่าตามบัญชี</label><input id="b_mb" type="number" value="15000000"></div>
+      <div><label for="b_mm">เครื่องจักร ราคาตลาด</label><input id="b_mm" type="number" value="15000000"></div>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>ชั้นของกรอบแกนกลาง</th><th class="n">ขายตามปกติ</th><th class="n">โอนบางส่วน (516)</th><th class="n">โอนทั้งหมด</th></tr></thead>
+      <tbody id="b_out"></tbody></table></div>
+  </div>
+</section>
+
+<section class="lab" id="w3">
+  <span class="lab-tag">ใบงาน 3 · LO3</span>
+  <h2>ไทม์ไลน์แบบ ค.อ. วันเลิก และแบบ ภ.ง.ด.50 รอบสุดท้าย</h2>
+  <p>นับ 30 วันจากวันที่นายทะเบียนรับจดทะเบียนตามประกาศปี 2555 ข้อ 3 (2) แจ้งการเลิกภายใน 15 วัน และยื่นแบบรอบสุดท้ายภายใน 150 วันนับแต่วันจดทะเบียนเลิก (มาตรา 72 ประกอบมาตรา 69) แอปนับวันตามปฏิทิน ไม่เลื่อนวันหยุด</p>
+  <div class="cols">
+    <div class="num">
+      <div><label for="t_reg">วันที่นายทะเบียนรับจดทะเบียน</label><input id="t_reg" type="date" value="2026-03-02"></div>
+      <div><label for="t_filed">วันที่ยื่นแบบ ค.อ.</label><input id="t_filed" type="date" value="2026-03-25"></div>
+      <div><label for="t_dis">วันจดทะเบียนเลิกบริษัทผู้โอน</label><input id="t_dis" type="date" value="2026-06-30"></div>
+      <div><label for="t_end">วันสิ้นรอบบัญชีที่โอน</label><input id="t_end" type="date" value="2026-12-31"></div>
+    </div>
+    <div class="tbl"><table><tbody id="t_out"></tbody></table></div>
+  </div>
+</section>
+
+<section class="lab" id="w4">
+  <span class="lab-tag">ใบงาน 4 · LO2 LO4</span>
+  <h2>เลิกบริษัทและเงินคืนผู้ถือหุ้นที่เป็นบริษัท</h2>
+  <p>ค่าตั้งต้นคือตัวอย่าง 8.3 ผลที่ถูกต้องคือส่วนเกินทุน 7,630,000 บาท ภาษี 1,526,000 บาท และถ้าจ่ายเงินปันผลก่อนเลิก ภาษีเหลือ 326,000 บาท ทางเลือกนี้เป็นความเห็นของผู้เขียนและต้องเข้าเงื่อนไขมาตรา 65 ทวิ (10)</p>
+  <div class="cols">
+    <div class="num">
+      <div><label for="l_cap">ทุนชำระแล้ว</label><input id="l_cap" type="number" value="10000000"></div>
+      <div><label for="l_re">กำไรสะสม</label><input id="l_re" type="number" value="6000000"></div>
+      <div><label for="l_cash">เงินสด</label><input id="l_cash" type="number" value="8000000"></div>
+      <div><label for="l_div">เงินปันผลที่จ่ายก่อนเลิก</label><input id="l_div" type="number" value="6000000"></div>
+      <div><label for="l_ib">สินค้า มูลค่าตามบัญชี</label><input id="l_ib" type="number" value="3000000"></div>
+      <div><label for="l_im">สินค้า ราคาตลาด</label><input id="l_im" type="number" value="4000000"></div>
+      <div><label for="l_mb">เครื่องจักร มูลค่าตามบัญชี</label><input id="l_mb" type="number" value="5000000"></div>
+      <div><label for="l_mm">เครื่องจักร ราคาตลาด</label><input id="l_mm" type="number" value="7000000"></div>
+    </div>
+    <div class="tbl"><table><tbody id="l_out"></tbody></table></div>
+  </div>
+</section>
+
+<section class="lab" id="quiz">
+  <span class="lab-tag">แบบทดสอบท้ายบท</span>
+  <h2>ทดสอบ 8 ข้อ</h2>
+  <div id="qbox"></div>
+  <div class="row"><span class="score" id="qscore"></span><button class="ghost" id="qreset">เริ่มใหม่</button></div>
+</section>
+
+<footer>
+  <p><b>ที่มาของตัวเลขและหลักเกณฑ์</b></p>
+  <ul>
+    <li>ประมวลรัษฎากร มาตรา 72 ถึง 74 และ 77/1 (8) (ฉ) พระราชกฤษฎีกา ฉบับที่ 10 และฉบับที่ 516 กฎกระทรวง ฉบับที่ 291</li>
+    <li>ประกาศอธิบดีกรมสรรพากรเรื่องการควบเข้ากันหรือโอนกิจการทั้งหมด ลงวันที่ 19 ตุลาคม 2555 ข้อ 3 (2) และ 3 (4) และประกาศลงวันที่ 27 กันยายน 2554</li>
+    <li>หนังสือตอบข้อหารือ กค 0702/1112, กค 0702(กม.)/462, กค 0702/4203, กค 0702/4377 และ กค 0706/8619</li>
+    <li>ตัวเลขใบงาน 2 และ 4 ตรงกับตัวอย่าง 8.2 และ 8.3 ของบทที่ 8 และทดสอบด้วยคอมพิวเตอร์แล้ว</li>
+  </ul>
+  <p><b>เรื่องที่ยังรอผู้เขียนตัดสิน</b> ทางเลือกจ่ายเงินปันผลก่อนเลิกยังไม่พบหนังสือตอบข้อหารือที่ตรงประเด็น แอปใช้ความเห็นของผู้เขียนในบท และไทม์ไลน์ไม่เลื่อนวันหยุดราชการ</p>
+  <p>Dr VIT · Siam edu. · ใช้ประกอบตำราภาษีชั้นสูง</p>
+</footer>
+</main>
+<script>
+// ตรรกะของแอปบทที่ 8 (ฟังก์ชันบริสุทธิ์ ทดสอบด้วย node)
+function r2(x){return Math.round(x*100)/100}
+
+// ใบงาน 1: เส้นทางและหลักทดสอบความต่อเนื่องสามมิติ
+function route(o){
+  const out={layers:{},dims:{},title:'',sections:''};
+  if(o.form==='sale'){
+    out.title='ขายทรัพย์สินตามปกติ: ไม่เป็นกลางทางภาษี';
+    out.layers={cit:'ผู้ขายเสียภาษีจากกำไรตามปกติ',vat:'เสียภาษีมูลค่าเพิ่มจากสังหาริมทรัพย์',sbt:'เสียภาษีธุรกิจเฉพาะจากอสังหาริมทรัพย์ อากรแสตมป์ตามลักษณะแห่งตราสาร',sh:'ไม่เกี่ยวกับผู้ถือหุ้น'};
+    out.dims={owner:'fail',business:'fail',base:'fail'};out.sections='8.6 และตาราง 8.7';return out;
+  }
+  if(o.form==='partial'){
+    const ok=o.group&&o.price&&o.complete;
+    out.title=ok?'โอนกิจการบางส่วนตามพระราชกฤษฎีกา ฉบับที่ 516: ยกเว้นภาษีมูลค่าเพิ่ม ภาษีธุรกิจเฉพาะ และอากรแสตมป์':'โอนกิจการบางส่วนแต่เงื่อนไขไม่ครบ: เสียภาษีเหมือนขายตามปกติ';
+    out.layers={cit:'ผู้โอนเสียภาษีจากกำไรตามปกติ ราคาต้องไม่ต่ำกว่าราคาตลาด (หนังสือตอบข้อหารือ กค 0702/4203)',
+      vat:ok?'ยกเว้นตามพระราชกฤษฎีกา ฉบับที่ 516':'เสียตามปกติ',
+      sbt:ok?'ยกเว้นภาษีธุรกิจเฉพาะและอากรแสตมป์ตามพระราชกฤษฎีกา ฉบับที่ 516':'เสียตามปกติ',
+      sh:'ไม่เกี่ยวกับผู้ถือหุ้น'};
+    out.dims={owner:o.group?'pass':'fail',business:'pass',base:'fail'};out.sections='8.5 ตาราง 8.4';return out;
+  }
+  // ควบหรือโอนกิจการทั้งหมด
+  const merger=o.form==='merger1'||o.form==='merger2';
+  const neutral=merger||o.dissolve;
+  out.title=neutral?(merger?'การควบ: เป็นกลางทางภาษีเงินได้':'โอนกิจการทั้งหมด: เป็นกลางทางภาษีเงินได้'):'โอนทรัพย์สินทั้งหมดแต่ผู้โอนไม่เลิกในรอบที่โอน: ไม่เป็นการโอนกิจการทั้งหมดตามมาตรา 74 (1) (ค)';
+  out.layers.cit=neutral?'ตีราคาตลาดแต่ไม่ถือส่วนต่างเป็นรายได้ ผู้รับใช้ราคาตามบัญชีของผู้โอน ผลขาดทุนของผู้สิ้นสภาพโอนไม่ได้ตามมาตรา 74 (1) (ข) เงินสำรองที่หักเป็นรายจ่ายแล้วนำมารวมเป็นรายได้ตามมาตรา 74 (2)':'ผู้โอนเสียภาษีเงินได้จากกำไร';
+  out.layers.vat=o.registered?(neutral?'ไม่เป็นการขายตามมาตรา 77/1 (8) (ฉ)':'ขึ้นกับว่ายังเป็นการโอนกิจการทั้งหมดให้ผู้ประกอบการจดทะเบียนหรือไม่'):'ผู้รับไม่ได้จดทะเบียน การโอนเป็นการขาย';
+  out.layers.sbt=neutral&&o.filed?'ยกเว้นตามมาตรา 5 โสฬส และมาตรา 6 (31) แห่งพระราชกฤษฎีกา ฉบับที่ 10':'เสียสิทธิยกเว้นภาษีธุรกิจเฉพาะและอากรแสตมป์'+(neutral?' (ไม่แจ้งแบบ ค.อ. ภายใน 30 วันตามประกาศปี 2555 ข้อ 3 (2))':'');
+  out.layers.sh=o.exchange?'ส่วนเกินทุนจากการแลกหุ้นได้รับยกเว้น (กฎกระทรวง ฉบับที่ 291 และมาตรา 5 สัตตรส)':'ไม่ได้แลกหุ้นในรอบเดียวกัน ส่วนเกินทุนเป็นเงินได้ของผู้ถือหุ้น';
+  out.dims={owner:o.exchange?'pass':'fail',business:'na',base:neutral?'pass':'fail'};
+  out.sections=merger?'8.3 ตาราง 8.2':'8.4 ตาราง 8.3';
+  return out;
+}
+
+// ใบงาน 2: ภาระภาษีสี่ชั้นของสามเส้นทาง (ตัวอย่าง 8.2)
+function burden(a){
+  const book=a.landB+a.bldB+a.machB, mkt=a.landM+a.bldM+a.machM, gain=mkt-book;
+  const cit=r2(gain*a.citRate), sbt=r2((a.landM+a.bldM)*a.sbtRate), vat=r2(a.machM*a.vatRate);
+  return {book,mkt,gain,
+    sale:{cit,sbt,vat,net:r2(cit+sbt),base:mkt},
+    partial:{cit,sbt:0,vat:0,net:cit,base:mkt},
+    entire:{cit:0,sbt:0,vat:0,net:0,base:book,deferred:cit}};
+}
+
+// ใบงาน 3: ไทม์ไลน์
+function addDays(iso,n){const d=new Date(iso+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
+function timeline(t){
+  const koDue=addDays(t.reg,30), notice=addDays(t.dissolve,15), finalDue=addDays(t.dissolve,150);
+  let ko='ทันกำหนด';
+  if(t.filed<t.reg) ko='ยื่นก่อนวันจดทะเบียน เสี่ยงเสียสิทธิ';
+  else if(t.filed>koDue) ko='ยื่นเกิน 30 วัน เสียสิทธิยกเว้นตามพระราชกฤษฎีกา ฉบับที่ 10';
+  const inPeriod=t.dissolve<=t.periodEnd;
+  return {koDue,ko,notice,finalDue,inPeriod};
+}
+
+// ใบงาน 4: เลิกบริษัทและเงินคืนผู้ถือหุ้น (ตัวอย่าง 8.3)
+function liquidation(l){
+  const reval=(l.invM-l.invB)+(l.machM-l.machB);
+  const cit=r2(reval*l.citRate), vat=r2((l.invM+l.machM)*l.vatRate);
+  const dist=r2(l.cash+l.invM+l.machM-cit-vat);
+  const excess=r2(dist-l.cap), tax=r2(excess*l.shRate);
+  const div=Math.min(l.div,l.re);
+  const excessAlt=r2(Math.max(0,dist-l.cap-div)), taxAlt=r2(excessAlt*l.shRate);
+  return {reval,cit,vat,dist,excess,tax,div,excessAlt,taxAlt,saving:r2(tax-taxAlt)};
+}
+
+const $=id=>document.getElementById(id);
+const fmt=n=>Number(n).toLocaleString('th-TH',{minimumFractionDigits:0,maximumFractionDigits:2});
+const v=id=>Number($(id).value)||0;
+const dname={owner:'มิติเจ้าของ',business:'มิติกิจการ',base:'มิติฐานภาษี'};
+const dtext={pass:'ผ่าน',fail:'ไม่ผ่าน',na:'ไม่เป็นเงื่อนไขในกฎหมายไทย'};
+function w1(){
+  const form=document.querySelector('input[name=form]:checked').value;
+  $('f_whole').disabled=!(form==='merger1'||form==='merger2'||form==='entire');
+  $('f_part').disabled=form!=='partial';
+  const r=route({form,dissolve:$('o_dissolve').checked,filed:$('o_filed').checked,exchange:$('o_exchange').checked,registered:$('o_registered').checked,group:$('o_group').checked,price:$('o_price').checked,complete:$('o_complete').checked});
+  $('r_title').textContent=r.title;
+  const L=[['ชั้นที่ 4 ภาษีเงินได้นิติบุคคล',r.layers.cit],['ชั้นที่ 3 ภาษีมูลค่าเพิ่ม',r.layers.vat],['ชั้นที่ 3 ภาษีธุรกิจเฉพาะและอากรแสตมป์',r.layers.sbt],['ผู้ถือหุ้น',r.layers.sh]];
+  $('r_layers').innerHTML=L.map(x=>`<tr><th>${x[0]}</th><td>${x[1]}</td></tr>`).join('');
+  $('r_dims').innerHTML=Object.keys(dname).map(k=>`<div class="${r.dims[k]}"><b>${dname[k]}</b>${dtext[r.dims[k]]}</div>`).join('');
+  $('r_sec').textContent='อ่านต่อในบท: หัวข้อ '+r.sections;
+}
+function w2(){
+  const b=burden({landB:v('b_lb'),landM:v('b_lm'),bldB:v('b_bb'),bldM:v('b_bm'),machB:v('b_mb'),machM:v('b_mm'),citRate:.2,sbtRate:.033,vatRate:.07});
+  const row=(t,a,c,d,cls='')=>`<tr class="${cls}"><td>${t}</td><td class="n">${a}</td><td class="n">${c}</td><td class="n">${d}</td></tr>`;
+  $('b_out').innerHTML=[
+    row('ชั้นที่ 1 บัญชี: กำไรจากการโอน',fmt(b.gain),fmt(b.gain),fmt(b.gain)),
+    row('ชั้นที่ 3 ภาษีธุรกิจเฉพาะ ร้อยละ 3.3 ของที่ดินและอาคาร',fmt(b.sale.sbt),'ยกเว้น','ยกเว้น'),
+    row('ชั้นที่ 3 ภาษีมูลค่าเพิ่ม ร้อยละ 7 ของเครื่องจักร (ผู้รับขอเครดิตได้)',fmt(b.sale.vat),'ยกเว้น','ไม่เป็นการขาย'),
+    row('ชั้นที่ 4 ภาษีเงินได้ ร้อยละ 20 ของกำไร',fmt(b.sale.cit),fmt(b.partial.cit),'0 (เลื่อน '+fmt(b.entire.deferred)+')'),
+    row('ภาระสุทธิ (ไม่รวมภาษีมูลค่าเพิ่มที่ขอเครดิตได้)',fmt(b.sale.net),fmt(b.partial.net),fmt(b.entire.net),'total'),
+    row('ฐานภาษีของผู้รับ',fmt(b.sale.base),fmt(b.partial.base),fmt(b.entire.base))].join('');
+}
+function w3(){
+  const t=timeline({reg:$('t_reg').value,filed:$('t_filed').value,dissolve:$('t_dis').value,periodEnd:$('t_end').value});
+  $('t_out').innerHTML=`<tr><th>กำหนดยื่นแบบ ค.อ.</th><td>${t.koDue}</td></tr><tr><th>ผลการยื่น</th><td class="mark ${t.ko==='ทันกำหนด'?'ok':'no'}">${t.ko}</td></tr><tr><th>แจ้งการเลิกต่อกรมสรรพากร</th><td>ภายใน ${t.notice}</td></tr><tr><th>ยื่นแบบ ภ.ง.ด.50 รอบสุดท้าย</th><td>ภายใน ${t.finalDue}</td></tr><tr><th>เลิกในรอบที่โอน</th><td class="mark ${t.inPeriod?'ok':'no'}">${t.inPeriod?'ใช่':'ไม่ใช่ ไม่เป็นการโอนกิจการทั้งหมด'}</td></tr>`;
+}
+function w4(){
+  const q=liquidation({cap:v('l_cap'),re:v('l_re'),cash:v('l_cash'),invB:v('l_ib'),invM:v('l_im'),machB:v('l_mb'),machM:v('l_mm'),citRate:.2,vatRate:.07,shRate:.2,div:v('l_div')});
+  const R=[['กำไรจากการตีราคาตลาด',q.reval],['ภาษีเงินได้รอบสุดท้าย',q.cit],['ภาษีมูลค่าเพิ่มของทรัพย์สินที่เหลือ (หักเป็นรายจ่ายไม่ได้ตามมาตรา 65 ตรี (6 ทวิ))',q.vat],['เงินคืนผู้ถือหุ้น',q.dist],['ส่วนเกินทุน เงินได้ตามมาตรา 40 (4) (ฉ)',q.excess],['ภาษีของบริษัทแม่ ร้อยละ 20',q.tax],['ส่วนเกินทุนเมื่อจ่ายเงินปันผล '+fmt(q.div)+' ก่อนเลิก',q.excessAlt],['ภาษีของบริษัทแม่ตามทางเลือก',q.taxAlt],['ภาษีที่ลดลง',q.saving]];
+  $('l_out').innerHTML=R.map((x,i)=>`<tr class="${i===8?'total':''}"><td>${x[0]}</td><td class="n">${fmt(x[1])}</td></tr>`).join('');
+}
+const QS=[
+ {lo:'LO1',s:'กรมสรรพากรใช้บทบัญญัติใดกับการควบโดยให้บริษัทหนึ่งคงอยู่ตามมาตรา 1238 (2)',o:['มาตรา 74 (1) (ค) การโอนกิจการทั้งหมด','มาตรา 73 การควบ','มาตรา 72 การเลิก','พระราชกฤษฎีกา ฉบับที่ 516'],a:0,e:'หนังสือตอบข้อหารือ กค 0702/1112 ลงวันที่ 21 กุมภาพันธ์ 2567 (หัวข้อ 8.3)'},
+ {lo:'LO1',s:'พระราชกฤษฎีกา ฉบับที่ 516 ไม่ยกเว้นภาษีใด',o:['ภาษีเงินได้นิติบุคคล','ภาษีมูลค่าเพิ่ม','ภาษีธุรกิจเฉพาะ','อากรแสตมป์'],a:0,e:'หนังสือตอบข้อหารือ กค 0702/4203 ลงวันที่ 22 เมษายน 2558 (หัวข้อ 8.5)'},
+ {lo:'LO3',s:'บริษัท ก ซึ่งคงอยู่หลังการควบ นำผลขาดทุนสุทธิของบริษัท ข ที่ถูกควบมาหักได้หรือไม่',o:['ไม่ได้ ตามมาตรา 74 (1) (ข)','ได้ทั้งจำนวน','ได้ไม่เกิน 5 รอบบัญชี','ได้เมื่อแจ้งแบบ ค.อ. ทันกำหนด'],a:0,e:'ข้อห้ามนี้ใช้กับผลขาดทุนของบริษัทที่สิ้นสภาพ ไม่ใช้กับผลขาดทุนของบริษัทที่คงอยู่ (หัวข้อ 8.3 และหลักการข้อ 4)'},
+ {lo:'LO3',s:'โอนกิจการทั้งหมดให้ผู้รับที่ไม่ได้จดทะเบียนภาษีมูลค่าเพิ่ม ผลทางภาษีมูลค่าเพิ่มเป็นอย่างไร',o:['การโอนเป็นการขาย','ไม่เป็นการขายตามมาตรา 77/1 (8) (ฉ)','ยกเว้นตามพระราชกฤษฎีกา ฉบับที่ 516','ยกเว้นเพราะผู้โอนเลิกบริษัท'],a:0,e:'มาตรา 77/1 (8) (ฉ) ใช้เฉพาะเมื่อผู้รับเป็นผู้ประกอบการจดทะเบียน (หัวข้อ 8.4)'},
+ {lo:'LO2',s:'จากตัวอย่าง 8.2 การโอนกิจการบางส่วนประหยัดภาษีธุรกิจเฉพาะได้เท่าใด',o:['1,485,000 บาท','1,050,000 บาท','4,000,000 บาท','5,485,000 บาท'],a:0,e:'ร้อยละ 3.3 ของราคาตลาดที่ดินและอาคาร 45,000,000 บาท (ตาราง 8.7)'},
+ {lo:'LO3',s:'นายทะเบียนรับจดทะเบียนวันที่ 2 มีนาคม 2569 ต้องยื่นแบบ ค.อ. ภายในวันใด',o:['1 เมษายน 2569','17 มีนาคม 2569','31 มีนาคม 2569','30 กรกฎาคม 2569'],a:0,e:'30 วันนับจากวันที่นายทะเบียนรับจดทะเบียน ตามประกาศปี 2555 ข้อ 3 (2) และไม่ควรยื่นก่อนวันนั้น'},
+ {lo:'LO4',s:'บริษัท ข บันทึกกำไรจากการตีราคาตลาด 19,000,000 บาทในรอบสุดท้าย ต้องปรับกำไรสุทธิอย่างไร',o:['หักออก เป็นผลแตกต่างถาวรเพราะบริษัท ข สิ้นสภาพ','ไม่ต้องปรับ','หักออก เป็นผลแตกต่างชั่วคราว','บวกเพิ่ม'],a:0,e:'ตาราง 8.9 จำนวนนี้เป็นรายการปรับกำไร ไม่ใช่มูลค่าทรัพย์สิน'},
+ {lo:'LO5',s:'การโอนกิจการบางส่วนตามพระราชกฤษฎีกา ฉบับที่ 516 ไม่ผ่านมิติใดของหลักทดสอบความต่อเนื่องสามมิติ',o:['มิติฐานภาษี เพราะผู้รับใช้ราคาตลาด','มิติเจ้าของ','มิติกิจการ','ผ่านทุกมิติ'],a:0,e:'ผู้รับไม่ได้ใช้ราคาตามบัญชีของผู้โอน ภาษีเงินได้จึงเก็บในวันโอน (หัวข้อ 8.6 และแผนภาพ 8.1)'}];
+function quiz(){
+  $('qbox').innerHTML=QS.map((q,i)=>{const ord=q.o.map((_,j)=>j).sort(()=>Math.random()-0.5);return `<div class="q"><span class="lo">ข้อ ${i+1} · ${q.lo}</span><div class="stem">${q.s}</div>${ord.map(j=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"> ${q.o[j]}</label>`).join('')}<div class="fb" id="fb${i}"></div></div>`}).join('');
+  QS.forEach((q,i)=>document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.addEventListener('change',()=>{const ok=+r.value===q.a;const f=$('fb'+i);f.className='fb show '+(ok?'ok':'no');f.textContent=(ok?'ถูกต้อง ':'ยังไม่ถูก ')+q.e;score()})));
+  score();
+}
+function score(){let a=0,c=0;QS.forEach((q,i)=>{const s=document.querySelector(`input[name=q${i}]:checked`);if(s){a++;if(+s.value===q.a)c++}});$('qscore').textContent=`ตอบแล้ว ${a} ข้อ ถูก ${c} ข้อ`}
+document.querySelectorAll('#w1 input').forEach(e=>e.addEventListener('change',w1));
+document.querySelectorAll('#w2 input').forEach(e=>e.addEventListener('input',w2));
+document.querySelectorAll('#w3 input').forEach(e=>e.addEventListener('change',w3));
+document.querySelectorAll('#w4 input').forEach(e=>e.addEventListener('input',w4));
+$('qreset').addEventListener('click',quiz);
+w1();w2();w3();w4();quiz();
+</script></body></html>

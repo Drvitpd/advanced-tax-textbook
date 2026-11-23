@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แอปบทที่ 6 รายจ่ายที่หักได้และรายจ่ายหักเพิ่ม</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#15233a; --muted:#5a6678; --line:#d5dbe3;
+  --accent:#0d6466; --accent-soft:#e1efef; --gate:#a86a12; --gate-soft:#f7ecd9;
+  --ok:#2f7d32; --stop:#b3261e; --stop-soft:#f8e3e1;
+  --display:"Noto Serif Thai",Georgia,serif; --body:"Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1620; --paper:#17212d; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2c3a4a;
+  --accent:#4fb8b4; --accent-soft:#163334; --gate:#e2a54a; --gate-soft:#3a2c14;
+  --ok:#74c27a; --stop:#f08a80; --stop-soft:#3c1d1b; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.brand img{height:40px;width:auto;display:block}
+.brand .org{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#15233a;border-left:2px solid #d5dbe3;padding-left:12px;line-height:1.2}
+header h1{font-family:var(--display);font-size:1.7rem;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+header p{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--gate);padding:4px 10px;background:var(--gate-soft);border-radius:0 6px 6px 0}
+section.lab{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.lab h2{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
+.lab-tag{font-size:.8rem;color:var(--accent);font-weight:700}
+.lab > p{margin:4px 0 14px;color:var(--muted);max-width:72ch}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+legend{font-weight:700;font-size:.92rem;padding:0 4px}
+label.opt{display:flex;gap:8px;align-items:flex-start;padding:2px 0;cursor:pointer;font-size:.95rem}
+.gate{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.gate .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--muted)}
+.gate.pass{border-color:var(--ok)} .gate.pass .dot{background:var(--ok)}
+.gate.stop{border-color:var(--stop);background:var(--stop-soft)} .gate.stop .dot{background:var(--stop)}
+.gate.skip{opacity:.45}
+.gate b{display:block} .gate small{color:var(--muted)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.num{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num label{display:block;font-size:.85rem;color:var(--muted)}
+.num input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.82rem;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.mark{font-weight:700;white-space:nowrap}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--stop)}
+button{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gate);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+textarea{width:100%;min-height:220px;font:inherit;font-size:.9rem;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.q .stem{font-weight:500;margin-bottom:6px}
+.q .lo{font-size:.78rem;color:var(--gate);font-weight:700}
+.q .fb{margin-top:6px;font-size:.92rem;padding:6px 10px;border-radius:6px;display:none}
+.q .fb.show{display:block}
+.q .fb.ok{background:var(--accent-soft)} .q .fb.no{background:var(--stop-soft)}
+.score{font-weight:700}
+footer{font-size:.85rem;color:var(--muted)}
+footer ul{padding-left:20px}
+input.amt{width:130px;text-align:right;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.chips button{font-size:.85rem;padding:5px 10px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:12px}
+.kpi div{background:var(--accent-soft);border-radius:8px;padding:10px 12px}
+.kpi b{display:block;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.kpi small{color:var(--muted)}
+.num{align-content:start}
+.num label.opt{display:flex;color:var(--ink);font-size:.92rem}
+td.n{white-space:nowrap}
+input.amt{width:130px;text-align:right;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+input.txt{width:100%;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink)}
+</style><style>.atx-nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.9rem;margin:0 0 4px}.atx-nav a{color:var(--accent,#0d6466);font-weight:700;text-decoration:none}.atx-nav a:hover{text-decoration:underline}main>*{min-width:0}.tbl,table{max-width:100%}</style>
+<script src="gate.js"></script>
+</head>
+<body>
+<main>
+<nav class="atx-nav" aria-label="นำทาง"><a href="./">สารบัญแอปประจำเล่ม</a> · <a href="ch05.html">บทที่ 5</a> · <a href="ch07.html">บทที่ 7</a></nav>
+<header>
+  <div class="brand"><img src="brand/logo.png" alt="Dr VIT" data-atx-logo><span class="org">Siam edu.</span></div>
+  <h1>แอปบทที่ 6 รายจ่ายที่หักได้และรายจ่ายหักเพิ่ม</h1>
+  <p>แอปนี้ใช้คู่กับบทที่ 6 ของตำราภาษีชั้นสูง ผู้เรียนเทียบค่าเสื่อมราคาทางบัญชีกับทางภาษีตามพระราชกฤษฎีกา ฉบับที่ 145 ตรวจรอบที่จำหน่ายหนี้สูญได้ตามกฎกระทรวง ฉบับที่ 186 ที่แก้ไขโดยฉบับที่ 374 วัดสินค้าคงเหลือด้วยราคาตลาดที่มีหลักฐาน ตรวจสิทธิหักเพิ่ม แล้วรวมผลเป็นตารางปรับกำไรสุทธิทางบัญชี ทุกใบงานใช้หลักทดสอบเหตุการณ์ยืนยันภายนอกในหัวข้อ 6.9.1</p>
+  <p class="note">ตัวเลขตั้งต้นมาจากกรณีบริษัท ธาราวัสดุ อินดัสทรี จำกัด (ชื่อสมมติ) ในบทที่ 6 ฉบับหลัก แอปใช้เพื่อการเรียนรู้ ไม่ใช่คำปรึกษาภาษีสำหรับกรณีจริง และห้ามนำข้อมูลลูกค้าจริงใส่แอปหรือเครื่องมือปัญญาประดิษฐ์</p>
+</header>
+
+<section class="lab" id="w1">
+  <span class="lab-tag">ใบงาน 1 · LO2</span>
+  <h2>ค่าเสื่อมราคาปีแรก: บัญชีเทียบภาษี</h2>
+  <p>คิดตามจำนวนวันที่ใช้งานในรอบปีปฏิทินและปัดสองตำแหน่งทีละบรรทัด ตามหัวข้อ 6.8 รถยนต์นั่งหักจากฐานไม่เกิน 1,000,000 บาทตามมาตรา 5 ส่วนต่างของต้นทุนส่วนเกินเป็นผลแตกต่างถาวรระหว่างใช้งาน</p>
+  <div class="tbl"><table><thead><tr><th>ทรัพย์สิน</th><th class="n">ราคาทุน</th><th>วันพร้อมใช้</th><th class="n">อัตราบัญชี %</th><th class="n">อัตราภาษี %</th><th>รถยนต์นั่ง</th><th class="n">บัญชี</th><th class="n">ภาษี</th><th class="n">บวกกลับ</th></tr></thead><tbody id="assets"></tbody></table></div>
+  <div class="row"><button class="ghost" id="a_add">เพิ่มทรัพย์สิน</button><button class="ghost" id="a_case">กรณีนำบท ก และ ข</button><button class="ghost" id="a_ex">แบบฝึกหัดระดับ 2 ข้อ 1</button></div>
+  <div id="assetn" style="font-size:.88rem;color:var(--muted);margin-top:8px"></div>
+</section>
+
+<section class="lab" id="w2">
+  <span class="lab-tag">ใบงาน 2 · LO3 LO5</span>
+  <h2>หนี้สูญรายลูกหนี้</h2>
+  <p>เลือกเหตุการณ์ที่มีเอกสารแล้ว แอปบอกข้อของกฎกระทรวงและผลในรอบนี้ คอลัมน์ "บัญชีรับรู้" คือจำนวนที่ลงเป็นค่าใช้จ่ายแล้ว ทั้งค่าเผื่อผลขาดทุนด้านเครดิตที่คาดว่าจะเกิดขึ้น (Expected Credit Loss: ECL) และการตัดจำหน่าย</p>
+  <div class="tbl"><table><thead><tr><th>ลูกหนี้</th><th class="n">จำนวนหนี้</th><th class="n">บัญชีรับรู้</th><th>เหตุการณ์</th><th>อนุมัติใน 30 วัน</th><th>ค่าฟ้องสูงกว่าหนี้</th><th>ลูกหนี้เป็นกรรมการ</th><th>ผลในรอบนี้</th></tr></thead><tbody id="debts"></tbody></table></div>
+  <div class="row"><button class="ghost" id="d_add">เพิ่มลูกหนี้</button><button class="ghost" id="d_case">กรณีนำบท ค</button><button class="ghost" id="d_ex">แบบฝึกหัดระดับ 2 ข้อ 2</button></div>
+  <div id="debtn" style="font-size:.88rem;color:var(--muted);margin-top:8px"></div>
+</section>
+
+<section class="lab" id="w3">
+  <span class="lab-tag">ใบงาน 3 · LO4 LO5</span>
+  <h2>สินค้าคงเหลือ: มูลค่าสุทธิที่จะได้รับเทียบราคาตลาดที่มีหลักฐาน</h2>
+  <p>บัญชีปรับลดด้วยมูลค่าสุทธิที่จะได้รับ (Net Realisable Value: NRV) ซึ่งเป็นประมาณการ ภาษีหักได้เฉพาะส่วนที่มีราคาตลาดยืนยันตามมาตรา 65 ทวิ (6)</p>
+  <div class="chips"><button class="ghost" id="i_case">กรณีนำบท ง</button><button class="ghost" id="i_ex">แบบฝึกหัดระดับ 2 ข้อ 3</button></div>
+  <div class="cols">
+    <div class="num">
+      <div><label for="i_c">ราคาทุน</label><input id="i_c" type="number" value="8000000" step="100000"></div>
+      <div><label for="i_n">มูลค่าสุทธิที่จะได้รับตามบัญชี</label><input id="i_n" type="number" value="7100000" step="100000"></div>
+      <div><label for="i_m">ราคาตลาดที่มีหลักฐาน</label><input id="i_m" type="number" value="7300000" step="100000"></div>
+    </div>
+    <div class="tbl"><table><tbody id="inv"></tbody></table></div>
+  </div>
+</section>
+
+<section class="lab" id="w4">
+  <span class="lab-tag">ใบงาน 4 · LO4</span>
+  <h2>รายจ่ายหักเพิ่มตามพระราชกฤษฎีกา</h2>
+  <p>ตรวจเงื่อนไขห้าข้อในหัวข้อ 6.6 ก่อน แล้วจึงคำนวณ ร่างพระราชกฤษฎีกามาตรการไมซ์ยังไม่ประกาศในราชกิจจานุเบกษา จึงไม่อยู่ในตัวเลือก</p>
+  <div class="chips"><button class="ghost" id="x_case">กรณีนำบท จ</button><button class="ghost" id="x_ex">แบบฝึกหัดระดับ 2 ข้อ 4</button></div>
+  <div class="cols">
+    <div>
+      <div class="num">
+        <div style="grid-column:1/-1"><label for="x_m">มาตรการ</label><select id="x_m"><option value="808">ฉบับที่ 808 ระบบ e-Tax Invoice &amp; e-Receipt และ e-Withholding Tax</option><option value="802">ฉบับที่ 802 บริการดิจิทัลของวิสาหกิจขนาดกลางและขนาดย่อม</option><option value="disabled">ฉบับที่ 499 และ 519 ค่าจ้างคนพิการ</option></select></div>
+        <div><label for="x_s">รายจ่ายที่จ่ายจริง</label><input id="x_s" type="number" value="240000" step="10000"></div>
+        <div id="x_capw"><label for="x_cap">ทุนชำระแล้ว ณ วันสิ้นรอบ</label><input id="x_cap" type="number" value="20000000" step="1000000"></div>
+        <div id="x_revw"><label for="x_rev">รายได้จากการขายและบริการ</label><input id="x_rev" type="number" value="50000000" step="1000000"></div>
+      </div>
+      <fieldset style="margin-top:10px"><legend>เงื่อนไขร่วม</legend>
+        <label class="opt"><input type="checkbox" class="xc" checked> 1. วันที่จ่ายอยู่ในช่วงเวลาที่พระราชกฤษฎีกากำหนด</label>
+        <label class="opt"><input type="checkbox" class="xc" checked> 2. ผู้รับเงินขึ้นทะเบียนหรือได้รับอนุมัติตามที่กำหนด</label>
+        <label class="opt"><input type="checkbox" class="xc" checked> 3. ทรัพย์สินเป็นของใหม่และใช้งานครบระยะเวลาขั้นต่ำ (ถ้ามี)</label>
+        <label class="opt"><input type="checkbox" class="xc" checked> 4. ไม่ใช้สิทธิซ้อน รวมสิทธิตามกฎหมายส่งเสริมการลงทุน</label>
+        <label class="opt"><input type="checkbox" class="xc" checked> 5. เก็บเอกสารพิสูจน์เงื่อนไขแยกจากใบเสร็จ</label>
+      </fieldset>
+      <label class="opt" id="x_o60w"><input type="checkbox" id="x_o60"> จ้างคนพิการเกินร้อยละ 60 ของลูกจ้างทั้งหมด และเกิน 180 วัน (ฉบับที่ 519)</label>
+    </div>
+    <div><div class="tbl"><table><tbody id="xt"></tbody></table></div><div class="verdict" id="xv"></div></div>
+  </div>
+</section>
+
+<section class="lab" id="w5">
+  <span class="lab-tag">สรุป · LO2–LO4</span>
+  <h2>ตารางปรับกำไรสุทธิทางบัญชีเป็นกำไรสุทธิทางภาษีอากร</h2>
+  <p>รวมผลจากใบงาน 1 ถึง 4 อัตโนมัติ ค่าตั้งต้นตรงกับตาราง 6.8.3 กำไรสุทธิทางภาษีอากร 12,695,616.44 บาท</p>
+  <div class="num" style="max-width:340px"><div style="grid-column:1/-1"><label for="p_book">กำไรสุทธิทางบัญชีก่อนภาษี</label><input id="p_book" type="number" value="10000000" step="100000"></div></div>
+  <div class="tbl" style="margin-top:10px"><table><thead><tr><th>รายการ</th><th class="n">บวก (หัก) บาท</th><th>ประเภทผลแตกต่าง</th></tr></thead><tbody id="rec"></tbody></table></div>
+</section>
+
+<section class="lab" id="quiz">
+  <span class="lab-tag">แบบทดสอบท้ายบท · LO1–LO5</span>
+  <h2>แบบทดสอบ 8 ข้อ</h2>
+  <p>เลือกคำตอบแล้วอ่านคำอธิบายทันที</p>
+  <div id="qs"></div>
+  <p class="score" id="score"></p>
+</section>
+
+<footer>
+  <b>ที่มาของตัวเลขตั้งต้น</b>
+  <ul>
+    <li>ใบงาน 1: ตาราง 6.8.1 บวกกลับ 75,616.44 บาท และ 160,000 บาท และแนวคำตอบระดับ 2 ข้อ 1 รวม 251,287.68 บาท</li>
+    <li>ใบงาน 2: ตาราง 6.8.2 หักได้ 1,350,000 บาท ค่าเผื่อลูกหนี้ X บวกกลับ 2,500,000 บาท และแนวคำตอบข้อ 2 (ปี 2569 จำหน่ายได้ 0 บาท)</li>
+    <li>ใบงาน 3: ภาษีหักได้ 700,000 บาท บวกกลับ 200,000 บาท และแนวคำตอบข้อ 3 (500,000 และ 300,000 บาท)</li>
+    <li>ใบงาน 4: หักเพิ่ม 240,000 บาท และแนวคำตอบข้อ 4 (หักเพิ่ม 300,000 บาท)</li>
+    <li>สรุป: ตาราง 6.8.3 กำไรสุทธิทางภาษีอากร 12,695,616.44 บาท ภาษี 2,539,123.29 บาท</li>
+  </ul>
+  <b>เรื่องที่ยังรอผู้เขียน</b>
+  <ul>
+    <li>ถ้อยคำรายมาตราของพระราชกฤษฎีกา ฉบับที่ 808 ยังตรวจจากไฟล์ราชกิจจานุเบกษาไม่ได้ อัตราในแอปใช้ตามบท</li>
+    <li>ค่าจ้างคนพิการ (499 และ 519) ตรวจจากหน้าสรุปของกรมสรรพากร ยังไม่ได้ตรวจตัวบทฉบับเต็ม</li>
+  </ul>
+  <p>Dr VIT · Siam edu. แอปประกอบตำราภาษีชั้นสูง</p>
+</footer>
+</main>
+<script>
+// แอปบทที่ 6 (ฉบับหลัก 3Hmx) ตรรกะบริสุทธิ์
+const r2=x=>Math.round(x*100)/100;
+function daysInYear(y){return ((y%4===0&&y%100!==0)||y%400===0)?366:365;}
+function depr1({cost,bookRate,taxRate,startISO,car}){
+  // ปีแรก ตามจำนวนวัน (ปีปฏิทิน ค.ศ.) ปัดทีละบรรทัด
+  const d=new Date(startISO+'T00:00:00Z'),y=d.getUTCFullYear();
+  const end=Date.UTC(y,11,31),days=Math.round((end-d.getTime())/86400000)+1,n=daysInYear(y);
+  const base=car?Math.min(cost,1000000):cost;
+  const book=r2(cost*bookRate/100*days/n), tax=r2(base*taxRate/100*days/n);
+  const perm=car&&cost>base?r2(book*(cost-base)/cost):0;
+  const temp=r2(book-tax-perm);
+  return {days,n,base,book,tax,perm,temp,addBack:r2(book-tax)};
+}
+function badDebt({amt,action,approved,legalExceeds,related}){
+  if(related) return {ok:false,clause:'ข้อ 3',note:'ลูกหนี้เป็นกรรมการหรือผู้เกี่ยวข้องตามข้อ 3 (1) ต้องห้ามจำหน่าย'};
+  const big=amt>2000000, small=amt<=200000;
+  if(['enforce','compromise'].includes(action)) return {ok:true,clause:'ข้อ 4',note:'ครบเหตุการณ์ตามข้อ 4 ใช้ได้ทุกขนาดหนี้'};
+  if(action==='filed'||action==='claim'){
+    if(big) return {ok:false,clause:'ข้อ 4',note:'หนี้เกิน 2,000,000 บาท คำสั่งรับฟ้องหรือรับคำขอรับชำระหนี้ยังไม่พอ ต้องมีรายงานการบังคับคดี การประนอมหนี้ หรือการแบ่งทรัพย์ครั้งแรกตามข้อ 4'};
+    if(!approved) return {ok:false,clause:'ข้อ 5',note:'เข้าข้อ 5 แต่กรรมการไม่ได้อนุมัติภายใน 30 วันนับแต่วันสิ้นรอบ จึงหักในรอบนี้ไม่ได้ (หัวข้อ 6.5.3)'};
+    return {ok:true,clause:'ข้อ 5 และข้อ 7',note:'ศาลรับฟ้องหรือรับคำขอรับชำระหนี้ในรอบนี้ และกรรมการอนุมัติภายใน 30 วัน'};
+  }
+  if(action==='demand'){
+    if(!small) return {ok:false,clause:'ข้อ 6',note:'ทวงถามอย่างเดียวใช้ได้เฉพาะหนี้ไม่เกิน 200,000 บาท'};
+    if(!legalExceeds) return {ok:false,clause:'ข้อ 6',note:'ค่าฟ้องไม่สูงกว่าหนี้ที่จะได้รับชำระ จึงไม่เข้าข้อ 6 ต้องฟ้องตามข้อ 5'};
+    return {ok:true,clause:'ข้อ 6',note:'หนี้ไม่เกิน 200,000 บาท ทวงถามแล้ว และค่าฟ้องไม่คุ้มกับหนี้'};
+  }
+  if(action==='judgment') return {ok:false,clause:'ข้อ 4',note:big?'ศาลพิพากษาแล้วแต่ยังไม่มีรายงานการบังคับคดี':'คำพิพากษาไม่ใช่เหตุการณ์ที่กำหนดรอบ ให้ดูรอบที่ศาลรับฟ้องตามข้อ 5'};
+  return {ok:false,clause:'-',note:'ยังไม่มีเหตุการณ์ตามกฎกระทรวง'};
+}
+function inventory({cost,nrv,market}){
+  const book=Math.max(0,cost-nrv), tax=Math.max(0,cost-Math.max(market,0));
+  const taxD=Math.min(tax,book);
+  return {book,tax:taxD,addBack:r2(book-taxD)};
+}
+function extra({measure,spend,ok,over60,cap,rev}){
+  if(!ok) return 0;
+  if(measure==='802'){ if(cap>5000000||rev>30000000) return 0; return Math.min(spend,300000); }
+  if(measure==='disabled') return spend+(over60?spend:0);
+  return spend; // 808 และอื่น ร้อยละหนึ่งร้อย
+}
+if(typeof module!=='undefined') module.exports={depr1,badDebt,inventory,extra,r2};
+const $=s=>document.querySelector(s);
+const fmt=n=>{const v=Math.round(n*100)/100;const s=Math.abs(v).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});return v<0?'('+s+')':s;};
+const num=id=>+$(id).value||0;
+const clone=o=>JSON.parse(JSON.stringify(o));
+
+/* ใบงาน 1 */
+const A_CASE=[{name:'ก เครื่องจักร',cost:3000000,start:'2026-07-01',br:25,tr:20,car:false},{name:'ข รถยนต์นั่ง',cost:1800000,start:'2026-01-01',br:20,tr:20,car:true}];
+const A_EX=[{name:'เครื่องจักร',cost:1200000,start:'2026-10-01',br:100/3,tr:20,car:false},{name:'รถยนต์นั่ง',cost:2400000,start:'2026-04-01',br:20,tr:20,car:true}];
+let A=clone(A_CASE);
+const calcA=a=>depr1({cost:a.cost,bookRate:a.br,taxRate:a.tr,startISO:a.start,car:a.car});
+function run1(){
+  $('#assets').innerHTML=A.map((a,i)=>{const r=calcA(a);return `<tr><td><input class="txt" data-i="${i}" data-k="name" value="${a.name}"></td><td class="n"><input class="amt" type="number" data-i="${i}" data-k="cost" value="${a.cost}" step="100000"></td><td><input type="date" data-i="${i}" data-k="start" value="${a.start}" min="2026-01-01" max="2026-12-31"></td><td class="n"><input class="amt" style="width:70px" type="number" step="0.01" data-i="${i}" data-k="br" value="${Math.round(a.br*100)/100}"></td><td class="n"><input class="amt" style="width:60px" type="number" data-i="${i}" data-k="tr" value="${a.tr}"></td><td><input type="checkbox" data-i="${i}" data-k="car" ${a.car?'checked':''} aria-label="รถยนต์นั่ง"></td><td class="n">${fmt(r.book)}</td><td class="n">${fmt(r.tax)}<br><small>${r.days}/${r.n} วัน</small></td><td class="n"><b>${fmt(r.addBack)}</b><br><small>${r.perm?'ถาวร '+fmt(r.perm):''}${r.perm&&Math.abs(r.temp)>0.004?' · ':''}${Math.abs(r.temp)>0.004?'ชั่วคราว '+fmt(r.temp):''}</small></td></tr>`;}).join('');
+  $('#assets').querySelectorAll('input').forEach(e=>e.onchange=()=>{const a=A[e.dataset.i],k=e.dataset.k;a[k]=e.type==='checkbox'?e.checked:(k==='name'||k==='start'?e.value:+e.value||0);if(k==='br'&&Math.abs(a.br-33.33)<0.01)a.br=100/3;run1();});
+  const tot=A.reduce((s,a)=>s+calcA(a).addBack,0);
+  $('#assetn').textContent=`รวมบวกกลับปีแรก ${fmt(tot)} บาท อัตราบัญชี 33.33 แทนอายุ 3 ปี (แอปใช้ 100/3 เพื่อให้ตรงกับแนวคำตอบ)`;
+  run5();
+}
+$('#a_add').onclick=()=>{A.push({name:'ทรัพย์สินใหม่',cost:1000000,start:'2026-01-01',br:20,tr:20,car:false});run1();};
+$('#a_case').onclick=()=>{A=clone(A_CASE);run1();};
+$('#a_ex').onclick=()=>{A=clone(A_EX);run1();};
+
+/* ใบงาน 2 */
+const EV={enforce:'รายงานการบังคับคดีครั้งแรกว่าไม่มีทรัพย์สิน (ข้อ 4)',compromise:'ศาลเห็นชอบประนอมหนี้หรือแบ่งทรัพย์ครั้งแรก (ข้อ 4)',filed:'ศาลมีคำสั่งรับฟ้องคดีแพ่งในรอบนี้ (ข้อ 5)',claim:'มีคำสั่งรับคำขอรับชำระหนี้ในคดีล้มละลายในรอบนี้ (ข้อ 5)',demand:'ทวงถามเป็นหนังสือแล้วไม่ได้รับชำระ (ข้อ 6)',judgment:'ศาลพิพากษาแล้ว ยังไม่มีรายงานการบังคับคดี',none:'ยังไม่มีเหตุการณ์'};
+const D_CASE=[{name:'X',amt:2500000,book:2500000,action:'judgment',approved:false,legal:false,rel:false},{name:'Y',amt:1200000,book:1200000,action:'filed',approved:true,legal:false,rel:false},{name:'Z',amt:150000,book:150000,action:'demand',approved:false,legal:true,rel:false}];
+const D_EX=[{name:'A',amt:3500000,book:0,action:'claim',approved:true,legal:false,rel:false},{name:'B',amt:1800000,book:0,action:'filed',approved:false,legal:false,rel:false},{name:'C',amt:180000,book:0,action:'demand',approved:false,legal:false,rel:false},{name:'D',amt:90000,book:0,action:'none',approved:false,legal:false,rel:true}];
+let D=clone(D_CASE);
+const cb=(i,k,v,l)=>`<input type="checkbox" data-i="${i}" data-k="${k}" ${v?'checked':''} aria-label="${l}">`;
+function run2(){
+  $('#debts').innerHTML=D.map((d,i)=>{const r=badDebt({amt:d.amt,action:d.action,approved:d.approved,legalExceeds:d.legal,related:d.rel});return `<tr><td><input class="txt" style="width:60px" data-i="${i}" data-k="name" value="${d.name}"></td><td class="n"><input class="amt" type="number" data-i="${i}" data-k="amt" value="${d.amt}" step="50000"></td><td class="n"><input class="amt" type="number" data-i="${i}" data-k="book" value="${d.book}" step="50000"></td><td><select style="width:220px" data-i="${i}" data-k="action">${Object.keys(EV).map(k=>`<option value="${k}" ${k===d.action?'selected':''}>${EV[k]}</option>`).join('')}</select></td><td>${cb(i,'approved',d.approved,'อนุมัติ')}</td><td>${cb(i,'legal',d.legal,'ค่าฟ้องสูงกว่าหนี้')}</td><td>${cb(i,'rel',d.rel,'ลูกหนี้เป็นกรรมการ')}</td><td style="min-width:240px"><span class="mark ${r.ok?'ok':'no'}">${r.ok?'หักได้':'ยังหักไม่ได้'}</span> <small>${r.clause}</small><br><small>${r.note}</small></td></tr>`;}).join('');
+  $('#debts').querySelectorAll('input,select').forEach(e=>e.onchange=()=>{const d=D[e.dataset.i],k=e.dataset.k;d[k]=e.type==='checkbox'?e.checked:(k==='amt'||k==='book'?+e.value||0:e.value);run2();});
+  const s=debtSum();
+  $('#debtn').textContent=`หักได้ทางภาษีในรอบนี้ ${fmt(s.tax)} บาท บัญชีรับรู้ ${fmt(s.book)} บาท ส่วนต่างที่ต้องปรับ ${fmt(s.book-s.tax)} บาท (ผลแตกต่างชั่วคราว)`;
+  run5();
+}
+function debtSum(){let book=0,tax=0;D.forEach(d=>{const r=badDebt({amt:d.amt,action:d.action,approved:d.approved,legalExceeds:d.legal,related:d.rel});book+=d.book;if(r.ok)tax+=d.amt;});return {book,tax};}
+$('#d_add').onclick=()=>{D.push({name:'ใหม่',amt:100000,book:100000,action:'none',approved:false,legal:false,rel:false});run2();};
+$('#d_case').onclick=()=>{D=clone(D_CASE);run2();};
+$('#d_ex').onclick=()=>{D=clone(D_EX);run2();};
+
+/* ใบงาน 3 */
+function run3(){
+  const r=inventory({cost:num('#i_c'),nrv:num('#i_n'),market:num('#i_m')});
+  $('#inv').innerHTML=`<tr><td>บัญชีปรับลด (ราคาทุน − มูลค่าสุทธิที่จะได้รับ)</td><td class="n">${fmt(r.book)}</td></tr><tr><td>ภาษีหักได้ (ราคาทุน − ราคาตลาดที่มีหลักฐาน ไม่เกินส่วนที่บัญชีปรับลด)</td><td class="n">${fmt(r.tax)}</td></tr><tr class="total"><td>บวกกลับ (ผลแตกต่างชั่วคราว กลับรายการเมื่อขายหรือทำลาย)</td><td class="n">${fmt(r.addBack)}</td></tr>`;
+  run5();
+}
+$('#i_case').onclick=()=>{$('#i_c').value=8000000;$('#i_n').value=7100000;$('#i_m').value=7300000;run3();};
+$('#i_ex').onclick=()=>{$('#i_c').value=5000000;$('#i_n').value=4200000;$('#i_m').value=4500000;run3();};
+['#i_c','#i_n','#i_m'].forEach(s=>$(s).addEventListener('input',run3));
+
+/* ใบงาน 4 */
+function xval(){
+  const m=$('#x_m').value, ok=[...document.querySelectorAll('.xc')].every(c=>c.checked);
+  return {m,ok,e:extra({measure:m,spend:num('#x_s'),ok,over60:$('#x_o60').checked,cap:num('#x_cap'),rev:num('#x_rev')})};
+}
+function run4(){
+  const {m,ok,e}=xval(), s=num('#x_s');
+  $('#x_capw').style.display=$('#x_revw').style.display=m==='802'?'':'none';
+  $('#x_o60w').style.display=m==='disabled'?'':'none';
+  $('#xt').innerHTML=`<tr><td>รายจ่ายจริงที่หักในบัญชีแล้ว</td><td class="n">${fmt(s)}</td></tr><tr class="total"><td>หักเพิ่มในแบบ ภ.ง.ด.50</td><td class="n">${fmt(e)}</td></tr><tr><td>หักได้ทั้งสิ้น</td><td class="n">${fmt(s+e)}</td></tr><tr><td>ภาษีลดลงที่อัตราร้อยละ 20</td><td class="n">${fmt(e*0.2)}</td></tr>`;
+  let v;
+  if(!ok) v='ไม่ครบเงื่อนไขร่วม ใช้สิทธิหักเพิ่มไม่ได้';
+  else if(m==='802'&&(num('#x_cap')>5000000||num('#x_rev')>30000000)) v='ฉบับที่ 802 ใช้เฉพาะบริษัทที่มีทุนชำระแล้วไม่เกิน 5 ล้านบาท และรายได้จากการขายและบริการไม่เกิน 30 ล้านบาท';
+  else if(m==='802') v='หักเพิ่มเฉพาะส่วนที่ไม่เกิน 300,000 บาท สำหรับรายจ่ายที่จ่ายตั้งแต่ 24 มิ.ย. 2568 ถึง 31 ธ.ค. 2570';
+  else if(m==='808') v='หักเพิ่มร้อยละหนึ่งร้อย สำหรับรายจ่ายที่จ่ายตั้งแต่ 1 ม.ค. 2569 ถึง 31 ธ.ค. 2570 (ตามบท ค้างตรวจถ้อยคำรายมาตรา)';
+  else v='ร้อยละหนึ่งร้อยของค่าจ้างคนพิการ และอีกร้อยละหนึ่งร้อยเมื่อเข้าเกณฑ์ฉบับที่ 519';
+  $('#xv').textContent=v; run5();
+}
+$('#x_case').onclick=()=>{$('#x_m').value='808';$('#x_s').value=240000;$('#x_cap').value=20000000;$('#x_rev').value=50000000;document.querySelectorAll('.xc').forEach(c=>c.checked=true);run4();};
+$('#x_ex').onclick=()=>{$('#x_m').value='802';$('#x_s').value=400000;$('#x_cap').value=4000000;$('#x_rev').value=25000000;document.querySelectorAll('.xc').forEach(c=>c.checked=true);run4();};
+['#x_m','#x_s','#x_cap','#x_rev','#x_o60'].forEach(s=>$(s).addEventListener('input',run4));
+document.querySelectorAll('.xc').forEach(c=>c.addEventListener('change',run4));
+
+/* สรุป */
+function run5(){
+  if(!$('#x_m')||typeof D==='undefined') return;
+  const L=[];
+  A.forEach(a=>{const r=calcA(a);if(Math.abs(r.temp)>0.004)L.push([`ค่าเสื่อมราคา ${a.name} ส่วนเกินอัตรา`,r.temp,'ชั่วคราว']);if(r.perm>0.004)L.push([`ค่าเสื่อมราคา ${a.name} ส่วนต้นทุนเกิน 1,000,000 บาท`,r.perm,'ถาวรระหว่างใช้งาน']);});
+  const s=debtSum(); if(Math.abs(s.book-s.tax)>0.004) L.push(['ค่าเผื่อและหนี้สูญส่วนที่ยังไม่เข้ากฎกระทรวง',s.book-s.tax,'ชั่วคราว']);
+  const iv=inventory({cost:num('#i_c'),nrv:num('#i_n'),market:num('#i_m')}); if(iv.addBack) L.push(['ปรับลดสินค้าส่วนที่ต่ำกว่าราคาตลาดที่มีหลักฐาน',iv.addBack,'ชั่วคราว']);
+  const x=xval().e; if(x) L.push(['หักเพิ่มตามพระราชกฤษฎีกา',-x,'ถาวร']);
+  const book=num('#p_book'), net=L.reduce((t,l)=>t+l[1],0), tax=book+net;
+  $('#rec').innerHTML=`<tr><td>กำไรสุทธิทางบัญชีก่อนภาษี</td><td class="n">${fmt(book)}</td><td></td></tr>`+L.map(l=>`<tr><td>${l[0]}</td><td class="n">${fmt(l[1])}</td><td>${l[2]}</td></tr>`).join('')+`<tr class="total"><td>ผลปรับสุทธิ</td><td class="n">${fmt(net)}</td><td></td></tr><tr class="total"><td>กำไรสุทธิทางภาษีอากร</td><td class="n">${fmt(tax)}</td><td></td></tr><tr class="total"><td>ภาษีเงินได้นิติบุคคลร้อยละ 20</td><td class="n">${fmt(Math.max(0,tax)*0.2)}</td><td></td></tr>`;
+}
+$('#p_book').addEventListener('input',run5);
+
+/* แบบทดสอบ */
+const Q=[
+ {lo:'LO1',s:'รายจ่ายที่หักได้ต้องตอบคำถามสามข้อตามลำดับในหัวข้อ 6.1 ข้อใดเรียงถูก',o:['หักได้หรือไม่ หักเมื่อใด และหักได้เท่าใด','หักได้เท่าใด หักเมื่อใด และหักได้หรือไม่','จ่ายให้ใคร จ่ายเมื่อใด และมีใบกำกับภาษีหรือไม่','บัญชีบันทึกหรือไม่ ผู้สอบบัญชีรับรองหรือไม่ และยื่นแบบหรือไม่'],a:0,e:'หักได้หรือไม่ (เพื่อกิจการและไม่ต้องห้ามตามมาตรา 65 ตรี) หักเมื่อใด (ค่าเสื่อมราคาหรือเหตุการณ์ตามกฎหมาย) และหักได้เท่าใด (เพดานหรือหักเพิ่ม)'},
+ {lo:'LO2',s:'เครื่องจักร 3,000,000 บาท พร้อมใช้ 1 กรกฎาคม 2569 บัญชีคิดร้อยละ 25 ภาษีร้อยละ 20 ตามจำนวนวัน ต้องบวกกลับเท่าใด',o:['75,616.44 บาท','75,000.00 บาท','150,000.00 บาท','0 บาท เพราะเป็นผลแตกต่างชั่วคราว'],a:0,e:'บัญชี 378,082.19 ภาษี 302,465.75 (184/365 วัน) ส่วนต่าง 75,616.44 บาท ตาราง 6.8.1'},
+ {lo:'LO2',s:'รถยนต์นั่ง 1,800,000 บาท บัญชีคิดร้อยละ 20 จากต้นทุนเต็ม ปีแรกเต็มปี ต้องบวกกลับเท่าใดและเป็นผลแตกต่างประเภทใด',o:['160,000 บาท ผลแตกต่างถาวรระหว่างใช้งาน','160,000 บาท ผลแตกต่างชั่วคราว','360,000 บาท ผลแตกต่างถาวร','0 บาท'],a:0,e:'ภาษีหักจากฐาน 1,000,000 บาทเท่ากับ 200,000 บาท ต้นทุนส่วนเกินไม่เคยหักเป็นค่าเสื่อมราคา (มาตรา 5 ของพระราชกฤษฎีกา ฉบับที่ 145)'},
+ {lo:'LO3',s:'ลูกหนี้ 1,800,000 บาท ศาลรับฟ้อง 15 ธันวาคม 2569 กรรมการอนุมัติ 10 กุมภาพันธ์ 2570 จำหน่ายในปี 2569 ได้หรือไม่',o:['ไม่ได้ เพราะอนุมัติเกิน 30 วันนับแต่วันสิ้นรอบ','ได้ เพราะศาลรับฟ้องในปี 2569','ได้ เพราะหนี้ไม่เกิน 2,000,000 บาท','ได้ครึ่งหนึ่ง'],a:0,e:'ข้อ 5 ต้องอนุมัติภายใน 30 วันหลังสิ้นรอบ (แนวคำตอบระดับ 2 ข้อ 2 และข้อสังเกตหัวข้อ 6.5.3)'},
+ {lo:'LO3',s:'ลูกหนี้ 180,000 บาท ทวงถามแล้ว ค่าฟ้องประมาณ 50,000 บาท จำหน่ายตามข้อ 6 ได้หรือไม่',o:['ไม่ได้ เพราะค่าฟ้องไม่สูงกว่าหนี้ที่จะได้รับชำระ ต้องใช้ทางข้อ 5','ได้ เพราะหนี้ไม่เกิน 200,000 บาท','ได้ เพราะทวงถามแล้ว','ได้ถ้าผู้สอบบัญชีเห็นด้วย'],a:0,e:'ข้อ 6 ต้องครบทั้งหนี้ไม่เกิน 200,000 บาท การทวงถาม และค่าฟ้องไม่คุ้มกับหนี้'},
+ {lo:'LO4',s:'สินค้าราคาทุน 8,000,000 บาท บัญชีปรับลดเป็น 7,100,000 บาท ราคาตลาดที่มีหลักฐาน 7,300,000 บาท ภาษีหักได้เท่าใด',o:['700,000 บาท และบวกกลับ 200,000 บาท','900,000 บาท','0 บาท จนกว่าจะขาย','200,000 บาท'],a:0,e:'มาตรา 65 ทวิ (6) ใช้ราคาตลาดที่มีหลักฐาน ไม่ใช่ประมาณการของฝ่ายขาย (ตาราง 6.8.2)'},
+ {lo:'LO4',s:'บริษัททุนชำระแล้ว 4 ล้านบาท รายได้ 25 ล้านบาท จ่ายค่าบริการดิจิทัลในบัญชีบริการดิจิทัล 400,000 บาท หักเพิ่มตามพระราชกฤษฎีกา ฉบับที่ 802 ได้เท่าใด',o:['300,000 บาท','400,000 บาท','800,000 บาท','0 บาท'],a:0,e:'หักได้ 2 เท่าเฉพาะส่วนที่ไม่เกิน 300,000 บาท รวมหักได้ทั้งสิ้น 700,000 บาท (แนวคำตอบข้อ 4)'},
+ {lo:'LO5',s:'ตามหลักทดสอบเหตุการณ์ยืนยันภายนอก เหตุใดค่าเผื่อผลขาดทุนด้านเครดิตหักไม่ได้ แต่หนี้ที่ศาลรับฟ้องหักได้',o:['ค่าเผื่อเป็นประมาณการของกิจการเอง ส่วนคำสั่งรับฟ้องเป็นเหตุการณ์ที่บุคคลภายนอกยืนยันในรอบนั้น','ค่าเผื่อมีจำนวนสูงกว่าเสมอ','ศาลกำหนดจำนวนหนี้สูญให้','มาตรฐานการบัญชีห้ามตั้งค่าเผื่อ'],a:0,e:'หัวข้อ 6.9.1 รายจ่ายจากการประมาณการหักได้เมื่อมีเหตุการณ์ภายนอกยืนยันและเกิดในรอบที่ขอหัก'}
+];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let done=0,right=0;
+$('#qs').innerHTML=Q.map((q,i)=>{const ord=shuffle(q.o.map((t,k)=>k));return `<div class="q" data-i="${i}"><div class="lo">ข้อ ${i+1} · ${q.lo}</div><div class="stem">${q.s}</div>${ord.map(k=>`<label class="opt"><input type="radio" name="qq${i}" value="${k}"> ${q.o[k]}</label>`).join('')}<div class="fb"></div></div>`;}).join('');
+document.querySelectorAll('.q').forEach(d=>d.addEventListener('change',e=>{
+  const q=Q[d.dataset.i],ok=+e.target.value===q.a,fb=d.querySelector('.fb');
+  if(!d.dataset.done){d.dataset.done=1;done++;if(ok)right++;}
+  fb.className='fb show '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>ถูกต้อง</b> ':'<b>ยังไม่ใช่</b> ')+q.e;
+  $('#score').textContent=`ตอบแล้ว ${done} จาก ${Q.length} ข้อ ถูกในครั้งแรก ${right} ข้อ`;
+}));
+
+run1();run2();run3();run4();run5();
+</script></body></html>

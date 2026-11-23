@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แอปบทที่ 11 VAT: ภาษีซื้อ ภาษีซื้อต้องห้าม และใบกำกับภาษี</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#15233a; --muted:#5a6678; --line:#d5dbe3;
+  --accent:#0d6466; --accent-soft:#e1efef; --gate:#a86a12; --gate-soft:#f7ecd9;
+  --ok:#2f7d32; --stop:#b3261e; --stop-soft:#f8e3e1;
+  --display:"Noto Serif Thai",Georgia,serif; --body:"Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1620; --paper:#17212d; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2c3a4a;
+  --accent:#4fb8b4; --accent-soft:#163334; --gate:#e2a54a; --gate-soft:#3a2c14;
+  --ok:#74c27a; --stop:#f08a80; --stop-soft:#3c1d1b; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.brand img{height:40px;width:auto;display:block}
+.brand .org{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#15233a;border-left:2px solid #d5dbe3;padding-left:12px;line-height:1.2}
+header h1{font-family:var(--display);font-size:1.7rem;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+header p{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--gate);padding:4px 10px;background:var(--gate-soft);border-radius:0 6px 6px 0}
+section.lab{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.lab h2{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
+.lab-tag{font-size:.8rem;color:var(--accent);font-weight:700}
+.lab > p{margin:4px 0 14px;color:var(--muted);max-width:72ch}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+legend{font-weight:700;font-size:.92rem;padding:0 4px}
+label.opt{display:flex;gap:8px;align-items:flex-start;padding:2px 0;cursor:pointer;font-size:.95rem}
+.gate{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.gate .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--muted)}
+.gate.pass{border-color:var(--ok)} .gate.pass .dot{background:var(--ok)}
+.gate.stop{border-color:var(--stop);background:var(--stop-soft)} .gate.stop .dot{background:var(--stop)}
+.gate.skip{opacity:.45}
+.gate b{display:block} .gate small{color:var(--muted)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.num{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num label{display:block;font-size:.85rem;color:var(--muted)}
+.num input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.82rem;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.mark{font-weight:700;white-space:nowrap}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--stop)}
+button{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gate);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+textarea{width:100%;min-height:220px;font:inherit;font-size:.9rem;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.q .stem{font-weight:500;margin-bottom:6px}
+.q .lo{font-size:.78rem;color:var(--gate);font-weight:700}
+.q .fb{margin-top:6px;font-size:.92rem;padding:6px 10px;border-radius:6px;display:none}
+.q .fb.show{display:block}
+.q .fb.ok{background:var(--accent-soft)} .q .fb.no{background:var(--stop-soft)}
+.score{font-weight:700}
+footer{font-size:.85rem;color:var(--muted)}
+footer ul{padding-left:20px}
+.dim{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.dim div{border:1px solid var(--line);border-radius:8px;padding:8px;font-size:.88rem}
+.dim .pass{border-color:var(--ok)} .dim .fail{border-color:var(--stop);background:var(--stop-soft)} .dim .na{opacity:.6}
+.dim b{display:block}
+input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%}
+</style><style>.atx-nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.9rem;margin:0 0 4px}.atx-nav a{color:var(--accent,#0d6466);font-weight:700;text-decoration:none}.atx-nav a:hover{text-decoration:underline}main>*{min-width:0}.tbl,table{max-width:100%}</style>
+<script src="gate.js"></script>
+</head><body>
+<main>
+<nav class="atx-nav" aria-label="นำทาง"><a href="./">สารบัญแอปประจำเล่ม</a> · <a href="ch10.html">บทที่ 10</a> · <a href="ch12.html">บทที่ 12</a></nav>
+<header>
+  <div class="brand"><img src="brand/logo.png" alt="Dr VIT" data-atx-logo><span class="org">Siam edu.</span></div>
+  <h1>แอปบทที่ 11 VAT: ภาษีซื้อ ภาษีซื้อต้องห้าม และใบกำกับภาษี</h1>
+  <p>แอปนี้ใช้คู่กับบทที่ 11 เรื่องภาษีมูลค่าเพิ่ม (Value Added Tax: VAT) ฝึกแบบจำลองสามเงื่อนไขของสิทธิเครดิตภาษีซื้อ (เอกสาร กิจการ เวลา) ด้วยกรณีรถยนต์ การเฉลี่ย กรอบหกเดือน และใบกำกับภาษีที่ออกโดยผู้ไม่มีสิทธิ ป้าย LO คือผลลัพธ์การเรียนรู้ (Learning Outcome: LO) ตามตารางหน้าเปิดบท</p>
+  <p class="note">ตัวเลขในแอปเป็นข้อมูลจำลองตามตัวอย่างในบท ใช้เพื่อการสอน ห้ามนำข้อมูลผู้เสียภาษีหรือผู้ตอบจริงใส่แอปหรือ GenAI สถานะกฎหมาย ณ 20 พฤศจิกายน 2569</p>
+</header>
+
+<section class="lab"><span class="lab-tag">ใบงาน 1 · LO1 · LO2</span><h2>ผังห้าคำถามของแบบจำลองสามเงื่อนไข (แผนภาพ 11.1)</h2>
+<p>ติ๊กเฉพาะข้อที่ตอบ "ใช่" แอปบอกเงื่อนไขแรกที่ไม่ผ่าน (เอกสาร กิจการ หรือเวลา) และผลทางกฎหมาย</p>
+<div class="cols"><fieldset><legend>คำถาม</legend><label class="opt"><input type="checkbox" class="dq" checked> 1. ผู้ซื้อเป็นผู้ประกอบการจดทะเบียน ณ วันที่ซื้อ</label><label class="opt"><input type="checkbox" class="dq" checked> 2. มีใบกำกับภาษีเต็มรูปจากผู้ขายจริงที่มีสิทธิออก</label><label class="opt"><input type="checkbox" class="dq" checked> 3. รายการครบและตรง ภ.พ.20 ณ วันออกใบกำกับภาษี</label><label class="opt"><input type="checkbox" class="dq" checked> 4. ใช้ในกิจการที่ต้องเสีย VAT และไม่ตกประกาศฉบับที่ 42</label><label class="opt"><input type="checkbox" class="dq" checked> 5. ใช้ในเดือนที่ออก หรือภายในหกเดือนตามประกาศฉบับที่ 4</label></fieldset><div><div class="verdict" id="v1"></div></div></div></section>
+
+<section class="lab"><span class="lab-tag">ใบงาน 2 · LO3</span><h2>รถยนต์และการเฉลี่ยภาษีซื้อ (ตัวอย่าง 11.2 และ 11.5)</h2>
+<p>ตัวแปรชี้ขาดเรื่องรถมีสองตัว คือพิกัดตามกฎหมายสรรพสามิตและวัตถุประสงค์ ณ วันที่ได้มา (ประกาศฉบับที่ 42 ข้อ 2 (1))</p>
+<div class="tbl"><table><thead><tr><th>รถ</th><th class="n">ราคาก่อนภาษี</th><th>พิกัด</th><th>วัตถุประสงค์</th><th class="n">ภาษีซื้อ</th><th>ผล</th></tr></thead><tbody id="t2"></tbody></table></div>
+<div class="verdict" id="v2"></div>
+<h3>การเฉลี่ยตามประกาศฉบับที่ 29</h3>
+<div class="cols"><div class="num"><label>รายได้กิจการที่ต้องเสีย VAT ปีก่อน<input id="m1" type="number" value="60000000"></label><label>รายได้กิจการที่ไม่ต้องเสีย VAT ปีก่อน<input id="m2" type="number" value="40000000"></label><label>ภาษีซื้อที่ใช้ร่วมกัน<input id="m3" type="number" value="350000"></label></div><div class="verdict" id="v2b"></div></div></section>
+
+<section class="lab"><span class="lab-tag">ใบงาน 3 · LO4</span><h2>กรอบหกเดือนของเงื่อนไขเวลา (ตัวอย่าง 11.3)</h2>
+<p>ประกาศฉบับที่ 4 ข้อ 2 นับหกเดือนจากเดือนถัดจากเดือนที่ออกใบกำกับภาษี และต้องมีเหตุจำเป็นหนึ่งในสามเหตุ</p>
+<div class="cols"><div class="num"><label>เดือนที่ออกใบกำกับภาษี (1–12)<input id="w1m" type="number" min="1" max="12" value="1"></label><label>ปี พ.ศ. ที่ออก<input id="w1y" type="number" value="2569"></label><label>เดือนที่ได้รับ (1–12)<input id="w2m" type="number" min="1" max="12" value="9"></label><label>ปี พ.ศ. ที่ได้รับ<input id="w2y" type="number" value="2569"></label></div><div class="verdict" id="v3"></div></div></section>
+
+<section class="lab"><span class="lab-tag">ใบงาน 4 · LO5</span><h2>ต้นทุนของใบกำกับภาษีที่ออกโดยผู้ไม่มีสิทธิ (ตัวอย่าง 11.4)</h2>
+<p>ใบกำกับภาษีปลอม หรือถือว่าปลอมเพราะพิสูจน์ผู้ออกไม่ได้: ภาษีซื้อต้องห้ามตามมาตรา 82/5 (5) เบี้ยปรับสองเท่าตามมาตรา 89 (7) เงินเพิ่มร้อยละ 1.5 ต่อเดือนตามมาตรา 89/1 (ไม่เกินจำนวนภาษี)</p>
+<div class="cols"><div class="num"><label>ภาษีซื้อที่ใช้ไป (บาท)<input id="f1" type="number" value="210000"></label><label>จำนวนเดือนนับแต่วันครบกำหนดยื่น<input id="f2" type="number" value="18"></label></div><div class="tbl"><table><tbody id="t4"></tbody></table><div class="verdict" id="v4"></div></div></div></section>
+
+<section class="lab"><span class="lab-tag">แบบทดสอบท้ายบท</span><h2>แบบทดสอบ 8 ข้อ</h2><p>เลือกคำตอบแล้วดูคำอธิบายทันที คะแนน <span class="score" id="score">0 / 8</span></p><div id="quiz"></div></section>
+<footer><p><b>ที่มาของตัวเลขตั้งต้น:</b> ตัวอย่าง 11.2 (หักได้ 133,000 ต้องห้าม 154,000 บาท), 11.3 (กรอบกุมภาพันธ์ถึงกรกฎาคม 2569), 11.4 (686,700 บาท บวกกลับทั้งจำนวน 686,700 บาท), 11.5 (210,000 / 140,000 บาท) ในบทที่ 11 ฉบับ 20 พ.ย. 2569</p>
+<p><b>เรื่องที่ยังรอผู้เขียนตัดสินหรือตรวจต้นฉบับ:</b></p><ul><li>ทางแก้เมื่อใบกำกับภาษีมาถึงหลังพ้นหกเดือน ยังไม่พบคำพิพากษาที่ตรงประเด็น (คำพิพากษาศาลฎีกาที่ 444/2549 ไม่ได้ตอบประเด็นนี้)</li><li>ผลทางภาษีเงินได้ของภาษีซื้อต้องห้ามตรวจแล้ว: กรณีมาตรา 82/5 (6) หักเป็นรายจ่ายได้ตามพระราชกฤษฎีกา ฉบับที่ 243 กรณีมาตรา 82/5 (5) บวกกลับ</li><li>ข้อเสนอปฏิรูปในหัวข้อ 11.13.1 เป็นความเห็นผู้เขียน ยังไม่ใช่กฎหมาย</li></ul>
+<p>Dr VIT · Siam edu. ใช้คู่กับตำราภาษีชั้นสูง บทที่ 11</p></footer>
+</main>
+<script>
+function r2(x){return Math.round(x*100)/100}
+const TH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+// ใบงาน 1: ผังห้าคำถาม (แผนภาพ 11.1)
+function decide(a){
+  const exits=['ไม่มีภาษีซื้อตามมาตรา 77/1 (18)','ต้องห้ามตามมาตรา 82/5 (1) หรือ (5) กรณี (5) ใบกำกับภาษีปลอมหรือพิสูจน์ผู้ออกไม่ได้ เบี้ยปรับสองเท่าตามมาตรา 89 (7)','ต้องห้ามตามมาตรา 82/5 (2) ให้ผู้ขายยกเลิกและออกใบใหม่','ต้องห้ามทั้งจำนวน หรือเฉลี่ยตามมาตรา 82/6','ใช้ในเดือนที่เลือกไม่ได้ ดูหัวข้อ 11.7.3'];
+  const cond=['เอกสาร','เอกสาร','เอกสาร','กิจการ','เวลา'];
+  for(let i=0;i<5;i++) if(!a[i]) return {ok:false,step:i+1,cond:cond[i],text:exits[i]};
+  return {ok:true,text:'หักภาษีซื้อได้ในเดือนนั้น'};
+}
+// ใบงาน 2: รถยนต์ (ตัวอย่าง 11.2) และการเฉลี่ย (ตัวอย่าง 11.5)
+function car(c){ // {price, rate, kind:'sedan'|'pickup', purpose:'stock'|'rent'|'asset'}
+  const vat=r2(c.price*c.rate);
+  const ok=c.kind==='pickup'||c.purpose==='stock'||c.purpose==='rent';
+  return {vat,ok};
+}
+function cars(list,rate){let ok=0,no=0;const rows=list.map(c=>{const r=car({...c,rate});r.ok?ok+=r.vat:no+=r.vat;return r});return {rows,ok:r2(ok),no:r2(no),total:r2(ok+no)}}
+function average(taxable,exempt,common){const s=taxable/(taxable+exempt);const ok=r2(common*s);return {share:s,ok,no:r2(common-ok),exemptShare:exempt/(taxable+exempt),opt9:exempt/(taxable+exempt)>=0.9}}
+// ใบงาน 3: กรอบหกเดือน (ประกาศ VAT ฉบับที่ 4 ข้อ 2)
+function windowOf(issueY,issueM,recvY,recvM){ // ปี พ.ศ., เดือน 1-12
+  const idx=(y,m)=>y*12+(m-1);
+  const last=idx(issueY,issueM)+6;
+  const lastY=Math.floor(last/12), lastM=last%12+1;
+  const r=idx(recvY,recvM);
+  return {lastY,lastM,lastName:TH[lastM-1],ok:r>=idx(issueY,issueM)&&r<=last};
+}
+// ใบงาน 4: ใบกำกับภาษีที่ออกโดยผู้ไม่มีสิทธิ (ตัวอย่าง 11.4)
+function fake(tax,months){const pen=r2(tax*2);let sur=r2(tax*0.015*months);if(sur>tax)sur=tax;return {tax,pen,sur,total:r2(tax+pen+sur),addback:r2(tax+pen+sur)}}
+// module
+if(typeof module!=='undefined') module.exports={decide,cars,average,windowOf,fake,TH};
+
+const $=id=>document.getElementById(id);
+const fmt=n=>Number(n).toLocaleString("th-TH",{minimumFractionDigits:0,maximumFractionDigits:2});
+const v=id=>Number($(id).value)||0;
+
+function renderQuiz(Q){const box=$('quiz');Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';
+d.innerHTML='<div class="lo">ข้อ '+(i+1)+' · '+q.lo+'</div><div class="stem">'+q.stem+'</div>'+q.opts.map((o,j)=>'<label class="opt"><input type="radio" name="q'+i+'" value="'+j+'"> '+'กขคง'[j]+'. '+o+'</label>').join('')+'<div class="fb"></div>';
+box.appendChild(d);d.querySelectorAll('input').forEach(inp=>inp.addEventListener('change',()=>{const fb=d.querySelector('.fb');const ok=Number(inp.value)===q.ans;fb.className='fb show '+(ok?'ok':'no');fb.textContent=(ok?'ถูกต้อง: ':'ยังไม่ถูก คำตอบคือ '+'กขคง'[q.ans]+': ')+q.why;d.dataset.ok=ok?1:0;let s=0;box.querySelectorAll('.q').forEach(x=>s+=Number(x.dataset.ok||0));$('score').textContent=s+' / '+Q.length;}))});}
+
+const CARS=[['รถยนต์นั่งของกรรมการผู้จัดการ',1200000,'sedan','asset'],['รถกระบะสี่ประตูของฝ่ายบริการ',900000,'pickup','asset'],['รถทดลองขับที่ลงเป็นทรัพย์สินถาวร',1000000,'sedan','asset'],['รถยนต์นั่งที่ซื้อมาเป็นสินค้าเพื่อขาย',1000000,'sedan','stock']];
+function sel(id,opts,val){return '<select id="'+id+'">'+opts.map(o=>'<option value="'+o[0]+'"'+(o[0]===val?' selected':'')+'>'+o[1]+'</option>').join('')+'</select>'}
+$('t2').innerHTML=CARS.map((c,i)=>'<tr><td>'+c[0]+'</td><td class="n"><input id="cp'+i+'" type="number" value="'+c[1]+'" style="width:110px"></td><td>'+sel('ck'+i,[['sedan','รถยนต์นั่งไม่เกิน 10 คน'],['pickup','รถกระบะ']],c[2])+'</td><td>'+sel('cu'+i,[['asset','ใช้เป็นทรัพย์สิน'],['stock','สินค้าเพื่อขาย'],['rent','ให้เช่าโดยตรง']],c[3])+'</td><td class="n" id="cv'+i+'"></td><td id="cr'+i+'"></td></tr>').join('');
+function w1(){const a=[...document.querySelectorAll('.dq')].map(x=>x.checked);const r=decide(a);$('v1').textContent=r.ok?r.text:('ไม่ผ่านคำถามที่ '+r.step+' (เงื่อนไข'+r.cond+'): '+r.text);}
+function w2(){const list=CARS.map((c,i)=>({price:v('cp'+i),kind:$('ck'+i).value,purpose:$('cu'+i).value}));const r=cars(list,.07);
+r.rows.forEach((x,i)=>{$('cv'+i).textContent=fmt(x.vat);$('cr'+i).innerHTML=x.ok?'<span class="mark ok">หักได้</span>':'<span class="mark no">ต้องห้าม</span>'});
+$('v2').textContent='หักได้ '+fmt(r.ok)+' บาท ต้องห้าม '+fmt(r.no)+' บาท จากภาษีซื้อรวม '+fmt(r.total)+' บาท';
+const m=average(v('m1'),v('m2'),v('m3'));$('v2b').textContent='สัดส่วนกิจการที่ต้องเสีย VAT ร้อยละ '+fmt(m.share*100)+' หักได้ '+fmt(m.ok)+' บาท ต้องห้ามตามข้อ 2 (8) '+fmt(m.no)+' บาท'+(m.opt9?' รายได้ที่ไม่ต้องเสีย VAT ถึงร้อยละ 90 เลือกไม่นำภาษีซื้อทั้งหมดไปหักตามข้อ 2 (9) ได้':' ใช้ข้อ 2 (9) ไม่ได้ เพราะรายได้ที่ไม่ต้องเสีย VAT ต่ำกว่าร้อยละ 90');}
+function w3(){const r=windowOf(v('w1y'),v('w1m'),v('w2y'),v('w2m'));$('v3').textContent='ใช้ได้ถึงเดือนภาษี'+r.lastName+' '+r.lastY+'. '+(r.ok?'เดือนที่ได้รับอยู่ในกรอบ ใช้ได้โดยเขียน \"ถือเป็นภาษีซื้อในเดือนภาษี...\" ในใบกำกับภาษี':'เดือนที่ได้รับเกินกรอบ ใช้ในเดือนนั้นไม่ได้ ทางเลือกที่เหลือคือยื่นแบบเพิ่มเติมของเดือนที่ออกใบกำกับภาษี ซึ่งยังไม่มีแนวคำพิพากษาที่ตรวจต้นฉบับแล้วรองรับ (หัวข้อ 11.7.3)');}
+function w4(){const r=fake(v('f1'),v('f2'));$('t4').innerHTML='<tr><td>ภาษีที่ต้องชำระเพิ่ม</td><td class="n">'+fmt(r.tax)+'</td></tr><tr><td>เบี้ยปรับสองเท่า</td><td class="n">'+fmt(r.pen)+'</td></tr><tr><td>เงินเพิ่ม</td><td class="n">'+fmt(r.sur)+'</td></tr><tr class="total"><td>รวม</td><td class="n">'+fmt(r.total)+'</td></tr>';
+$('v4').textContent='บวกกลับใน ภ.ง.ด.50 รวม '+fmt(r.addback)+' บาท: ภาษีซื้อต้องห้ามตามมาตรา 65 ตรี (6 ทวิ) ประกอบพระราชกฤษฎีกา ฉบับที่ 243 และเบี้ยปรับเงินเพิ่มตามมาตรา 65 ตรี (6) ความสุจริตของผู้ซื้อมีผลเพียงต่อการพิจารณาลดเบี้ยปรับ';}
+document.querySelectorAll('.dq').forEach(e=>e.addEventListener('change',w1));
+document.querySelectorAll('#t2 input,#t2 select,#m1,#m2,#m3').forEach(e=>e.addEventListener('input',w2));
+['w1m','w1y','w2m','w2y'].forEach(i=>$(i).addEventListener('input',w3));['f1','f2'].forEach(i=>$(i).addEventListener('input',w4));
+w1();w2();w3();w4();
+
+renderQuiz([{"lo": "LO1 · เข้าใจ", "stem": "การไม่ผ่านเงื่อนไขใดไม่ทำให้ภาษีซื้อเป็นภาษีซื้อต้องห้ามตามมาตรา 82/5 แต่ทำให้ใช้ในเดือนที่ต้องการไม่ได้", "opts": ["เงื่อนไขเอกสาร", "เงื่อนไขกิจการ", "เงื่อนไขเวลา", "ทุกเงื่อนไข"], "ans": 2, "why": "เงื่อนไขเวลากำหนดเดือนที่ใช้ ไม่ได้เปลี่ยนสถานะภาษีซื้อเป็นภาษีซื้อต้องห้าม (หัวข้อ 11.4)"}, {"lo": "LO2 · ประยุกต์", "stem": "บริษัทยื่น ภ.พ.09 เปลี่ยนชื่อเมื่อวันที่ 13 แล้วได้รับใบกำกับภาษีชื่อเดิมในวันที่ 14 ผลคือข้อใด", "opts": ["ใช้ได้ เพราะระบุตัวผู้ซื้อได้", "ใช้ไม่ได้ ต้องให้ผู้ขายยกเลิกและออกใบใหม่", "ใช้ได้ถ้าเขียนชื่อใหม่ด้วยลายมือ", "ใช้ได้ภายในหกเดือน"], "ans": 1, "why": "หนังสือตอบข้อหารือ กค 0706/พ./7749: ใบที่ระบุชื่อผู้ซื้อไม่ตรงทะเบียนใช้ไม่ได้ ต้องยกเลิกและออกใหม่"}, {"lo": "LO2 · ประยุกต์", "stem": "ใบกำกับภาษีที่ไม่มีชื่อและที่อยู่ผู้ซื้อ ศาลฎีกาวินิจฉัยอย่างไรในคำพิพากษาศาลฎีกาที่ 3275/2548", "opts": ["เป็นเพียงความบกพร่องเล็กน้อย", "ชื่อและที่อยู่ผู้ซื้อเป็นสาระสำคัญ คงเบี้ยปรับไว้ที่ร้อยละ 50", "ลดเบี้ยปรับเหลือร้อยละ 30", "งดเบี้ยปรับทั้งหมด"], "ans": 1, "why": "ศาลฎีกาเห็นว่าชื่อและที่อยู่ผู้ซื้อเป็นสาระสำคัญ ไม่รับการลดเหลือร้อยละ 30 ของศาลภาษีอากรกลาง"}, {"lo": "LO3 · วิเคราะห์", "stem": "ตัวแทนจำหน่ายซื้อรถยนต์นั่งมาเป็นรถทดลองขับและลงเป็นทรัพย์สินถาวร ต่อมาขายไป ภาษีซื้อเป็นอย่างไร", "opts": ["หักได้ เพราะขายไปแล้ว", "ต้องห้าม เพราะได้มาเป็นทรัพย์สิน ไม่ใช่สินค้าเพื่อขาย", "หักได้ครึ่งหนึ่ง", "หักได้ถ้าใช้ไม่เกินหกเดือน"], "ans": 1, "why": "หนังสือตอบข้อหารือ กค 0811/พ.11382: ดูวัตถุประสงค์ ณ วันที่ได้มา"}, {"lo": "LO3 · วิเคราะห์", "stem": "ภาษีซื้อร่วม 350,000 บาท รายได้ปีก่อนต้องเสีย VAT 60 ล้าน ไม่ต้องเสีย 40 ล้าน ภาษีซื้อต้องห้ามเท่าใด", "opts": ["0 บาท", "140,000 บาท", "210,000 บาท", "350,000 บาท"], "ans": 1, "why": "เฉลี่ยตามประกาศฉบับที่ 29 ส่วนกิจการที่ไม่ต้องเสีย VAT ร้อยละ 40 เท่ากับ 140,000 บาท ต้องห้ามตามข้อ 2 (8)"}, {"lo": "LO4 · วิเคราะห์", "stem": "ใบกำกับภาษีลงวันที่ 10 เมษายน 2569 ใช้ได้ถึงเดือนภาษีใดตามประกาศฉบับที่ 4", "opts": ["กันยายน 2569", "ตุลาคม 2569", "พฤศจิกายน 2569", "เมษายน 2572"], "ans": 1, "why": "นับหกเดือนจากเดือนถัดไป คือ พฤษภาคมถึงตุลาคม 2569"}, {"lo": "LO5 · ประเมิน", "stem": "ศาลฎีกาไทยใช้เกณฑ์ใดเป็นหลักเมื่อผู้ซื้อใช้ใบกำกับภาษีที่ออกโดยผู้ไม่มีสิทธิ", "opts": ["ผู้ซื้อรู้หรือควรรู้ว่ามีการฉ้อโกงหรือไม่", "มีการซื้อขายจริงกับผู้ออกที่มีสิทธิออกหรือไม่", "ผู้ซื้อให้ความร่วมมือหรือไม่", "จำนวนเงินเกินห้าล้านบาทหรือไม่"], "ans": 1, "why": "หลักทดสอบการซื้อขายจริงกับผู้ออกที่มีสิทธิ (หัวข้อ 11.8.3) เกณฑ์รู้หรือควรรู้เป็นของคดี Kittel ในสหภาพยุโรป"}, {"lo": "LO6 · สร้างสรรค์", "stem": "ข้อเสนอหลักการระบุตัวโดยไม่สับสนในหัวข้อ 11.13.1 ต้องการให้ใบกำกับภาษีแบบใดใช้ได้", "opts": ["ใบที่ไม่มีเลขประจำตัวผู้เสียภาษี", "ใบที่ชื่อหรือที่อยู่ผู้ซื้อคลาดเคลื่อน แต่เลขประจำตัวผู้เสียภาษีถูกและระบุตัวได้โดยไม่สับสน", "ใบกำกับภาษีอย่างย่อ", "สำเนาใบกำกับภาษี"], "ans": 1, "why": "ข้อเสนอนี้อิงแนว Barlis 06 และให้ผู้ขายออกหนังสือยืนยันการแก้ไข"}]);
+</script>
+</body></html>

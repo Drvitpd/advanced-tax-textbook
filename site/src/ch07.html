@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แอปบทที่ 7 สามด่านของรายจ่ายต้องห้าม</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#15233a; --muted:#5a6678; --line:#d5dbe3;
+  --accent:#0d6466; --accent-soft:#e1efef; --gate:#a86a12; --gate-soft:#f7ecd9;
+  --ok:#2f7d32; --stop:#b3261e; --stop-soft:#f8e3e1;
+  --display:"Noto Serif Thai",Georgia,serif; --body:"Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1620; --paper:#17212d; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2c3a4a;
+  --accent:#4fb8b4; --accent-soft:#163334; --gate:#e2a54a; --gate-soft:#3a2c14;
+  --ok:#74c27a; --stop:#f08a80; --stop-soft:#3c1d1b; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.brand img{height:40px;width:auto;display:block}
+.brand .org{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#15233a;border-left:2px solid #d5dbe3;padding-left:12px;line-height:1.2}
+header h1{font-family:var(--display);font-size:1.7rem;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+header p{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--gate);padding:4px 10px;background:var(--gate-soft);border-radius:0 6px 6px 0}
+section.lab{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.lab h2{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
+.lab-tag{font-size:.8rem;color:var(--accent);font-weight:700}
+.lab > p{margin:4px 0 14px;color:var(--muted);max-width:72ch}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+legend{font-weight:700;font-size:.92rem;padding:0 4px}
+label.opt{display:flex;gap:8px;align-items:flex-start;padding:2px 0;cursor:pointer;font-size:.95rem}
+.gate{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.gate .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--muted)}
+.gate.pass{border-color:var(--ok)} .gate.pass .dot{background:var(--ok)}
+.gate.stop{border-color:var(--stop);background:var(--stop-soft)} .gate.stop .dot{background:var(--stop)}
+.gate.skip{opacity:.45}
+.gate b{display:block} .gate small{color:var(--muted)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.num{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num label{display:block;font-size:.85rem;color:var(--muted)}
+.num input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.82rem;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.mark{font-weight:700;white-space:nowrap}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--stop)}
+button{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gate);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+textarea{width:100%;min-height:220px;font:inherit;font-size:.9rem;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.q .stem{font-weight:500;margin-bottom:6px}
+.q .lo{font-size:.78rem;color:var(--gate);font-weight:700}
+.q .fb{margin-top:6px;font-size:.92rem;padding:6px 10px;border-radius:6px;display:none}
+.q .fb.show{display:block}
+.q .fb.ok{background:var(--accent-soft)} .q .fb.no{background:var(--stop-soft)}
+.score{font-weight:700}
+footer{font-size:.85rem;color:var(--muted)}
+footer ul{padding-left:20px}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="brand"><img src="logo.png" alt="Dr VIT"><span class="org">Siam edu.</span></div>
+  <h1>แอปบทที่ 7 สามด่านของรายจ่ายต้องห้ามตามมาตรา 65 ตรี</h1>
+  <p>แอปนี้ใช้คู่กับบทที่ 7 ของตำราภาษีชั้นสูง ผู้เรียนนำรายจ่ายผ่านด่านหลักฐาน ด่านวัตถุประสงค์ และด่านนโยบายและลักษณะ คำนวณค่ารับรองและเพดานการกุศล แล้วปรับกำไรสุทธิของกรณีนำบทเป็นกำไรสุทธิทางภาษีอากร</p>
+  <p class="note">สถานะกฎหมาย ณ วันที่ 17 พฤศจิกายน 2569 ตัวเลขทุกตัวมาจากกรณีสมมติในบท ใช้เพื่อการเรียนรู้ ไม่ใช่คำปรึกษาภาษีสำหรับกรณีจริง และห้ามนำข้อมูลลูกค้าจริงใส่แอปหรือเครื่องมือปัญญาประดิษฐ์</p>
+</header>
+
+<section class="lab" id="w1">
+  <span class="lab-tag">ใบงาน 1 · LO2 LO4</span>
+  <h2>ผังสามด่าน: รายจ่ายนี้ตกด่านใด</h2>
+  <p>เลือกรายการตัวอย่างหรือตอบคำถามเอง แอปหยุดที่ด่านแรกที่ไม่ผ่าน แล้วบอกอนุมาตรา ประเภทผลแตกต่าง และหัวข้อในบทที่ต้องอ่าน</p>
+  <div class="cols">
+    <div>
+      <fieldset><legend>รายการตัวอย่างจากกรณีนำบท</legend>
+        <select id="preset" aria-label="รายการตัวอย่าง"></select>
+      </fieldset>
+      <fieldset><legend>ด่านที่ 1 หลักฐาน</legend>
+        <label class="opt"><input type="checkbox" id="g1a" checked> ภาระเกิดขึ้นจริงแล้ว ไม่ใช่การกันเงินไว้ล่วงหน้า และลงในรอบบัญชีที่ถูกต้อง</label>
+        <label class="opt"><input type="checkbox" id="g1b" checked> พิสูจน์ได้ว่าใครเป็นผู้รับ</label>
+      </fieldset>
+      <fieldset><legend>ด่านที่ 2 วัตถุประสงค์</legend>
+        <label class="opt"><input type="checkbox" id="g2a" checked> จ่ายเพื่อหากำไรของกิจการในประเทศไทย ไม่ใช่ประโยชน์ส่วนตัว</label>
+        <label class="opt"><input type="checkbox" id="g2b" checked> ไม่เกินเพดาน (ค่ารับรอง การกุศล) และไม่เกินสมควร</label>
+      </fieldset>
+      <fieldset><legend>ด่านที่ 3 นโยบายและลักษณะ: เงินนี้เป็น</legend>
+        <label class="opt"><input type="radio" name="g3" value="none" checked> ไม่ใช่ข้อใดด้านล่าง</label>
+        <label class="opt"><input type="radio" name="g3" value="penalty"> โทษตามกฎหมาย (เบี้ยปรับ เงินเพิ่ม ค่าปรับ)</label>
+        <label class="opt"><input type="radio" name="g3" value="tax"> ภาษีเงินได้นิติบุคคลหรือภาษีมูลค่าเพิ่ม</label>
+        <label class="opt"><input type="radio" name="g3" value="profit"> เงินที่กำหนดจ่ายจากกำไรของรอบเดียวกัน</label>
+        <label class="opt"><input type="radio" name="g3" value="capital"> รายจ่ายลงทุนหรือต้นทุนทรัพย์สิน</label>
+      </fieldset>
+    </div>
+    <div>
+      <div class="gate" id="gs1"><div class="dot">1</div><div><b>ด่านหลักฐาน</b><small id="gt1"></small></div></div>
+      <div class="gate" id="gs2"><div class="dot">2</div><div><b>ด่านวัตถุประสงค์</b><small id="gt2"></small></div></div>
+      <div class="gate" id="gs3"><div class="dot">3</div><div><b>ด่านนโยบายและลักษณะ</b><small id="gt3"></small></div></div>
+      <div class="verdict" id="verdict" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<section class="lab" id="w2">
+  <span class="lab-tag">ใบงาน 2 · LO3</span>
+  <h2>เครื่องคำนวณค่ารับรอง ตามกฎกระทรวง ฉบับที่ 143 แก้ไขโดยฉบับที่ 222</h2>
+  <p>ค่าตั้งต้นคือรายการ ก ของกรณีนำบท ผลที่ถูกต้องคือบวกกลับ 350,000 บาท ส่วนของขวัญที่เกิน 2,000 บาทคิดตามความเห็นของผู้เขียนว่าต้องห้ามเฉพาะส่วนเกิน</p>
+  <div class="cols">
+    <div class="num">
+      <div><label for="e_rev">รายได้ (บาท)</label><input id="e_rev" type="number" value="300000000"></div>
+      <div><label for="e_cap">ทุนที่ชำระแล้ว ณ วันสิ้นรอบ (บาท)</label><input id="e_cap" type="number" value="50000000"></div>
+      <div><label for="e_tot">ค่ารับรองที่ลงบัญชีทั้งหมด (บาท)</label><input id="e_tot" type="number" value="1250000"></div>
+      <div><label for="e_gn">จำนวนของขวัญ (ชิ้น)</label><input id="e_gn" type="number" value="40"></div>
+      <div><label for="e_ge">มูลค่าของขวัญต่อชิ้น (บาท)</label><input id="e_ge" type="number" value="3000"></div>
+    </div>
+    <div class="tbl"><table><tbody id="e_out"></tbody></table></div>
+  </div>
+</section>
+
+<section class="lab" id="w3">
+  <span class="lab-tag">ใบงาน 3 · LO3</span>
+  <h2>เพดานรายจ่ายเพื่อการกุศลตามคำสั่ง ป.52/2537</h2>
+  <p>P คือกำไรสุทธิทางภาษีก่อนหักรายจ่ายเพื่อการกุศลสาธารณะและรายจ่ายเพื่อการศึกษาหรือการกีฬา หลังปรับรายการอื่นครบแล้ว ค่าตั้งต้นคือรายการ ข ของกรณีนำบท</p>
+  <div class="cols">
+    <div class="num">
+      <div><label for="c_p">P (บาท)</label><input id="c_p" type="number" value="45050000"></div>
+      <div><label for="c_c">รายจ่ายเพื่อการกุศลสาธารณะ (บาท)</label><input id="c_c" type="number" value="900000"></div>
+      <div><label for="c_e">รายจ่ายเพื่อการศึกษาหรือการกีฬา (บาท)</label><input id="c_e" type="number" value="300000"></div>
+    </div>
+    <div class="tbl"><table><tbody id="c_out"></tbody></table></div>
+  </div>
+</section>
+
+<section class="lab" id="w4">
+  <span class="lab-tag">ใบงาน 4 · LO4 LO5 LO6</span>
+  <h2>กรณีนำบท: จัดอนุมาตราแล้วปรับกำไรสุทธิ</h2>
+  <p>เลือกอนุมาตราของแต่ละรายการ กดตรวจ แล้วดูตารางปรับกำไรสุทธิและร่างบันทึกความเห็นทางภาษีที่คัดลอกไปใช้ต่อได้</p>
+  <div class="tbl"><table>
+    <thead><tr><th>รายการ</th><th>ข้อเท็จจริง</th><th>คำตอบของผู้เรียน</th><th>ผล</th></tr></thead>
+    <tbody id="k_rows"></tbody>
+  </table></div>
+  <div class="row"><button id="k_check">ตรวจคำตอบ</button><span class="score" id="k_score"></span></div>
+  <div id="sol" hidden><h3>ตารางปรับกำไรสุทธิทางบัญชีเป็นกำไรสุทธิทางภาษีอากร</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>รายการ</th><th class="n">จำนวน (บาท)</th><th>ผลแตกต่าง</th></tr></thead>
+    <tbody id="r_rows"></tbody>
+  </table></div>
+  <h3>ร่างบันทึกความเห็นทางภาษี</h3>
+  <textarea id="memo" aria-label="ร่างบันทึกความเห็นทางภาษี"></textarea>
+  <div class="row"><button class="ghost" id="memo_copy">คัดลอกร่างบันทึก</button><span id="memo_msg"></span></div></div>
+</section>
+
+<section class="lab" id="quiz">
+  <span class="lab-tag">แบบทดสอบท้ายบท</span>
+  <h2>ทดสอบ 8 ข้อ</h2>
+  <div id="qbox"></div>
+  <div class="row"><span class="score" id="qscore"></span><button class="ghost" id="qreset">เริ่มใหม่</button></div>
+</section>
+
+<footer>
+  <p><b>ที่มาของตัวเลขและหลักเกณฑ์</b></p>
+  <ul>
+    <li>ประมวลรัษฎากร มาตรา 65 ตรี (rd.go.th/5939) และหน้าความรู้เรื่องค่ารับรองของกรมสรรพากร (rd.go.th/827)</li>
+    <li>คำสั่งกรมสรรพากรที่ ป.52/2537 (rd.go.th/3595) และ ป.56/2538</li>
+    <li>คำพิพากษาศาลฎีกาที่ 949/2509, 2761/2524, 3319/2550 และหนังสือตอบข้อหารือ กค 0811/2883</li>
+    <li>ตัวเลขกรณีนำบทตรงกับตาราง 7.3 ของบทที่ 7 และตรวจด้วยโปรแกรมแล้ว</li>
+  </ul>
+  <p><b>เรื่องที่ยังรอผู้เขียนตัดสิน</b> ของขวัญเกิน 2,000 บาท ค่าปรับเป็นพินัยหรือค่าปรับทางปกครอง เบี้ยปรับตามสัญญา และโบนัสตาม KPI ยังไม่มีแนววินิจฉัยยุติ แอปใช้ความเห็นของผู้เขียนในบท</p>
+  <p>Dr VIT · Siam edu. · ใช้ประกอบตำราภาษีชั้นสูง</p>
+</footer>
+</main>
+
+<script>
+function r2(x){return Math.round(x*100)/100}
+function entertainment(o){
+  const giftExcess=Math.max(0,o.giftEach-2000)*o.giftN;
+  const eligible=o.total-giftExcess;
+  const base=Math.max(o.rev,o.cap);
+  const cap=Math.min(base*0.003,10000000);
+  const over=Math.max(0,eligible-cap);
+  return {giftExcess,eligible,base,cap,over,addBack:giftExcess+over,allowed:o.total-(giftExcess+over)};
+}
+function charity(o){
+  const t=o.P*2/104; let c,e,rule;
+  if(o.charity>=t&&o.edu>=t){c=t;e=t;rule=1}
+  else if(o.charity<t&&o.edu<t){c=o.charity;e=o.edu;rule=3}
+  else if(o.charity<o.edu){c=o.charity;e=Math.min(o.edu,(o.P-c)*2/102);rule=2}
+  else {e=o.edu;c=Math.min(o.charity,(o.P-e)*2/102);rule=2}
+  const taxable=o.P-c-e;
+  return {threshold:r2(t),charityAllowed:r2(c),eduAllowed:r2(e),charityExcess:r2(o.charity-c),eduExcess:r2(o.edu-e),taxable:r2(taxable),rule};
+}
+const CASE={book:40000000,items:[
+ {k:'ก',name:'ค่ารับรองส่วนเกิน (กระเช้า 40 ชุด ชุดละ 3,000 บาท)',gate:2,sub:'(4)',amt:350000,diff:'ถาวร'},
+ {k:'ค1',name:'เงินเพิ่มภาษีมูลค่าเพิ่ม 120,000 บาท',gate:3,sub:'(6)',amt:120000,diff:'ถาวร'},
+ {k:'ค2',name:'ค่าปรับด้านสิ่งแวดล้อม 200,000 บาท',gate:3,sub:'(6) หรือ (13)',amt:200000,diff:'ถาวร'},
+ {k:'ค3',name:'เบี้ยปรับตามสัญญาส่งของล่าช้า 350,000 บาท',gate:0,sub:'หักได้',amt:0,diff:'-'},
+ {k:'ง',name:'ดอกเบี้ยเงินกู้ซื้อที่ดินให้เช่า 800,000 บาท',gate:3,sub:'(5)',amt:800000,diff:'ชั่วคราว'},
+ {k:'จ1',name:'โบนัสกรรมการร้อยละ 3 ของกำไรปีเดียวกัน 1,500,000 บาท',gate:3,sub:'(19)',amt:1500000,diff:'ถาวร'},
+ {k:'จ2',name:'โบนัสพนักงานตาม KPI ที่กำหนดต้นปี 2,000,000 บาท',gate:0,sub:'หักได้',amt:0,diff:'-'},
+ {k:'ฉ',name:'ประมาณการผลประโยชน์พนักงาน ตั้ง 600,000 จ่ายจริง 150,000 บาท',gate:1,sub:'(1)',amt:450000,diff:'ชั่วคราว'},
+ {k:'ช',name:'ค่านายหน้าเงินสด ไม่ทราบผู้รับ 250,000 บาท',gate:1,sub:'(18)',amt:250000,diff:'ถาวร'},
+ {k:'ซ',name:'ค่าสมาชิกสนามกอล์ฟเฉพาะกรรมการผู้จัดการ 180,000 บาท',gate:2,sub:'(3)',amt:180000,diff:'ถาวร'}],
+ charity:900000,edu:300000};
+function reconcile(c){
+  const add=c.items.reduce((s,i)=>s+i.amt,0);
+  const P=c.book+add+c.charity+c.edu;
+  const ch=charity({P,charity:c.charity,edu:c.edu});
+  return {add,P,ch,taxable:ch.taxable,tax:r2(ch.taxable*0.2),totalAddBack:r2(add+ch.charityExcess+ch.eduExcess)};
+}
+const $=id=>document.getElementById(id);
+const fmt=x=>x.toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+/* ใบงาน 1 */
+const PRESETS=[
+ {n:'กำหนดเอง',a:[1,1,1,1,'none']},
+ {n:'ก ค่ารับรองส่วนที่เกินเพดาน',a:[1,1,1,0,'none']},
+ {n:'ค1 เงินเพิ่มภาษีมูลค่าเพิ่ม',a:[1,1,1,1,'penalty']},
+ {n:'ค3 เบี้ยปรับตามสัญญา',a:[1,1,1,1,'none']},
+ {n:'ง ดอกเบี้ยเงินกู้ซื้อที่ดิน',a:[1,1,1,1,'capital']},
+ {n:'จ1 โบนัสกรรมการร้อยละของกำไร',a:[1,1,1,1,'profit']},
+ {n:'ฉ ประมาณการผลประโยชน์พนักงาน',a:[0,1,1,1,'none']},
+ {n:'ช ค่านายหน้าไม่ทราบผู้รับ',a:[1,0,1,1,'none']},
+ {n:'ซ ค่าสมาชิกกอล์ฟเฉพาะผู้บริหาร',a:[1,1,0,1,'none']}];
+PRESETS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p.n;$('preset').appendChild(o)});
+$('preset').addEventListener('change',()=>{const a=PRESETS[$('preset').value].a;
+  $('g1a').checked=!!a[0];$('g1b').checked=!!a[1];$('g2a').checked=!!a[2];$('g2b').checked=!!a[3];
+  document.querySelector(`input[name=g3][value=${a[4]}]`).checked=true;gates()});
+function setGate(n,state,text){const el=$('gs'+n);el.className='gate '+state;$('gt'+n).textContent=text}
+function gates(){
+  const g1a=$('g1a').checked,g1b=$('g1b').checked,g2a=$('g2a').checked,g2b=$('g2b').checked;
+  const g3=document.querySelector('input[name=g3]:checked').value;
+  let v;
+  if(!g1a||!g1b){
+    setGate(1,'stop',!g1a?'ภาระยังไม่เกิดหรือลงผิดรอบ':'พิสูจน์ผู้รับไม่ได้');setGate(2,'skip','ไม่ต้องพิจารณา');setGate(3,'skip','ไม่ต้องพิจารณา');
+    v=!g1a?'ต้องห้ามตาม (1) หรือ (9) บวกกลับในรอบนี้ หักได้ในรอบที่ภาระเกิดจริง เป็นผลแตกต่างชั่วคราว (เว้นแต่ไม่มีการจ่ายจริงเลย) อ่านหัวข้อ 7.3.1 และ 7.3.3':'ต้องห้ามตาม (18) เป็นผลแตกต่างถาวร และตรวจภาษีหัก ณ ที่จ่ายในชั้นที่ 2 ด้วย อ่านหัวข้อ 7.3.2';
+  } else if(!g2a||!g2b){
+    setGate(1,'pass','ผ่าน');setGate(2,'stop',!g2a?'มีลักษณะส่วนตัวหรือไม่ใช่เพื่อกิจการ':'เกินเพดานหรือเกินสมควร');setGate(3,'skip','ไม่ต้องพิจารณา');
+    v=!g2a?'ต้องห้ามตาม (3) หรือ (13) เป็นผลแตกต่างถาวร ถ้าเป็นประโยชน์ของกรรมการหรือพนักงาน ให้ตรวจว่าเป็นเงินได้ตามมาตรา 40 (1) หรือ (2) ด้วย อ่านหัวข้อ 7.4.1 และ 7.4.2':'ต้องห้ามเฉพาะส่วนเกินตาม (3) (4) หรือ (8) เป็นผลแตกต่างถาวร ใช้ใบงาน 2 หรือ 3 คำนวณ อ่านหัวข้อ 7.4.2 ถึง 7.4.4';
+  } else if(g3!=='none'){
+    setGate(1,'pass','ผ่าน');setGate(2,'pass','ผ่าน');
+    const m={penalty:['เป็นโทษตามกฎหมาย','ต้องห้ามตาม (6) และอาจตาม (13) เป็นผลแตกต่างถาวร เบี้ยปรับตามสัญญาทางแพ่งไม่ใช่โทษ อ่านหัวข้อ 7.5.1'],
+      tax:['เป็นตัวภาษี','ภาษีเงินได้นิติบุคคลต้องห้ามตาม (6) ภาษีมูลค่าเพิ่มตาม (6 ทวิ) เป็นผลแตกต่างถาวร อ่านหัวข้อ 7.5.1'],
+      profit:['เป็นการจัดสรรกำไร','ต้องห้ามตาม (19) เป็นผลแตกต่างถาวร ตัวแปรชี้ขาดคือฐานคำนวณเป็นกำไรของรอบเดียวกัน อ่านหัวข้อ 7.5.2'],
+      capital:['เป็นทุน','ต้องห้ามตาม (5) แต่รวมเป็นต้นทุนทรัพย์สิน เป็นผลแตกต่างชั่วคราว อ่านหัวข้อ 7.5.3']}[g3];
+    setGate(3,'stop',m[0]);v=m[1];
+  } else {
+    setGate(1,'pass','ผ่าน');setGate(2,'pass','ผ่าน');setGate(3,'pass','ผ่าน');
+    v='หักเป็นรายจ่ายได้ตามมาตรา 65 และ 65 ทวิ ไม่ต้องปรับกำไรสุทธิ';
+  }
+  $('verdict').textContent=v;
+}
+document.querySelectorAll('#w1 input').forEach(i=>i.addEventListener('change',()=>{$('preset').value=0;gates()}));
+gates();
+
+/* ใบงาน 2 */
+function ent(){
+  const r=entertainment({rev:+$('e_rev').value||0,cap:+$('e_cap').value||0,total:+$('e_tot').value||0,giftN:+$('e_gn').value||0,giftEach:+$('e_ge').value||0});
+  $('e_out').innerHTML=[
+   ['ของขวัญส่วนที่เกิน 2,000 บาทต่อชิ้น',r.giftExcess],['ค่ารับรองที่เข้าเงื่อนไข',r.eligible],
+   ['ฐานที่ใช้ (รายได้หรือทุน แล้วแต่อย่างใดมากกว่า)',r.base],['เพดานร้อยละ 0.3 (ไม่เกิน 10 ล้านบาท)',r.cap],
+   ['ส่วนที่เกินเพดาน',r.over],['หักเป็นรายจ่ายได้',r.allowed]].map(x=>`<tr><td>${x[0]}</td><td class="n">${fmt(x[1])}</td></tr>`).join('')+
+   `<tr class="total"><td>บวกกลับตาม (4)</td><td class="n">${fmt(r.addBack)}</td></tr>`;
+}
+['e_rev','e_cap','e_tot','e_gn','e_ge'].forEach(id=>$(id).addEventListener('input',ent));ent();
+
+/* ใบงาน 3 */
+function cha(){
+  const r=charity({P:+$('c_p').value||0,charity:+$('c_c').value||0,edu:+$('c_e').value||0});
+  const rule={1:'ทั้งสองรายการสูงกว่าหรือเท่ากับ 2/104 ของ P',2:'รายการหนึ่งต่ำกว่า 2/104 ของ P: หักรายการต่ำก่อน อีกรายการไม่เกิน 2/102 ของกำไรหลังหักรายการแรก',3:'ทั้งสองรายการต่ำกว่า 2/104 ของ P: หักเต็มจำนวน'}[r.rule];
+  $('c_out').innerHTML=`<tr><td>2/104 ของ P</td><td class="n">${fmt(r.threshold)}</td></tr><tr><td colspan="2"><small>${rule}</small></td></tr>`+
+   [['การกุศลสาธารณะที่หักได้',r.charityAllowed],['การศึกษาหรือการกีฬาที่หักได้',r.eduAllowed],['ส่วนเกินที่ต้องบวกกลับ',r2(r.charityExcess+r.eduExcess)]].map(x=>`<tr><td>${x[0]}</td><td class="n">${fmt(x[1])}</td></tr>`).join('')+
+   `<tr class="total"><td>กำไรสุทธิทางภาษีอากร</td><td class="n">${fmt(r.taxable)}</td></tr><tr><td>ตรวจสอบ: ร้อยละ 2 ของกำไรสุทธิทางภาษีอากร</td><td class="n">${fmt(r2(r.taxable*0.02))}</td></tr>`;
+}
+['c_p','c_c','c_e'].forEach(id=>$(id).addEventListener('input',cha));cha();
+
+/* ใบงาน 4 */
+const OPTS=['เลือก','หักได้','(1)','(3)','(4)','(5)','(6)','(13)','(18)','(19)'];
+function accepts(item,v){if(item.sub==='(6) หรือ (13)')return v==='(6)'||v==='(13)';return v===item.sub}
+$('k_rows').innerHTML=CASE.items.map((it,i)=>`<tr><td>${it.k}</td><td>${it.name}</td><td><select id="k${i}" aria-label="อนุมาตรารายการ ${it.k}">${OPTS.map(o=>`<option>${o}</option>`).join('')}</select></td><td class="mark" id="m${i}"></td></tr>`).join('');
+$('k_check').addEventListener('click',()=>{let ok=0;CASE.items.forEach((it,i)=>{const good=accepts(it,$('k'+i).value);if(good)ok++;
+  const m=$('m'+i);m.className='mark '+(good?'ok':'no');m.textContent=good?'ถูก':`ควรเป็น ${it.sub} (${it.gate?'ตกด่านที่ '+it.gate:'ผ่านครบสามด่าน'})`});
+  $('k_score').textContent=`ถูก ${ok} จาก ${CASE.items.length} รายการ`;$('sol').hidden=false});
+const R=reconcile(CASE);
+const rows=[['กำไรก่อนภาษีเงินได้ตามงบการเงิน',CASE.book,'']].concat(CASE.items.filter(i=>i.amt).map(i=>[`บวก ${i.k} ${i.name.split(' ')[0]} ${i.sub}`,i.amt,i.diff]))
+ .concat([['บวก รายจ่ายเพื่อการกุศลและการศึกษาที่ลงบัญชี',CASE.charity+CASE.edu,''],['กำไรสุทธิก่อนหักรายจ่ายทั้งสองรายการ (P)',R.P,''],
+ ['หัก รายจ่ายเพื่อการศึกษา',-R.ch.eduAllowed,''],['หัก รายจ่ายเพื่อการกุศลสาธารณะ',-R.ch.charityAllowed,`ส่วนเกิน ${fmt(R.ch.charityExcess)} ถาวร`]]);
+$('r_rows').innerHTML=rows.map(r=>`<tr><td>${r[0]}</td><td class="n">${fmt(r[1])}</td><td>${r[2]}</td></tr>`).join('')+
+ `<tr class="total"><td>กำไรสุทธิทางภาษีอากร</td><td class="n">${fmt(R.taxable)}</td><td></td></tr><tr><td>ภาษีเงินได้นิติบุคคล อัตราภาษีทั่วไปร้อยละ 20</td><td class="n">${fmt(R.tax)}</td><td></td></tr>`;
+$('memo').value=`บันทึกความเห็นทางภาษี (ร่าง)
+เรื่อง รายจ่ายต้องห้ามของบริษัท สยามวัสดุก่อสร้าง จำกัด รอบบัญชีสิ้นสุด 31 ธันวาคม 2569
+สถานะกฎหมาย ณ วันที่ 17 พฤศจิกายน 2569
+
+1. ข้อเท็จจริง
+กำไรก่อนภาษีเงินได้ตามงบการเงิน ${fmt(CASE.book)} บาท รายการที่ตรวจพบ ${CASE.items.length} รายการ และรายจ่ายเพื่อการกุศลและการศึกษา ${fmt(CASE.charity+CASE.edu)} บาท
+
+2. ประเด็น
+รายการใดเป็นรายจ่ายต้องห้ามตามมาตรา 65 ตรี แห่งประมวลรัษฎากร และต้องปรับกำไรสุทธิเท่าใด
+
+3. ความเห็น (จัดตามหลักทดสอบสามด่าน)
+${CASE.items.map(i=>`- ${i.k} ${i.name}: ${i.gate?`ตกด่านที่ ${i.gate} ${i.sub} บวกกลับ ${fmt(i.amt)} บาท (${i.diff})`:'ผ่านครบสามด่าน หักได้ (ความเห็นผู้เขียน ยังไม่มีแนววินิจฉัยยืนยัน)'}`).join('\n')}
+- รายจ่ายเพื่อการกุศลสาธารณะเกินเพดานตามคำสั่ง ป.52/2537 จำนวน ${fmt(R.ch.charityExcess)} บาท
+
+4. สรุป
+บวกกลับสุทธิ ${fmt(R.totalAddBack)} บาท กำไรสุทธิทางภาษีอากร ${fmt(R.taxable)} บาท ภาษีเงินได้นิติบุคคล ${fmt(R.tax)} บาท
+
+5. ความเสี่ยงและเอกสารที่ควรเตรียม
+ของขวัญเกิน 2,000 บาท และค่าปรับด้านสิ่งแวดล้อมยังไม่มีแนวยุติ ควรเก็บใบเสร็จแยกราคากระเช้าต่อชุด และหนังสือแจ้งค่าปรับที่ระบุฐานกฎหมาย`;
+$('memo_copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('memo').value);$('memo_msg').textContent='คัดลอกแล้ว'}catch(e){$('memo').select();$('memo_msg').textContent='เลือกข้อความแล้ว กดคัดลอกเอง'}});
+
+/* แบบทดสอบ */
+const QS=[
+ {lo:'LO1',s:'เพดานค่ารับรองตามกฎกระทรวง ฉบับที่ 143 ที่แก้ไขโดยฉบับที่ 222 คือข้อใด',o:['ร้อยละ 0.3 ของรายได้หรือทุนที่ชำระแล้ว แล้วแต่อย่างใดมากกว่า ไม่เกิน 10 ล้านบาท','ร้อยละ 0.3 ของรายได้เท่านั้น ไม่เกิน 5 ล้านบาท','ร้อยละ 2 ของกำไรสุทธิ','ร้อยละ 0.5 ของทุนจดทะเบียน'],a:0,e:'ฐานคือรายได้หรือทุนที่ชำระแล้ว ณ วันสิ้นรอบ แล้วแต่อย่างใดมากกว่า และสูงสุดไม่เกิน 10 ล้านบาท (หัวข้อ 7.4.3)'},
+ {lo:'LO2',s:'เงินที่บริษัทกันไว้จ่ายบำเหน็จพนักงานในอนาคตตกด่านใด',o:['ด่านหลักฐาน ตาม (1)','ด่านวัตถุประสงค์ ตาม (13)','ด่านนโยบายและลักษณะ ตาม (19)','ไม่ตกด่านใด'],a:0,e:'คำพิพากษาศาลฎีกาที่ 2761/2524 วินิจฉัยว่าเป็นเงินสำรองตาม (1) เพราะหนี้ต่อพนักงานยังไม่เกิด (หัวข้อ 7.3.3)'},
+ {lo:'LO2',s:'ค่านายหน้าที่จ่ายจริงแต่พิสูจน์ผู้รับไม่ได้ เป็นผลแตกต่างประเภทใด',o:['ผลแตกต่างถาวรตาม (18)','ผลแตกต่างชั่วคราวตาม (9)','ไม่ใช่ผลแตกต่าง','ผลแตกต่างชั่วคราวตาม (18)'],a:0,e:'(18) ไม่มีวันหักได้ในรอบอื่น จึงเป็นผลแตกต่างถาวร แม้จะอยู่ในด่านหลักฐาน (หัวข้อ 7.8.1)'},
+ {lo:'LO4',s:'ธนาคารจ่ายโบนัสโดยใช้ ROA ของปีก่อนเป็นเกณฑ์ และจ่ายแม้ปีปัจจุบันขาดทุน กรมสรรพากรวินิจฉัยอย่างไร',o:['ไม่ต้องห้ามตาม (19) หักได้','ต้องห้ามตาม (19)','ต้องห้ามตาม (13)','หักได้เพียงครึ่งหนึ่ง'],a:0,e:'หนังสือตอบข้อหารือ กค 0811/2883 ลงวันที่ 11 เมษายน 2543 ฐานเป็นผลงานปีก่อนและหนี้เกิดแน่นอน (หัวข้อ 7.5.2)'},
+ {lo:'LO4',s:'ค่าสมาชิกสนามกอล์ฟที่ใช้สิทธิได้เฉพาะกรรมการผู้จัดการ มีผลอย่างไร',o:['รายจ่ายส่วนตัวตาม (3) และเป็นเงินได้ของกรรมการผู้จัดการ','ค่ารับรองตาม (4) หักได้ภายในเพดาน','หักได้ทั้งจำนวน','รายจ่ายลงทุนตาม (5)'],a:0,e:'คำสั่งกรมสรรพากรที่ ป.56/2538 ตัวแปรชี้ขาดคือวงผู้มีสิทธิใช้ (หัวข้อ 7.4.2)'},
+ {lo:'LO3',s:'P = 20,000,000 บาท บริจาคการกุศล 500,000 บาท การกีฬา 100,000 บาท หักการกุศลได้เท่าใด',o:['390,196.08 บาท','400,000.00 บาท','384,615.38 บาท','500,000.00 บาท'],a:0,e:'การกีฬาต่ำกว่า 2/104 ของ P จึงหักก่อน การกุศลไม่เกิน 2/102 × 19,900,000 = 390,196.08 บาท (คำสั่ง ป.52/2537)'},
+ {lo:'LO5',s:'ข้อใดอธิบายความต่างระหว่างคำวินิจฉัยที่ 40/2560 กับคำพิพากษาศาลฎีกาที่ 1109/2559 ได้ถูกต้อง',o:['คำวินิจฉัยใช้ถ้อยคำกฎหมายภาษีอากรทุกประเภท ส่วนศาลรวมค่าปรับอาญาตามกฎหมายอื่นด้วย','ทั้งสองแหล่งจำกัดเฉพาะประมวลรัษฎากร','ศาลให้หักค่าปรับศุลกากรได้','คำวินิจฉัยผูกพันศาล'],a:0,e:'ถ้อยคำของคำวินิจฉัยที่ 40/2560 แคบกว่าแนวศาลและหน้าความรู้ของกรมสรรพากร (หัวข้อ 7.5.1)'},
+ {lo:'LO5',s:'ดอกเบี้ยเงินกู้ซื้อที่ดินเปล่าเพื่อให้เช่า บัญชีรับรู้เป็นค่าใช้จ่าย ทางภาษีต้องทำอย่างไร',o:['บวกกลับตาม (5) รวมเป็นต้นทุนที่ดิน หักได้เมื่อขายที่ดิน','หักได้ทันทีตาม TAS 23','บวกกลับตาม (13) เป็นผลแตกต่างถาวร','ไม่ต้องปรับ'],a:0,e:'คำพิพากษาศาลฎีกาที่ 2347/2536, 1064/2545 และ 3291/2547 ถือเป็นต้นทุนที่ดิน เป็นผลแตกต่างชั่วคราว (หัวข้อ 7.5.3)'}];
+function quiz(){
+  $('qbox').innerHTML=QS.map((q,i)=>{const ord=q.o.map((_,j)=>j).sort(()=>Math.random()-0.5);return `<div class="q"><span class="lo">ข้อ ${i+1} · ${q.lo}</span><div class="stem">${q.s}</div>${ord.map(j=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"> ${q.o[j]}</label>`).join('')}<div class="fb" id="fb${i}"></div></div>`}).join('');
+  QS.forEach((q,i)=>document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.addEventListener('change',()=>{const ok=+r.value===q.a;const f=$('fb'+i);f.className='fb show '+(ok?'ok':'no');f.textContent=(ok?'ถูกต้อง ':'ยังไม่ถูก ')+q.e;score()})));
+  score();
+}
+function score(){let a=0,c=0;QS.forEach((q,i)=>{const s=document.querySelector(`input[name=q${i}]:checked`);if(s){a++;if(+s.value===q.a)c++}});$('qscore').textContent=`ตอบแล้ว ${a} ข้อ ถูก ${c} ข้อ`}
+$('qreset').addEventListener('click',quiz);quiz();
+</script>
+</body>
+</html>

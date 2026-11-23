@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แอปบทที่ 2 เดินธุรกรรมผ่าน 4 ชั้น</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#15233a; --muted:#5a6678; --line:#d5dbe3;
+  --accent:#0d6466; --accent-soft:#e1efef; --gate:#a86a12; --gate-soft:#f7ecd9;
+  --ok:#2f7d32; --stop:#b3261e; --stop-soft:#f8e3e1;
+  --display:"Noto Serif Thai",Georgia,serif; --body:"Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1620; --paper:#17212d; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2c3a4a;
+  --accent:#4fb8b4; --accent-soft:#163334; --gate:#e2a54a; --gate-soft:#3a2c14;
+  --ok:#74c27a; --stop:#f08a80; --stop-soft:#3c1d1b; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.brand img{height:40px;width:auto;display:block}
+.brand .org{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#15233a;border-left:2px solid #d5dbe3;padding-left:12px;line-height:1.2}
+header h1{font-family:var(--display);font-size:1.7rem;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+header p{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--gate);padding:4px 10px;background:var(--gate-soft);border-radius:0 6px 6px 0}
+section.lab{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.lab h2{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
+.lab-tag{font-size:.8rem;color:var(--accent);font-weight:700}
+.lab > p{margin:4px 0 14px;color:var(--muted);max-width:72ch}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+legend{font-weight:700;font-size:.92rem;padding:0 4px}
+label.opt{display:flex;gap:8px;align-items:flex-start;padding:2px 0;cursor:pointer;font-size:.95rem}
+.gate{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.gate .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--muted)}
+.gate.pass{border-color:var(--ok)} .gate.pass .dot{background:var(--ok)}
+.gate.stop{border-color:var(--stop);background:var(--stop-soft)} .gate.stop .dot{background:var(--stop)}
+.gate.skip{opacity:.45}
+.gate b{display:block} .gate small{color:var(--muted)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.num{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num label{display:block;font-size:.85rem;color:var(--muted)}
+.num input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.82rem;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.mark{font-weight:700;white-space:nowrap}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--stop)}
+button{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gate);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+textarea{width:100%;min-height:220px;font:inherit;font-size:.9rem;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.q .stem{font-weight:500;margin-bottom:6px}
+.q .lo{font-size:.78rem;color:var(--gate);font-weight:700}
+.q .fb{margin-top:6px;font-size:.92rem;padding:6px 10px;border-radius:6px;display:none}
+.q .fb.show{display:block}
+.q .fb.ok{background:var(--accent-soft)} .q .fb.no{background:var(--stop-soft)}
+.score{font-weight:700}
+footer{font-size:.85rem;color:var(--muted)}
+footer ul{padding-left:20px}
+input.amt{width:130px;text-align:right;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+input.txt{width:100%;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink)}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:12px}
+.kpi div{background:var(--accent-soft);border-radius:8px;padding:10px 12px}
+.kpi b{display:block;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.kpi small{color:var(--muted)}
+</style>
+<style>.atx-nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.9rem;margin:0 0 4px}.atx-nav a{color:var(--accent,#0d6466);font-weight:700;text-decoration:none}.atx-nav a:hover{text-decoration:underline}main>*{min-width:0}.tbl,table{max-width:100%}</style>
+<script src="gate.js"></script>
+</head>
+<body>
+<main>
+<nav class="atx-nav" aria-label="นำทาง"><a href="./">สารบัญแอปประจำเล่ม</a> · <a href="ch03.html">บทที่ 3</a></nav>
+<header>
+  <div class="brand"><img src="brand/logo.png" alt="Dr VIT" data-atx-logo><span class="org">Siam edu.</span></div>
+  <h1>แอปบทที่ 2 เดินธุรกรรมผ่านกรอบแกนกลาง 4 ชั้น</h1>
+  <p>แอปนี้ใช้คู่กับบทที่ 2 ของตำราภาษีชั้นสูง ผู้เรียนนำแคมเปญส่งเสริมการขายแต่ละแบบผ่านชั้นบัญชี ชั้นภาษีหัก ณ ที่จ่าย ชั้นภาษีมูลค่าเพิ่ม และชั้นภาษีเงินได้นิติบุคคล แล้วกระทบยอดข้ามชั้นและประเมินต้นทุนของการจัดประเภทผิด</p>
+  <p class="note">ตัวเลขตั้งต้นมาจากกรณีบริษัท สยามน้ำใส จำกัด (นามสมมติ) ในบท ภาษีมูลค่าเพิ่มใช้อัตรารวมร้อยละ 7 ซึ่งใช้ถึงวันที่ 30 กันยายน 2570 ตามพระราชกฤษฎีกา (ฉบับที่ 807) แอปใช้เพื่อการเรียนรู้ ไม่ใช่คำปรึกษาภาษีสำหรับกรณีจริง และห้ามนำข้อมูลลูกค้าจริงใส่แอปหรือเครื่องมือปัญญาประดิษฐ์</p>
+</header>
+
+<section class="lab" id="w1">
+  <span class="lab-tag">ใบงาน 1 · LO2 LO3 LO4</span>
+  <h2>เดินแคมเปญผ่านสี่ชั้น</h2>
+  <p>เลือกแคมเปญและแก้ตัวเลขได้ แอปแสดงผลทีละชั้นพร้อมแหล่งอ้างอิงในบท</p>
+  <div class="cols">
+    <div>
+      <fieldset><legend>แคมเปญ</legend>
+        <label class="opt"><input type="radio" name="camp" value="a" checked> ก. ส่วนลดตามเป้าให้ร้านค้าส่งที่ซื้อไปขายต่อ</label>
+        <label class="opt"><input type="radio" name="camp" value="b"> ข. ของแถมพร้อมการขายให้ผู้บริโภค</label>
+        <label class="opt"><input type="radio" name="camp" value="c"> ค. รางวัลชิงโชคให้ผู้บริโภค</label>
+        <label class="opt"><input type="radio" name="camp" value="d"> ง. กระเช้าของขวัญให้ผู้บริหารของลูกค้า</label>
+      </fieldset>
+      <div id="inp" class="num"></div>
+    </div>
+    <div id="layers" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="lab" id="w2">
+  <span class="lab-tag">ใบงาน 2 · LO5</span>
+  <h2>ตารางสังเคราะห์สี่ชั้นและการกระทบยอดข้ามชั้น</h2>
+  <p>ตารางนี้ใช้ตัวเลขล่าสุดจากใบงาน 1 ของทุกแคมเปญ ใช้อธิบายว่าเหตุใดยอดในบัญชี ภ.พ.30 (แบบแสดงรายการภาษีมูลค่าเพิ่ม) และ ภ.ง.ด.50 (แบบแสดงรายการภาษีเงินได้นิติบุคคล) จึงไม่เท่ากัน</p>
+  <div class="tbl"><table><thead><tr><th>แคมเปญ</th><th>ชั้น 1 บัญชี</th><th>ชั้น 2 หัก ณ ที่จ่าย</th><th>ชั้น 3 VAT</th><th>ชั้น 4 ภาษีเงินได้นิติบุคคล</th></tr></thead><tbody id="syn"></tbody></table></div>
+</section>
+
+<section class="lab" id="w3">
+  <span class="lab-tag">ใบงาน 3 · LO5 LO6</span>
+  <h2>ต้นทุนของการจัดประเภทผิด</h2>
+  <p>ทายก่อนว่าความผิดพลาดแต่ละแบบกระทบชั้นใด แล้วกดดูผลตามหัวข้อ 2.7.2</p>
+  <div class="tbl"><table><thead><tr><th>ความผิดพลาด</th><th>ชั้นที่คาดว่ากระทบ</th><th>ผล</th></tr></thead><tbody id="mis"></tbody></table></div>
+  <div class="row"><button id="mis_check">ตรวจและดูผล</button><span class="score" id="mis_score"></span></div>
+</section>
+
+<section class="lab" id="quiz">
+  <span class="lab-tag">แบบทดสอบท้ายบท</span>
+  <h2>ทดสอบ 8 ข้อ</h2>
+  <div id="qbox"></div>
+  <div class="row"><span class="score" id="qscore"></span><button class="ghost" id="qreset">เริ่มใหม่</button></div>
+</section>
+
+<footer>
+  <p><b>ที่มาของตัวเลขและหลักเกณฑ์</b></p>
+  <ul>
+    <li>คำสั่งกรมสรรพากรที่ ป.118/2545 และ ท.ป.4/2528, หนังสือตอบข้อหารือ กค 0702/4122, กค 0706/8821, กค 0811/พ.7827, กค 0702/พ./781</li>
+    <li>ประมวลรัษฎากร มาตรา 77/1 (8) (10), 79, 82/5 (4), 82/10, 65 ตรี (4) (6 ทวิ) (13), ประกาศอธิบดีกรมสรรพากรเกี่ยวกับภาษีมูลค่าเพิ่ม (ฉบับที่ 40), กฎกระทรวง ฉบับที่ 143 แก้ไขโดยฉบับที่ 222, คำพิพากษาศาลฎีกาที่ 7169/2543</li>
+    <li>ตัวเลขตั้งต้นตรงกับตาราง 2.1 และหัวข้อ 2.7.1 ถึง 2.7.2 ของบทที่ 2 ตรวจด้วยโปรแกรมแล้ว</li>
+  </ul>
+  <p><b>เรื่องที่ยังรอผู้เขียน</b> การเทียบเพดาน 2,000 บาทต่อคนด้วยต้นทุนที่รวมภาษีซื้อต้องห้าม (ทะเบียน C2-12) และมูลค่ารางวัลที่ใช้คำนวณภาษีออกแทน ยังไม่พบคำวินิจฉัยที่ตอบตรง แอปใช้ข้อสมมติตามบท อัตราร้อยละ 1 ผ่าน e-Withholding Tax ใช้ได้ถึงวันที่ 31 ธันวาคม 2570</p>
+  <p>Dr VIT · Siam edu. · ใช้ประกอบตำราภาษีชั้นสูง</p>
+</footer>
+</main>
+<script>
+function r2(x){return Math.round(x*100)/100}
+const VAT=0.07;
+function discount(o){ // amt, mode:'credit'|'cash_ewht'|'cash'
+  const rate=o.mode==='cash_ewht'?0.01:0.03;
+  return {wht:r2(o.amt*rate),whtRate:rate,form:'ภ.ง.ด.53',vatKept:r2(o.amt*VAT),citDeduct:o.amt};
+}
+function freebie(o){ // n, cost, market, price
+  const within=o.market<=o.price;
+  return {within,wht:0,outVat:within?0:null,inVat:r2(o.n*o.cost*VAT),citDeduct:r2(o.n*o.cost)};
+}
+function prize(o){ // k, value, grossup
+  const per=o.grossup?r2(o.value*5/95):r2(o.value*0.05);
+  return {whtPer:per,wht:r2(per*o.k),outVat:r2(o.k*o.value*VAT),inVat:r2(o.k*o.value*VAT),citDeduct:r2(o.k*o.value),addBack:r2(o.k*o.value*VAT)};
+}
+function gift(o){ // n, price, rev, cap
+  const per=r2(o.price*(1+VAT)), total=r2(per*o.n), cap=Math.min(Math.max(o.rev,o.cap)*0.003,10e6);
+  const excessGift=r2(Math.max(0,per-2000)*o.n);
+  return {per,total,inVatBlocked:r2(o.price*VAT*o.n),cap,perOk:per<=2000,excessGift,overCap:r2(Math.max(0,total-excessGift-cap))};
+}
+
+
+const $=id=>document.getElementById(id);
+const fmt=x=>x.toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const P={a:{amt:100000,mode:'credit'},b:{n:10000,cost:20,market:30,price:60},c:{k:2,value:40000,grossup:false},d:{n:50,price:1800,rev:200000000,cap:20000000}};
+const FIELDS={a:[['amt','ส่วนลดตามเป้า (บาท)','number'],['mode','วิธีให้ส่วนลด','sel',[['credit','ออกใบลดหนี้'],['cash_ewht','จ่ายเงินผ่าน e-Withholding Tax'],['cash','จ่ายเงินแบบปกติ']]]],
+ b:[['n','จำนวนแพ็ก','number'],['cost','ราคาทุนของแถมต่อชิ้น (บาท)','number'],['market','ราคาตลาดของแถม (บาท)','number'],['price','ราคาสินค้าที่ขายต่อแพ็ก ก่อน VAT (บาท)','number']],
+ c:[['k','จำนวนรางวัล','number'],['value','มูลค่ารางวัลละ ไม่รวม VAT (บาท)','number'],['grossup','บริษัทออกภาษีแทนผู้ได้รับรางวัล','sel',[['no','ไม่ออกแทน'],['yes','ออกแทนตลอดไป']]]],
+ d:[['n','จำนวนผู้รับ (คน)','number'],['price','ราคากระเช้าต่อคน ก่อน VAT (บาท)','number'],['rev','รายได้ของบริษัท (บาท)','number'],['cap','ทุนที่ชำระแล้ว (บาท)','number']]};
+const cur=()=>document.querySelector('input[name=camp]:checked').value;
+function inputs(){const c=cur();$('inp').innerHTML=FIELDS[c].map(f=>{const v=f[0]==='grossup'?(P[c].grossup?'yes':'no'):P[c][f[0]];
+  return f[2]==='sel'?`<div><label for="f_${f[0]}">${f[1]}</label><select id="f_${f[0]}" data-k="${f[0]}">${f[3].map(o=>`<option value="${o[0]}"${o[0]===v?' selected':''}>${o[1]}</option>`).join('')}</select></div>`
+  :`<div><label for="f_${f[0]}">${f[1]}</label><input id="f_${f[0]}" type="number" data-k="${f[0]}" value="${v}"></div>`}).join('');
+  $('inp').querySelectorAll('[data-k]').forEach(el=>el.addEventListener('input',()=>{const k=el.dataset.k;P[c][k]=k==='mode'?el.value:k==='grossup'?el.value==='yes':(+el.value||0);render()}));render()}
+function layerBox(n,title,text,state){return `<div class="gate ${state||'pass'}"><div class="dot">${n}</div><div><b>${title}</b><small>${text}</small></div></div>`}
+function analyze(c){const p=P[c];
+  if(c==='a'){const r=discount(p);return {l:[`บันทึกลดรายได้ ${fmt(p.amt)} บาท เอกสาร: เงื่อนไขเป้ายอดซื้อและ${p.mode==='credit'?'ใบลดหนี้':'หลักฐานการจ่าย'}`,
+    `หัก ${r.whtRate*100}% = ${fmt(r.wht)} บาท ${p.mode==='credit'?'ณ วันออกใบลดหนี้':'ณ วันจ่าย'} ยื่น ${r.form} (ป.118/2545)${p.mode==='credit'?' อัตราร้อยละ 1 ใช้ได้เฉพาะเมื่อจ่ายเป็นเงินผ่าน e-Withholding Tax':''}`,
+    `ส่วนลดหลังการขายไม่ใช่เหตุตามมาตรา 82/10 ลดภาษีขายไม่ได้ ภาษีขายที่คงอยู่ ${fmt(r.vatKept)} บาท`,
+    `หักได้ในรูปรายได้ที่ลดลง ${fmt(r.citDeduct)} บาท`],syn:[`ลดรายได้ ${fmt(p.amt)}`,`${r.whtRate*100}% = ${fmt(r.wht)}`,`ลดภาษีขายไม่ได้ (${fmt(r.vatKept)})`,'หักได้ในรูปรายได้ที่ลดลง']}}
+  if(c==='b'){const r=freebie(p);return {l:[`ต้นทุนขาย ${fmt(r.citDeduct)} บาท`,'ไม่หัก ผู้รับเป็นผู้บริโภค และของแถมมูลค่าไม่เกินสินค้าที่ขาย (ป.118/2545 ข้อ 4 และ 6)',
+    r.within?`มูลค่าตลาดของแถม ${fmt(p.market)} ไม่เกินราคาสินค้า ${fmt(p.price)} จึงไม่ต้องนำมารวมเป็นฐานภาษี (ประกาศฉบับที่ 40 ข้อ 2 (1)) ภาษีซื้อ ${fmt(r.inVat)} บาท ใช้ได้`:`มูลค่าของแถมเกินสินค้าที่ขาย ไม่เข้าข้อยกเว้นของประกาศฉบับที่ 40 ข้อ 2 (1) ต้องพิจารณาเป็นการขายตามมาตรา 77/1 (8) ดูหัวข้อ 2.4.1`,
+    `หักได้ ${fmt(r.citDeduct)} บาท เป็นค่าส่งเสริมการขาย ไม่ใช่ค่ารับรอง`],syn:[`ต้นทุนขาย ${fmt(r.citDeduct)}`,'ไม่หัก',r.within?`ไม่มีภาษีขาย ภาษีซื้อ ${fmt(r.inVat)} ใช้ได้`:'ต้องพิจารณาภาษีขาย',`หักได้ ${fmt(r.citDeduct)}`],warn:!r.within}}
+  if(c==='c'){const r=prize(p);return {l:[`ค่าส่งเสริมการขาย ${fmt(r.citDeduct)} บาท และภาษีขายที่รับภาระเอง ${fmt(r.outVat)} บาท`,
+    p.grossup?`ออกภาษีแทนตลอดไป ${fmt(p.value)} × 5/95 = ${fmt(r.whtPer)} บาทต่อรางวัล รวม ${fmt(r.wht)} บาท ยื่น ภ.ง.ด.3`:`หัก 5% ของมูลค่ารางวัล = ${fmt(r.wht)} บาท ณ วันส่งมอบ ยื่น ภ.ง.ด.3 (ท.ป.4/2528 ข้อ 9 (1))`,
+    `แพ็กเกจทัวร์เป็นการให้บริการตามมาตรา 77/1 (10) ใช้ต้นทุนเป็นฐานภาษี ภาษีขาย ${fmt(r.outVat)} บาท หักด้วยภาษีซื้อ ${fmt(r.inVat)} บาท (กค 0702/4122)`,
+    `หักได้ ${fmt(r.citDeduct)} บาท (ไม่ต้องห้ามตาม 65 ตรี (13)) แต่ต้องบวกกลับภาษีขายที่รับภาระเอง ${fmt(r.addBack)} บาท ตาม 65 ตรี (6 ทวิ)`],syn:[`${fmt(r.citDeduct)} + ภาษีขายที่รับภาระ ${fmt(r.outVat)}`,`5% = ${fmt(r.wht)}`,`ภาษีขาย ${fmt(r.outVat)} หักภาษีซื้อ ${fmt(r.inVat)}`,`หักได้ ${fmt(r.citDeduct)} บวกกลับ ${fmt(r.addBack)}`]}}
+  const r=gift(p);return {l:[`ค่ารับรอง ${fmt(r.total)} บาท (กระเช้ารวมภาษีซื้อต้องห้าม ${fmt(r.inVatBlocked)} บาท)`,'ไม่มีหน้าที่หัก ณ ที่จ่ายในกรณีนี้',
+    `ภาษีซื้อ ${fmt(r.inVatBlocked)} บาท เป็นภาษีซื้อต้องห้ามตามมาตรา 82/5 (4)`,
+    `ต่อคน ${fmt(r.per)} บาท ${r.perOk?'ไม่เกิน':'เกิน'} 2,000 บาท เพดานรวม ${fmt(r.cap)} บาท ${r.overCap>0||r.excessGift>0?`ต้องบวกกลับ ${fmt(r.excessGift+r.overCap)} บาท`:'หักได้ทั้งจำนวน'}`],
+    syn:[`ค่ารับรอง ${fmt(r.total)}`,'-',`ภาษีซื้อต้องห้าม ${fmt(r.inVatBlocked)}`,r.overCap>0||r.excessGift>0?`บวกกลับ ${fmt(r.excessGift+r.overCap)}`:`หักได้ภายในเพดาน ${fmt(r.cap)}`],warn:!r.perOk||r.overCap>0}}
+function render(){const c=cur(),a=analyze(c);const T=['ชั้นที่ 1 บัญชี','ชั้นที่ 2 ภาษีหัก ณ ที่จ่าย','ชั้นที่ 3 VAT','ชั้นที่ 4 ภาษีเงินได้นิติบุคคล'];
+  $('layers').innerHTML=a.l.map((t,i)=>layerBox(i+1,T[i],t,a.warn&&(i===2||i===3)?'stop':'pass')).join('');
+  const N={a:'ก. ส่วนลดตามเป้า',b:'ข. ของแถม',c:'ค. ชิงโชค',d:'ง. กระเช้าปีใหม่'};
+  $('syn').innerHTML=['a','b','c','d'].map(k=>`<tr><td>${N[k]}</td>${analyze(k).syn.map(s=>`<td>${s}</td>`).join('')}</tr>`).join('')}
+document.querySelectorAll('input[name=camp]').forEach(r=>r.addEventListener('change',inputs));inputs();
+
+/* ใบงาน 3 */
+const MIS=[['บันทึกส่วนลดตามเป้าเป็นส่วนลดทั่วไปและไม่หักภาษี','2','บริษัทรับผิดในภาษี 3,000 บาทที่ไม่ได้หัก'],
+ ['ออกใบลดหนี้แบบลดภาษีขายสำหรับส่วนลดตามเป้า','3','รับผิดในภาษี 7,000 บาทตามใบลดหนี้ (มาตรา 86/13) และเบี้ยปรับสองเท่า 14,000 บาท (มาตรา 89 (6))'],
+ ['บันทึกแก้วแถมเป็นค่ารับรอง','3,4','เสียสิทธิภาษีซื้อ 14,000 บาท และใช้เพดานค่ารับรองไป 214,000 บาท'],
+ ['บันทึกกระเช้าเป็นค่าส่งเสริมการขายแล้วนำภาษีซื้อมาหัก','3','ภาษีซื้อต้องห้าม 6,300 บาทถูกเรียกคืนพร้อมเบี้ยปรับและเงินเพิ่ม'],
+ ['ไม่เสียภาษีขายจากรางวัลชิงโชค','3','ภาษีขายขาด 5,600 บาท']];
+const LOPT=[['','เลือก'],['2','ชั้นที่ 2'],['3','ชั้นที่ 3'],['4','ชั้นที่ 4'],['3,4','ชั้นที่ 3 และ 4']];
+$('mis').innerHTML=MIS.map((m,i)=>`<tr><td>${m[0]}</td><td><select id="ms${i}" aria-label="ชั้นที่กระทบ">${LOPT.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select></td><td id="mr${i}"></td></tr>`).join('');
+$('mis_check').addEventListener('click',()=>{let ok=0;MIS.forEach((m,i)=>{const g=$('ms'+i).value===m[1];if(g)ok++;$('mr'+i).innerHTML=`<span class="mark ${g?'ok':'no'}">${g?'ถูก':'ชั้น '+m[1].replace(',',' และ ')}</span> ${m[2]}`});$('mis_score').textContent=`ถูก ${ok} จาก ${MIS.length} ข้อ`});
+
+/* แบบทดสอบ */
+const QS=[
+ {lo:'LO1',s:'เหตุใดต้องวิเคราะห์ธุรกรรมเริ่มจากชั้นบัญชี',o:['ข้อเท็จจริงและเอกสารในชั้นบัญชีกำหนดผลของทุกชั้นถัดไป','ชั้นบัญชีมีอัตราภาษีสูงสุด','กรมสรรพากรตรวจชั้นบัญชีเท่านั้น','ภาษีเงินได้นิติบุคคลไม่เกี่ยวกับบัญชี'],a:0,e:'การจัดประเภทในชั้นที่ 1 มีผลเป็นตัวเงินในชั้นที่ 2 ถึง 4 (หัวข้อ 2.1 และ 2.2)'},
+ {lo:'LO2',s:'ส่วนลดตามเป้าที่ให้ร้านค้าส่งที่ซื้อไปขายต่อผ่านใบลดหนี้ ต้องหักภาษี ณ ที่จ่ายอัตราใด',o:['3% ณ วันออกใบลดหนี้','1% เสมอ','5% ณ วันจ่าย','ไม่ต้องหัก'],a:0,e:'คำสั่ง ป.118/2545 ข้อ 3 อัตราร้อยละ 1 ใช้ได้เฉพาะเมื่อจ่ายเป็นเงินผ่าน e-Withholding Tax'},
+ {lo:'LO2',s:'รางวัลชิงโชคที่ให้ผู้บริโภค ต้องหักภาษี ณ ที่จ่ายอัตราใด',o:['5% ของมูลค่ารางวัล','3% ของมูลค่ารางวัล','1% ของมูลค่ารางวัล','ไม่ต้องหัก'],a:0,e:'เงินได้ตามมาตรา 40 (8) หักร้อยละ 5 ตามคำสั่ง ท.ป.4/2528 ข้อ 9 (1)'},
+ {lo:'LO3',s:'ของแถมราคาตลาด 30 บาท แถมกับน้ำดื่มราคา 60 บาท ผลทาง VAT คือข้อใด',o:['ไม่ต้องนำมารวมเป็นฐานภาษี และภาษีซื้อใช้ได้','ต้องเสียภาษีขาย 2.10 บาทต่อชิ้น','ภาษีซื้อเป็นภาษีซื้อต้องห้าม','ต้องออกใบกำกับภาษีให้ผู้บริโภค'],a:0,e:'ประกาศอธิบดีกรมสรรพากรเกี่ยวกับภาษีมูลค่าเพิ่ม (ฉบับที่ 40) ข้อ 2 (1) และ กค 0702/พ./781'},
+ {lo:'LO3',s:'ส่วนลดที่ให้ภายหลังการขายเมื่อซื้อครบเป้า ผู้ขายลดภาษีขายได้หรือไม่',o:['ไม่ได้ เพราะไม่ใช่เหตุตามมาตรา 82/10','ได้ทั้งจำนวน','ได้ครึ่งหนึ่ง','ได้เมื่อผู้ซื้อยินยอม'],a:0,e:'กค 0811/พ.7827 และคำพิพากษาศาลฎีกาที่ 7169/2543 (หัวข้อ 2.4.1)'},
+ {lo:'LO4',s:'กรณีเปิดบท รายได้ 200 ล้านบาท ทุนชำระแล้ว 20 ล้านบาท เพดานค่ารับรองเท่าใด',o:['600,000 บาท','60,000 บาท','10,000,000 บาท','4,000,000 บาท'],a:0,e:'0.3% × 200,000,000 = 600,000 บาท ใช้ฐานรายได้เพราะสูงกว่าฐานทุน (ตัวอย่าง 2.1)'},
+ {lo:'LO4',s:'ค่าซื้อแพ็กเกจทัวร์เป็นรางวัลชิงโชคเพื่อส่งเสริมการขาย ในชั้นที่ 4 เป็นอย่างไร',o:['หักได้ ไม่ต้องห้ามตาม 65 ตรี (13) แต่ภาษีขายที่รับภาระเองต้องบวกกลับ','เป็นค่ารับรองที่มีเพดาน','ต้องห้ามทั้งจำนวน','หักได้เฉพาะเมื่อผู้รับเป็นนิติบุคคล'],a:0,e:'กค 0702/4122 และ 65 ตรี (6 ทวิ) (หัวข้อ 2.5.1 และ 2.5.3)'},
+ {lo:'LO5',s:'เหตุใดยอดขายใน ภ.พ.30 ของกรณีเปิดบทสูงกว่ายอดในบัญชี 100,000 บาท',o:['ส่วนลดตามเป้าลดรายได้ในบัญชีแต่ลดฐานภาษีขายไม่ได้','บริษัทบันทึกรายได้ผิด','ของแถมต้องเสียภาษีขาย','รางวัลชิงโชคเป็นรายได้'],a:0,e:'ตาราง 2.1 กระดาษทำการกระทบยอดข้ามชั้น'}];
+function quiz(){
+  $('qbox').innerHTML=QS.map((q,i)=>{const ord=q.o.map((_,j)=>j).sort(()=>Math.random()-0.5);return `<div class="q"><span class="lo">ข้อ ${i+1} · ${q.lo}</span><div class="stem">${q.s}</div>${ord.map(j=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"> ${q.o[j]}</label>`).join('')}<div class="fb" id="fb${i}"></div></div>`}).join('');
+  QS.forEach((q,i)=>document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.addEventListener('change',()=>{const ok=+r.value===q.a;const f=$('fb'+i);f.className='fb show '+(ok?'ok':'no');f.textContent=(ok?'ถูกต้อง ':'ยังไม่ถูก ')+q.e;score()})));
+  score();
+}
+function score(){let a=0,c=0;QS.forEach((q,i)=>{const s=document.querySelector(`input[name=q${i}]:checked`);if(s){a++;if(+s.value===q.a)c++}});$('qscore').textContent=`ตอบแล้ว ${a} ข้อ ถูก ${c} ข้อ`}
+$('qreset').addEventListener('click',quiz);quiz();
+</script>
+</body>
+</html>

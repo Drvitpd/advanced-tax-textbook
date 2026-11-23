@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แอปบทที่ 5 รายได้ทางภาษีและราคาตลาด</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#15233a; --muted:#5a6678; --line:#d5dbe3;
+  --accent:#0d6466; --accent-soft:#e1efef; --gate:#a86a12; --gate-soft:#f7ecd9;
+  --ok:#2f7d32; --stop:#b3261e; --stop-soft:#f8e3e1;
+  --display:"Noto Serif Thai",Georgia,serif; --body:"Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1620; --paper:#17212d; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2c3a4a;
+  --accent:#4fb8b4; --accent-soft:#163334; --gate:#e2a54a; --gate-soft:#3a2c14;
+  --ok:#74c27a; --stop:#f08a80; --stop-soft:#3c1d1b; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.brand img{height:40px;width:auto;display:block}
+.brand .org{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#15233a;border-left:2px solid #d5dbe3;padding-left:12px;line-height:1.2}
+header h1{font-family:var(--display);font-size:1.7rem;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+header p{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--gate);padding:4px 10px;background:var(--gate-soft);border-radius:0 6px 6px 0}
+section.lab{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.lab h2{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
+.lab-tag{font-size:.8rem;color:var(--accent);font-weight:700}
+.lab > p{margin:4px 0 14px;color:var(--muted);max-width:72ch}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+legend{font-weight:700;font-size:.92rem;padding:0 4px}
+label.opt{display:flex;gap:8px;align-items:flex-start;padding:2px 0;cursor:pointer;font-size:.95rem}
+.gate{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.gate .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--muted)}
+.gate.pass{border-color:var(--ok)} .gate.pass .dot{background:var(--ok)}
+.gate.stop{border-color:var(--stop);background:var(--stop-soft)} .gate.stop .dot{background:var(--stop)}
+.gate.skip{opacity:.45}
+.gate b{display:block} .gate small{color:var(--muted)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.num{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num label{display:block;font-size:.85rem;color:var(--muted)}
+.num input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.82rem;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.mark{font-weight:700;white-space:nowrap}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--stop)}
+button{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gate);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+textarea{width:100%;min-height:220px;font:inherit;font-size:.9rem;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.q .stem{font-weight:500;margin-bottom:6px}
+.q .lo{font-size:.78rem;color:var(--gate);font-weight:700}
+.q .fb{margin-top:6px;font-size:.92rem;padding:6px 10px;border-radius:6px;display:none}
+.q .fb.show{display:block}
+.q .fb.ok{background:var(--accent-soft)} .q .fb.no{background:var(--stop-soft)}
+.score{font-weight:700}
+footer{font-size:.85rem;color:var(--muted)}
+footer ul{padding-left:20px}
+input.amt{width:130px;text-align:right;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.chips button{font-size:.85rem;padding:5px 10px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:12px}
+.kpi div{background:var(--accent-soft);border-radius:8px;padding:10px 12px}
+.kpi b{display:block;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.kpi small{color:var(--muted)}
+.num{align-content:start}
+.num label.opt{display:flex;color:var(--ink);font-size:.92rem}
+td.n{white-space:nowrap}
+input.amt{width:130px;text-align:right;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+input.txt{width:100%;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink)}
+</style><style>.atx-nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.9rem;margin:0 0 4px}.atx-nav a{color:var(--accent,#0d6466);font-weight:700;text-decoration:none}.atx-nav a:hover{text-decoration:underline}main>*{min-width:0}.tbl,table{max-width:100%}</style>
+<script src="gate.js"></script>
+</head>
+<body>
+<main>
+<nav class="atx-nav" aria-label="นำทาง"><a href="./">สารบัญแอปประจำเล่ม</a> · <a href="ch04.html">บทที่ 4</a> · <a href="ch06.html">บทที่ 6</a></nav>
+<header>
+  <div class="brand"><img src="brand/logo.png" alt="Dr VIT" data-atx-logo><span class="org">Siam edu.</span></div>
+  <h1>แอปบทที่ 5 รายได้ทางภาษี: การรับรู้และราคาตลาด</h1>
+  <p>แอปนี้ใช้คู่กับบทที่ 5 ของตำราภาษีชั้นสูง ผู้เรียนตอบคำถาม "เมื่อใด" ด้วยการเฉลี่ยค่าเช่ารับล่วงหน้าตามข้อ 3.4 ของคำสั่ง ท.ป.1/2528 และตอบคำถาม "เท่าใด" ด้วยดอกเบี้ยตามราคาตลาด การแปลงค่าเงินตราต่างประเทศ และเงินปันผลที่ได้รับยกเว้น แล้วรวมผลเป็นตารางปรับกำไรสุทธิทางบัญชี</p>
+  <p class="note">ตัวเลขตั้งต้นมาจากกรณีบริษัท ชลพฤกษ์ แลนด์ จำกัด (ชื่อสมมติ) ในบท อัตราแลกเปลี่ยนเป็นตัวเลขสมมติ แอปใช้เพื่อการเรียนรู้ ไม่ใช่คำปรึกษาภาษีสำหรับกรณีจริง และห้ามนำข้อมูลลูกค้าจริงใส่แอปหรือเครื่องมือปัญญาประดิษฐ์</p>
+</header>
+
+<section class="lab" id="w1">
+  <span class="lab-tag">ใบงาน 1 · LO1 LO2</span>
+  <h2>ค่าเช่ารับล่วงหน้าตามส่วนแห่งระยะเวลา</h2>
+  <p>รอบบัญชีปีปฏิทิน ค่าตั้งต้นตรงกับรายการ ก ของกรณีนำบท (ตัวอย่าง 5.9.1) แถวสุดท้ายแสดงผลถ้าอ้างแนวหนังสือตอบข้อหารือปี 2550 ซึ่งออกก่อนการแก้ไขข้อ 3.4 โดยคำสั่ง ท.ป.299/2561</p>
+  <div class="chips"><button class="ghost" id="r_case">กรณีนำบท ก</button><button class="ghost" id="r_ex">แบบฝึกหัดระดับ 2 ข้อ 1</button></div>
+  <div class="cols">
+    <div class="num">
+      <div><label for="r_up">ค่าตอบแทนการเช่ารับล่วงหน้า</label><input id="r_up" type="number" value="30000000" step="1000000"></div>
+      <div><label for="r_y">อายุสัญญา (ปี)</label><input id="r_y" type="number" value="30" min="1"></div>
+      <div><label for="r_m">เดือนที่เริ่มเช่า (1–12)</label><input id="r_m" type="number" value="7" min="1" max="12"></div>
+      <div><label for="r_a">ค่าเช่าต่อปี</label><input id="r_a" type="number" value="1200000" step="100000"></div>
+    </div>
+    <div class="tbl"><table><tbody id="rent"></tbody></table></div>
+  </div>
+</section>
+
+<section class="lab" id="w2">
+  <span class="lab-tag">ใบงาน 2 · LO3 LO5</span>
+  <h2>ดอกเบี้ยตามราคาตลาดตามมาตรา 65 ทวิ (4)</h2>
+  <p>ตรวจองค์ประกอบสามข้อก่อน แล้วจึงคำนวณ ค่าตั้งต้นตรงกับรายการ ข (ตัวอย่าง 5.9.2) อัตราตลาดใช้อัตราที่ผู้ให้กู้เสียจริงตามแนวคำพิพากษาศาลฎีกาที่ 5399/2538</p>
+  <div class="chips"><button class="ghost" id="m_case">กรณีนำบท ข</button><button class="ghost" id="m_ex">แบบฝึกหัดระดับ 2 ข้อ 2</button></div>
+  <div class="cols">
+    <div>
+      <fieldset><legend>องค์ประกอบ</legend>
+        <label class="opt"><input type="checkbox" id="e1" checked> 1. มีการโอนทรัพย์สิน ให้บริการ หรือให้กู้ยืมเงิน</label>
+        <label class="opt"><input type="checkbox" id="e2" checked disabled> 2. ไม่มีค่าตอบแทน หรือต่ำกว่าราคาตลาด (แอปตรวจจากอัตรา)</label>
+        <label class="opt"><input type="checkbox" id="e3"> 3. ติ๊กถ้าผู้เสียภาษีมีเหตุอันสมควรพร้อมเอกสาร ณ วันทำธุรกรรม (องค์ประกอบข้อ 3 คือ "ไม่มีเหตุอันสมควร" จะไม่ครบ)</label>
+      </fieldset>
+      <div class="num">
+        <div><label for="m_p">เงินต้น</label><input id="m_p" type="number" value="50000000" step="1000000"></div>
+        <div><label for="m_n">จำนวนเดือนในรอบ</label><input id="m_n" type="number" value="12" min="0" max="12"></div>
+        <div><label for="m_mk">อัตราตลาด (ร้อยละต่อปี)</label><input id="m_mk" type="number" value="5" step="0.25"></div>
+        <div><label for="m_c">อัตราที่คิดจริง (ร้อยละต่อปี)</label><input id="m_c" type="number" value="0" step="0.25"></div>
+      </div>
+    </div>
+    <div><div class="tbl"><table><tbody id="mkt"></tbody></table></div><div class="verdict" id="mktv"></div></div>
+  </div>
+</section>
+
+<section class="lab" id="w3">
+  <span class="lab-tag">ใบงาน 3 · LO4</span>
+  <h2>เงินตราต่างประเทศ ณ วันสิ้นรอบตามมาตรา 65 ทวิ (5)</h2>
+  <p>วิธีที่ 2 ใช้อัตราถัวเฉลี่ยที่ธนาคารพาณิชย์รับซื้อสำหรับเงินตราและทรัพย์สิน และอัตราถัวเฉลี่ยที่ธนาคารพาณิชย์ขายสำหรับหนี้สิน ซึ่งธนาคารแห่งประเทศไทยคำนวณไว้</p>
+  <div class="chips"><button class="ghost" id="f_case">กรณีนำบท ค (ลูกหนี้)</button><button class="ghost" id="f_ex">แบบฝึกหัดระดับ 2 ข้อ 3 (เจ้าหนี้)</button></div>
+  <div class="cols">
+    <div class="num">
+      <div><label for="f_k">ประเภทรายการ</label><select id="f_k"><option value="asset">ทรัพย์สิน เช่น ลูกหนี้ (อัตรารับซื้อ)</option><option value="liab">หนี้สิน เช่น เจ้าหนี้ (อัตราขาย)</option></select></div>
+      <div><label for="f_fc">จำนวนเงินตราต่างประเทศ</label><input id="f_fc" type="number" value="100000" step="1000"></div>
+      <div><label for="f_b">อัตราที่บันทึกไว้ (บาท)</label><input id="f_b" type="number" value="34.00" step="0.01"></div>
+      <div><label for="f_y">อัตรา ณ วันสิ้นรอบ (บาท)</label><input id="f_y" type="number" value="33.20" step="0.01"></div>
+    </div>
+    <div class="tbl"><table><tbody id="fxt"></tbody></table></div>
+  </div>
+</section>
+
+<section class="lab" id="w4">
+  <span class="lab-tag">ใบงาน 4 · LO4</span>
+  <h2>เงินปันผลที่ได้รับและตารางปรับกำไรสุทธิ</h2>
+  <p>ค่าตั้งต้นตรงกับรายการ ง ผู้รับเป็นบริษัทจำกัดที่ไม่ได้จดทะเบียน แก้เงื่อนไขในแต่ละแถวได้ ตารางปรับกำไรสุทธิด้านล่างรวมดอกเบี้ยจากใบงาน 2 และเงินปันผลส่วนที่ได้รับยกเว้น ตามตัวอย่าง 5.9.3</p>
+  <label class="opt"><input type="checkbox" id="d_listed"> ผู้รับเป็นบริษัทจดทะเบียนในตลาดหลักทรัพย์</label>
+  <div class="tbl"><table><thead><tr><th>ผู้จ่าย</th><th class="n">จำนวน</th><th class="n">ถือหุ้น %</th><th>ถือหุ้นกลับ</th><th>ถือก่อน 3 เดือน</th><th>ถือต่อ 3 เดือน</th><th>ถือ 6 เดือน</th><th class="n">ภาษีต่างประเทศ %</th><th class="n">รวมเป็นรายได้</th></tr></thead><tbody id="div"></tbody></table></div>
+  <div id="divr" style="font-size:.88rem;color:var(--muted);margin-top:6px"></div>
+  <div class="row"><button class="ghost" id="d_add">เพิ่มแถว</button><button class="ghost" id="d_case">กลับค่ากรณีนำบท ง</button></div>
+  <h3 style="font-family:var(--display);font-size:1.05rem;margin:18px 0 6px">ตารางปรับกำไรสุทธิทางบัญชีเป็นกำไรสุทธิทางภาษีอากร</h3>
+  <div class="tbl"><table><thead><tr><th>รายการปรับปรุง</th><th class="n">บวก (หัก) บาท</th><th>ประเภทผลแตกต่าง</th><th>เหตุผล</th></tr></thead><tbody id="rec"></tbody></table></div>
+  <p class="note" style="margin-top:10px">ตารางนี้สมมติว่างบการเงินตามมาตรฐานการรายงานทางการเงินสำหรับกิจการที่ไม่มีส่วนได้เสียสาธารณะ (Thai Financial Reporting Standard for Non-Publicly Accountable Entities: TFRS for NPAEs) รับรู้ค่าเช่าและแปลงค่าเงินตราต่างประเทศตรงกับภาษี จึงไม่มีบรรทัดของใบงาน 1 และ 3 ถ้าบัญชีใช้วิธีอื่น ต้องเพิ่มบรรทัดผลแตกต่างชั่วคราว (ดูบทที่ 3)</p>
+</section>
+
+<section class="lab" id="quiz">
+  <span class="lab-tag">แบบทดสอบท้ายบท · LO1–LO5</span>
+  <h2>แบบทดสอบ 8 ข้อ</h2>
+  <p>เลือกคำตอบแล้วอ่านคำอธิบายทันที</p>
+  <div id="qs"></div>
+  <p class="score" id="score"></p>
+</section>
+
+<footer>
+  <b>ที่มาของตัวเลขตั้งต้น</b>
+  <ul>
+    <li>ใบงาน 1: ตัวอย่าง 5.9.1 รายได้ค่าเช่าทางภาษี 1,100,000 บาท ยกไป 29,500,000 บาท และแนวคำตอบแบบฝึกหัดระดับ 2 ข้อ 1 เท่ากับ 900,000 บาท</li>
+    <li>ใบงาน 2: ตัวอย่าง 5.9.2 ดอกเบี้ยตามราคาตลาด 2,500,000 บาท และแนวคำตอบข้อ 2 เท่ากับ 1,000,000 บาท</li>
+    <li>ใบงาน 3: ผลขาดทุน 80,000 บาท (รายการ ค) และหนี้สินเพิ่ม 20,000 บาท (แนวคำตอบข้อ 3)</li>
+    <li>ใบงาน 4: หัวข้อ 5.7 และตาราง 5.9.3 ผลสุทธิ (1,500,000) บาท ผลต่อภาษี (300,000) บาท</li>
+  </ul>
+  <b>เรื่องที่ยังรอผู้เขียน</b>
+  <ul>
+    <li>ใบงาน 2 ไม่ได้จำแนกประเภทของเหตุอันสมควร ผู้เรียนต้องให้เหตุผลเองตามหัวข้อ 5.5.2 และ 5.10</li>
+    <li>ประเด็นค้างของบท: คำพิพากษาศาลฎีกาที่ 495/2534 หนังสือตอบข้อหารือ กค 0702/8739 และกฎกระทรวงฉบับที่ 370</li>
+  </ul>
+  <p>Dr VIT · Siam edu. แอปประกอบตำราภาษีชั้นสูง</p>
+</footer>
+</main>
+<script>
+// แอปบทที่ 5 ตรรกะบริสุทธิ์
+function rent({upfront,years,startMonth,annual}){
+  // startMonth 1-12 ในรอบปีปฏิทิน; เดือนที่เช่าในรอบแรก
+  const m=13-startMonth;
+  const up=upfront/years*m/12, rt=annual*m/12;
+  return {months:m,up,rt,total:up+rt,deferred:upfront-up,old:upfront+rt};
+}
+function marketInterest({principal,market,charged,months=12,elements=true,reason=false}){
+  const gap=Math.max(0,market-charged);
+  const amt=principal*gap/100*months/12;
+  const assess=elements&&!reason&&gap>0;
+  return {gap,amt,assess,add:assess?amt:0};
+}
+function fx({kind,fc,booked,yearEnd}){
+  // kind 'asset' หรือ 'liab'
+  const diff=Math.round(fc*(yearEnd-booked)*100)/100;
+  const pl=kind==='asset'?diff:-diff; // บวก = กำไร
+  return {booked:fc*booked,yearEnd:fc*yearEnd,pl};
+}
+function dividend({amt,payer,listedRecipient,pct,crossHold,before3,after3,months6,foreignRate}){
+  if(payer==='foreign'){
+    const ok=pct>=25&&months6&&foreignRate>=15;
+    return {include:ok?0:amt,exempt:ok?amt:0,rule:ok?'ยกเว้นตามมาตรา 5 วีสติ แห่ง พ.ร.ฎ. (ฉบับที่ 10) ครบสามเงื่อนไข':'ไม่ครบเงื่อนไขมาตรา 5 วีสติ รวมเป็นรายได้ทั้งจำนวน แล้วพิจารณาเครดิตภาษีต่างประเทศ (บทที่ 15)'};
+  }
+  if(!before3||!after3) return {include:amt,exempt:0,rule:'ได้หุ้นมาน้อยกว่าสามเดือนก่อนวันมีเงินได้ หรือโอนหุ้นภายในสามเดือนหลังวันมีเงินได้ ไม่ได้รับยกเว้น'};
+  if(listedRecipient) return {include:0,exempt:amt,rule:'ผู้รับเป็นบริษัทจดทะเบียน ไม่ต้องรวม (มาตรา 65 ทวิ (10))'};
+  if(pct>=25&&!crossHold) return {include:0,exempt:amt,rule:'ถือหุ้นไม่น้อยกว่าร้อยละ 25 และผู้จ่ายไม่ได้ถือหุ้นกลับ ไม่ต้องรวม (มาตรา 65 ทวิ (10) (ข))'};
+  return {include:amt/2,exempt:amt/2,rule:'บริษัทอื่น รวมกึ่งหนึ่ง (มาตรา 65 ทวิ (10))'};
+}
+if(typeof module!=='undefined') module.exports={rent,marketInterest,fx,dividend};
+const $=s=>document.querySelector(s);
+const fmt=n=>{const v=Math.round(n*100)/100;const s=Math.abs(v).toLocaleString('th-TH',{maximumFractionDigits:2});return v<0?'('+s+')':s;};
+const num=id=>+$(id).value||0;
+const setV=(o)=>{for(const k in o){const e=$(k);if(e.type==='checkbox')e.checked=o[k];else e.value=o[k];}};
+const rows=(id,arr)=>{$(id).innerHTML=arr.map(x=>`<tr${x[2]?' class="total"':''}><td>${x[0]}</td><td class="n">${x[1]}</td></tr>`).join('');};
+
+/* ใบงาน 1 */
+function run1(){
+  const r=rent({upfront:num('#r_up'),years:Math.max(1,num('#r_y')),startMonth:Math.min(12,Math.max(1,num('#r_m'))),annual:num('#r_a')});
+  rows('#rent',[
+    [`จำนวนเดือนที่เช่าในรอบแรก`,r.months+' เดือน'],
+    [`ค่าตอบแทนรับล่วงหน้าส่วนของรอบ (ค่าตอบแทน ÷ อายุสัญญา × ${r.months}/12)`,fmt(r.up)],
+    [`ค่าเช่าส่วนของรอบ (ค่าเช่าต่อปี × ${r.months}/12)`,fmt(r.rt)],
+    ['รวมรายได้ค่าเช่าทางภาษีของรอบแรก',fmt(r.total),1],
+    ['ค่าตอบแทนที่ยังไม่ถึงรอบรับรู้ ยกไปรอบถัดไป',fmt(r.deferred)],
+    ['เทียบ: รับรู้ค่าตอบแทนทั้งจำนวนในปีแรกตามแนวปี 2550 (ล้าสมัยสำหรับรอบตั้งแต่ 2561)',fmt(r.old)]
+  ]);
+}
+$('#r_case').onclick=()=>{setV({'#r_up':30000000,'#r_y':30,'#r_m':7,'#r_a':1200000});run1();};
+$('#r_ex').onclick=()=>{setV({'#r_up':12000000,'#r_y':10,'#r_m':4,'#r_a':0});run1();};
+
+/* ใบงาน 2 */
+function run2(){
+  const r=marketInterest({principal:num('#m_p'),market:num('#m_mk'),charged:num('#m_c'),months:num('#m_n'),elements:$('#e1').checked,reason:$('#e3').checked});
+  $('#e2').checked=r.gap>0;
+  rows('#mkt',[
+    ['ส่วนต่างอัตรา (ร้อยละต่อปี)',fmt(r.gap)],
+    ['ดอกเบี้ยตามราคาตลาดส่วนที่ขาด (เงินต้น × ส่วนต่าง × เดือน/12)',fmt(r.amt)],
+    ['รายได้ที่อาจถูกประเมินเพิ่ม',fmt(r.add),1]
+  ]);
+  let v;
+  if(!$('#e1').checked) v='ไม่ครบองค์ประกอบข้อ 1 มาตรา 65 ทวิ (4) ไม่ใช้กับธุรกรรมนี้';
+  else if(r.gap<=0) v='คิดอัตราไม่ต่ำกว่าราคาตลาด ไม่ครบองค์ประกอบข้อ 2';
+  else if($('#e3').checked) v='ผู้เสียภาษีอ้างเหตุอันสมควร ผู้เขียนเห็นว่าภาระพิสูจน์แบ่งเป็นสองจังหวะ เจ้าพนักงานประเมินต้องแสดงราคาเปรียบเทียบที่น่าเชื่อถือก่อน (คำพิพากษาศาลฎีกาที่ 1680/2547) แล้วผู้เสียภาษีต้องหักล้างด้วยเอกสารที่เตรียมไว้ตั้งแต่วันทำธุรกรรม (คำพิพากษาศาลฎีกาที่ 6693/2540) ตามหัวข้อ 5.5.2';
+  else v='ครบสามองค์ประกอบ เจ้าพนักงานประเมินประเมินดอกเบี้ยตามราคาตลาดได้ บวกกลับเป็นผลแตกต่างถาวร ถ้าให้กู้เป็นทางค้าปกติ ต้องตรวจภาษีธุรกิจเฉพาะตามมาตรา 91/2 (5) ด้วย';
+  $('#mktv').textContent=v; run4();
+}
+$('#m_case').onclick=()=>{setV({'#m_p':50000000,'#m_mk':5,'#m_c':0,'#m_n':12,'#e1':true,'#e3':false});run2();};
+$('#m_ex').onclick=()=>{setV({'#m_p':20000000,'#m_mk':6,'#m_c':1,'#m_n':12,'#e1':true,'#e3':false});run2();};
+
+/* ใบงาน 3 */
+function run3(){
+  const k=$('#f_k').value,r=fx({kind:k,fc:num('#f_fc'),booked:num('#f_b'),yearEnd:num('#f_y')});
+  rows('#fxt',[
+    ['มูลค่าตามอัตราที่บันทึกไว้',fmt(r.booked)],
+    [`มูลค่า ณ วันสิ้นรอบ (อัตรา${k==='asset'?'รับซื้อ':'ขาย'}ถัวเฉลี่ย)`,fmt(r.yearEnd)],
+    [r.pl>=0?'กำไรจากอัตราแลกเปลี่ยน (รายได้ของรอบ)':'ผลขาดทุนจากอัตราแลกเปลี่ยน (รายจ่ายของรอบ)',fmt(r.pl),1],
+    ['ต้องปรับกำไรสุทธิหรือไม่','ไม่ต้อง ถ้าบัญชีใช้อัตราเดียวกัน']
+  ]);
+}
+$('#f_case').onclick=()=>{setV({'#f_k':'asset','#f_fc':100000,'#f_b':34,'#f_y':33.2});run3();};
+$('#f_ex').onclick=()=>{setV({'#f_k':'liab','#f_fc':50000,'#f_b':35,'#f_y':35.4});run3();};
+
+/* ใบงาน 4 */
+const CASE_D=[
+  {payer:'thai',name:'บริษัทจำกัดไทย',amt:2000000,pct:10,crossHold:false,before3:true,after3:true,months6:true,foreignRate:0},
+  {payer:'thai',name:'บริษัทลูก',amt:3000000,pct:40,crossHold:false,before3:true,after3:true,months6:true,foreignRate:0}
+];
+let D=JSON.parse(JSON.stringify(CASE_D));
+const yn=(i,k,v)=>`<input type="checkbox" data-i="${i}" data-k="${k}" ${v?'checked':''} aria-label="${k}">`;
+function run4(){
+  const listed=$('#d_listed').checked;
+  const res=D.map(d=>dividend({...d,listedRecipient:listed}));
+  $('#div').innerHTML=D.map((d,i)=>`<tr><td><select data-i="${i}" data-k="payer"><option value="thai" ${d.payer==='thai'?'selected':''}>บริษัทไทย</option><option value="foreign" ${d.payer==='foreign'?'selected':''}>บริษัทต่างประเทศ</option></select></td><td class="n"><input class="amt" type="number" data-i="${i}" data-k="amt" value="${d.amt}" step="100000"></td><td class="n"><input class="amt" style="width:70px" type="number" data-i="${i}" data-k="pct" value="${d.pct}"></td><td>${yn(i,'crossHold',d.crossHold)}</td><td>${yn(i,'before3',d.before3)}</td><td>${yn(i,'after3',d.after3)}</td><td>${yn(i,'months6',d.months6)}</td><td class="n"><input class="amt" style="width:70px" type="number" data-i="${i}" data-k="foreignRate" value="${d.foreignRate}"></td><td class="n"><b>${fmt(res[i].include)}</b></td></tr>`).join('');
+  $('#divr').innerHTML=res.map((r,i)=>`แถว ${i+1}: ${r.rule}`).join('<br>');
+  $('#div').querySelectorAll('input,select').forEach(e=>e.onchange=()=>{const d=D[e.dataset.i],k=e.dataset.k;d[k]=e.type==='checkbox'?e.checked:(e.tagName==='SELECT'?e.value:+e.value||0);run4();});
+  const mi=marketInterest({principal:num('#m_p'),market:num('#m_mk'),charged:num('#m_c'),months:num('#m_n'),elements:$('#e1').checked,reason:$('#e3').checked}).add;
+  const lines=[];
+  if(mi) lines.push(['ดอกเบี้ยตามราคาตลาดที่ไม่มีในบัญชี (ใบงาน 2)',mi,'ผลแตกต่างถาวร','มาตรา 65 ทวิ (4)']);
+  res.forEach((r,i)=>{if(r.exempt) lines.push([`เงินปันผลแถว ${i+1} ส่วนที่ได้รับยกเว้น`,-r.exempt,'ผลแตกต่างถาวร',D[i].payer==='thai'?'มาตรา 65 ทวิ (10)':'มาตรา 5 วีสติ พ.ร.ฎ. (ฉบับที่ 10)']);});
+  const net=lines.reduce((s,x)=>s+x[1],0);
+  $('#rec').innerHTML=lines.map(x=>`<tr><td>${x[0]}</td><td class="n">${fmt(x[1])}</td><td>${x[2]}</td><td>${x[3]}</td></tr>`).join('')+
+   `<tr class="total"><td>ผลสุทธิต่อกำไรสุทธิ</td><td class="n">${fmt(net)}</td><td></td><td></td></tr><tr class="total"><td>ผลต่อภาษีเงินได้นิติบุคคลที่อัตราร้อยละ 20</td><td class="n">${fmt(net*0.2)}</td><td></td><td></td></tr>`;
+}
+$('#d_listed').onchange=run4;
+$('#d_add').onclick=()=>{D.push({payer:'foreign',amt:1000000,pct:30,crossHold:false,before3:true,after3:true,months6:true,foreignRate:10});run4();};
+$('#d_case').onclick=()=>{D=JSON.parse(JSON.stringify(CASE_D));$('#d_listed').checked=false;run4();};
+
+['#r_up','#r_y','#r_m','#r_a'].forEach(s=>$(s).addEventListener('input',run1));
+['#m_p','#m_n','#m_mk','#m_c','#e1','#e3'].forEach(s=>$(s).addEventListener('input',run2));
+['#f_k','#f_fc','#f_b','#f_y'].forEach(s=>$(s).addEventListener('input',run3));
+
+/* แบบทดสอบ */
+const Q=[
+ {lo:'LO1',s:'มาตรา 65 วรรคสองกำหนดให้รับรู้รายได้ทางภาษีตามเกณฑ์ใด',o:['เกณฑ์สิทธิ รายได้ที่เกิดขึ้นในรอบใดเป็นรายได้ของรอบนั้น แม้ยังไม่ได้รับชำระ','เกณฑ์เงินสด รับเงินเมื่อใดเป็นรายได้เมื่อนั้น','ตามวันที่ออกใบกำกับภาษี','ตามวันที่ผู้สอบบัญชีรับรองงบการเงิน'],a:0,e:'หัวข้อ 5.3 รายจ่ายที่เกี่ยวกับรายได้นั้นก็เป็นรายจ่ายของรอบเดียวกัน และการเปลี่ยนเกณฑ์หรือวิธีการทางบัญชีต้องขออนุมัติอธิบดีตามมาตรา 65 วรรคสาม'},
+ {lo:'LO2',s:'รับค่าตอบแทนการเช่าล่วงหน้า 12,000,000 บาท สัญญา 10 ปี เริ่ม 1 เมษายน 2569 รอบบัญชีปีปฏิทิน รายได้ทางภาษีปี 2569 เท่าใด',o:['900,000 บาท','1,200,000 บาท','12,000,000 บาท','300,000 บาท'],a:0,e:'12,000,000 ÷ 10 × 9/12 เท่ากับ 900,000 บาท ตามข้อ 3.4 ของคำสั่ง ท.ป.1/2528 ที่แก้ไขโดย ท.ป.299/2561'},
+ {lo:'LO2',s:'ผู้ปฏิบัติอ้างหนังสือตอบข้อหารือ กค 0706/6502 ปี 2550 เพื่อรับรู้ค่าเช่าล่วงหน้าทั้งจำนวนในปีแรกสำหรับรอบปี 2569 ข้อใดถูก',o:['ผู้เขียนเห็นว่าแนวนี้ล้าสมัย เพราะข้อ 3.4 ฉบับแก้ไขให้รับรู้ตามส่วนแห่งระยะเวลาสำหรับรอบตั้งแต่ปี 2561','ใช้ได้ เพราะหนังสือตอบข้อหารือไม่มีวันหมดอายุ','ใช้ได้เฉพาะสัญญาที่ไม่เกิน 3 ปี','ใช้ได้ถ้าผู้สอบบัญชีเห็นด้วย'],a:0,e:'หัวข้อ 5.4.1 แนวหลังการแก้ไขคือ กค 0702/537 (2566) และ กค 0702/1248 (2569) ให้เฉลี่ยรับรู้'},
+ {lo:'LO3',s:'บริษัทให้บริษัทในเครือกู้ 50,000,000 บาท ตลอดปีโดยไม่คิดดอกเบี้ย ตนเองกู้ธนาคารร้อยละ 5 ไม่มีเหตุอันสมควร ดอกเบี้ยตามราคาตลาดเท่าใด',o:['2,500,000 บาท','ไม่มี เพราะไม่ได้รับเงินจริง','1,250,000 บาท','5,000,000 บาท'],a:0,e:'50,000,000 × ร้อยละ 5 ใช้อัตราที่ผู้ให้กู้เสียจริงตามแนวคำพิพากษาศาลฎีกาที่ 5399/2538 (ตัวอย่าง 5.9.2)'},
+ {lo:'LO3',s:'ดอกเบี้ยตามราคาตลาดที่ไม่มีในบัญชีเป็นผลแตกต่างประเภทใด',o:['ผลแตกต่างถาวร บวกกลับในตารางปรับกำไรสุทธิ','ผลแตกต่างชั่วคราวที่กลับรายการปีหน้า','ไม่ต้องปรับ เพราะไม่มีในบัญชี','หักออกจากกำไรสุทธิทางบัญชี'],a:0,e:'ตาราง 5.9.3 และกล่องกับดัก บริษัทมักลืมบรรทัดนี้เพราะไม่มีตัวเลขในบัญชีเลย'},
+ {lo:'LO4',s:'ลูกหนี้ 100,000 ดอลลาร์สหรัฐ บันทึกที่ 34.00 บาท อัตรารับซื้อถัวเฉลี่ย ณ วันสิ้นรอบ 33.20 บาท ผลทางภาษีของรอบเป็นอย่างไร',o:['ผลขาดทุน 80,000 บาท เป็นรายจ่ายของรอบแม้ยังไม่ได้รับชำระ','ยังไม่รับรู้จนกว่าจะได้รับชำระ','กำไร 80,000 บาท','ผลขาดทุน 3,320,000 บาท'],a:0,e:'มาตรา 65 ทวิ (5) วิธีอัตรารับซื้อสำหรับทรัพย์สิน 100,000 × (34.00 − 33.20)'},
+ {lo:'LO4',s:'บริษัทจำกัดไทยที่ไม่ได้จดทะเบียนได้เงินปันผล 2,000,000 บาท จากบริษัทจำกัดไทยที่ถือหุ้นร้อยละ 10 มานานเกินสามเดือน ต้องรวมเป็นรายได้เท่าใด',o:['1,000,000 บาท (กึ่งหนึ่ง)','0 บาท','2,000,000 บาท','500,000 บาท'],a:0,e:'ถือหุ้นต่ำกว่าร้อยละ 25 และผู้รับไม่ได้จดทะเบียน จึงรวมกึ่งหนึ่งตามมาตรา 65 ทวิ (10)'},
+ {lo:'LO4 LO5',s:'เงินปันผลจากบริษัทลูกต่างประเทศที่ถือหุ้นร้อยละ 30 มาหนึ่งปี แต่เสียภาษีในประเทศนั้นร้อยละ 10 ผลเป็นอย่างไร',o:['รวมเป็นรายได้ทั้งจำนวน เพราะไม่ถึงเกณฑ์อัตราภาษีร้อยละ 15 แล้วพิจารณาเครดิตภาษีต่างประเทศ','ได้รับยกเว้น เพราะถือหุ้นเกินร้อยละ 25','รวมกึ่งหนึ่ง','ได้รับยกเว้น เพราะถือหุ้นเกินหกเดือน'],a:0,e:'มาตรา 5 วีสติ แห่ง พ.ร.ฎ. (ฉบับที่ 10) ต้องครบสามเงื่อนไข ผู้เสียภาษีต้องพิสูจน์อัตราที่เสียจริงเอง (หัวข้อ 5.7.2)'}
+];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let done=0,right=0;
+$('#qs').innerHTML=Q.map((q,i)=>{const ord=shuffle(q.o.map((t,k)=>k));return `<div class="q" data-i="${i}"><div class="lo">ข้อ ${i+1} · ${q.lo}</div><div class="stem">${q.s}</div>${ord.map(k=>`<label class="opt"><input type="radio" name="qq${i}" value="${k}"> ${q.o[k]}</label>`).join('')}<div class="fb"></div></div>`;}).join('');
+document.querySelectorAll('.q').forEach(d=>d.addEventListener('change',e=>{
+  const q=Q[d.dataset.i],ok=+e.target.value===q.a,fb=d.querySelector('.fb');
+  if(!d.dataset.done){d.dataset.done=1;done++;if(ok)right++;}
+  fb.className='fb show '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>ถูกต้อง</b> ':'<b>ยังไม่ใช่</b> ')+q.e;
+  $('#score').textContent=`ตอบแล้ว ${done} จาก ${Q.length} ข้อ ถูกในครั้งแรก ${right} ข้อ`;
+}));
+
+run1();run2();run3();run4();
+</script></body></html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แอปบทที่ 3 กระดาษทำการกระทบยอดสู่ ภ.ง.ด.50</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#15233a; --muted:#5a6678; --line:#d5dbe3;
+  --accent:#0d6466; --accent-soft:#e1efef; --gate:#a86a12; --gate-soft:#f7ecd9;
+  --ok:#2f7d32; --stop:#b3261e; --stop-soft:#f8e3e1;
+  --display:"Noto Serif Thai",Georgia,serif; --body:"Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1620; --paper:#17212d; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2c3a4a;
+  --accent:#4fb8b4; --accent-soft:#163334; --gate:#e2a54a; --gate-soft:#3a2c14;
+  --ok:#74c27a; --stop:#f08a80; --stop-soft:#3c1d1b; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.brand img{height:40px;width:auto;display:block}
+.brand .org{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#15233a;border-left:2px solid #d5dbe3;padding-left:12px;line-height:1.2}
+header h1{font-family:var(--display);font-size:1.7rem;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+header p{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--gate);padding:4px 10px;background:var(--gate-soft);border-radius:0 6px 6px 0}
+section.lab{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.lab h2{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
+.lab-tag{font-size:.8rem;color:var(--accent);font-weight:700}
+.lab > p{margin:4px 0 14px;color:var(--muted);max-width:72ch}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+legend{font-weight:700;font-size:.92rem;padding:0 4px}
+label.opt{display:flex;gap:8px;align-items:flex-start;padding:2px 0;cursor:pointer;font-size:.95rem}
+.gate{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.gate .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--muted)}
+.gate.pass{border-color:var(--ok)} .gate.pass .dot{background:var(--ok)}
+.gate.stop{border-color:var(--stop);background:var(--stop-soft)} .gate.stop .dot{background:var(--stop)}
+.gate.skip{opacity:.45}
+.gate b{display:block} .gate small{color:var(--muted)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.num{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num label{display:block;font-size:.85rem;color:var(--muted)}
+.num input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.82rem;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.mark{font-weight:700;white-space:nowrap}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--stop)}
+button{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gate);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+textarea{width:100%;min-height:220px;font:inherit;font-size:.9rem;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.q .stem{font-weight:500;margin-bottom:6px}
+.q .lo{font-size:.78rem;color:var(--gate);font-weight:700}
+.q .fb{margin-top:6px;font-size:.92rem;padding:6px 10px;border-radius:6px;display:none}
+.q .fb.show{display:block}
+.q .fb.ok{background:var(--accent-soft)} .q .fb.no{background:var(--stop-soft)}
+.score{font-weight:700}
+footer{font-size:.85rem;color:var(--muted)}
+footer ul{padding-left:20px}
+input.amt{width:130px;text-align:right;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+input.txt{width:100%;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink)}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:12px}
+.kpi div{background:var(--accent-soft);border-radius:8px;padding:10px 12px}
+.kpi b{display:block;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.kpi small{color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="brand"><img src="logo.png" alt="Dr VIT"><span class="org">Siam edu.</span></div>
+  <h1>แอปบทที่ 3 กระดาษทำการกระทบยอดกำไรสู่ ภ.ง.ด.50</h1>
+  <p>แอปนี้ใช้คู่กับบทที่ 3 ของตำราภาษีชั้นสูง ผู้เรียนจำแนกผลแตกต่างถาวรและชั่วคราว จัดทำกระดาษทำการปรับปรุงกำไรสุทธิทางบัญชีเป็นกำไรสุทธิทางภาษีอากร คำนวณภาษีเงินได้รอการตัดบัญชี และเทียบค่าใช้จ่ายภาษีระหว่าง TFRS กับ TFRS for NPAEs</p>
+  <p class="note">ตัวเลขตั้งต้นมาจากกรณีบริษัท ชลธารอุตสาหกรรม จำกัด (ชื่อสมมติ) ในบท ใช้เพื่อการเรียนรู้ ไม่ใช่คำปรึกษาภาษีสำหรับกรณีจริง แอปไม่แสดงเลขบรรทัดของแบบ ภ.ง.ด.50 เพราะกรมสรรพากรปรับผังแบบได้ทุกปี และห้ามนำข้อมูลลูกค้าจริงใส่แอปหรือเครื่องมือปัญญาประดิษฐ์</p>
+</header>
+
+<section class="lab" id="w1">
+  <span class="lab-tag">ใบงาน 1 · LO2</span>
+  <h2>จำแนกรายการ: ถาวรหรือชั่วคราว บวกหรือหัก</h2>
+  <p>รายการ ก ถึง ซ ของกรณีเปิดบท ใช้คำถามจากกล่องเชื่อมโยงบัญชี-ภาษีในหัวข้อ 3.4: ตลอดอายุของกิจการ รายการนี้หักเป็นรายจ่ายรวมเท่ากับที่บันทึกบัญชีหรือไม่</p>
+  <div class="tbl"><table><thead><tr><th>รายการ</th><th>ข้อเท็จจริง</th><th>บวก/หัก</th><th>ประเภท</th><th>ผล</th></tr></thead><tbody id="c_rows"></tbody></table></div>
+  <div class="row"><button id="c_check">ตรวจคำตอบ</button><span class="score" id="c_score"></span></div>
+</section>
+
+<section class="lab" id="w2">
+  <span class="lab-tag">ใบงาน 2 · LO3 LO4 LO5</span>
+  <h2>กระดาษทำการกระทบยอด ภาษีเงินได้รอการตัดบัญชี และอัตราภาษีที่แท้จริง</h2>
+  <p>แก้จำนวน ประเภท หรือเพิ่มรายการได้ เช่น นำยอดบวกกลับจากแอปบทที่ 7 มาใส่ แอปคำนวณกำไรสุทธิทางภาษีอากร ภาษีของงวดปัจจุบัน สินทรัพย์ภาษีเงินได้รอการตัดบัญชี (Deferred Tax Asset: DTA) และอัตราภาษีที่แท้จริง (Effective Tax Rate: ETR) ทันที</p>
+  <div class="row"><button class="ghost" id="p1">ปีแรก 2568 (กรณีเปิดบท)</button><button class="ghost" id="p2">ปีที่สอง 2569 (ตัวอย่างที่ 3.3)</button></div>
+  <div class="num" style="margin-top:12px">
+    <div><label for="w_book">กำไรก่อนภาษีตามงบการเงิน (บาท)</label><input id="w_book" type="number"></div>
+    <div><label for="w_open">ผลแตกต่างชั่วคราวสะสมต้นปี (บาท)</label><input id="w_open" type="number"></div>
+    <div><label for="w_rate">อัตราภาษีทั่วไป (ร้อยละ)</label><input id="w_rate" type="number" value="20"></div>
+  </div>
+  <div class="tbl" style="margin-top:12px"><table><thead><tr><th>รายการ</th><th class="n">จำนวน (บาท)</th><th>บวก/หัก</th><th>ประเภท</th><th></th></tr></thead><tbody id="w_rows"></tbody></table></div>
+  <div class="row"><button class="ghost" id="w_add">เพิ่มรายการ</button></div>
+  <div class="kpi" id="kpi" aria-live="polite"></div>
+  <div class="cols" style="margin-top:14px">
+    <div class="tbl"><table><thead><tr><th>ค่าใช้จ่ายภาษีเงินได้</th><th class="n">TFRS (TAS 12)</th><th class="n">TFRS for NPAEs</th></tr></thead><tbody id="cmp"></tbody></table></div>
+    <div class="tbl"><table><thead><tr><th>กระทบยอดอัตราภาษี (TAS 12)</th><th class="n">บาท</th></tr></thead><tbody id="rec"></tbody></table></div>
+  </div>
+</section>
+
+<section class="lab" id="w3">
+  <span class="lab-tag">ใบงาน 3 · LO2 LO4</span>
+  <h2>ตารางกลับรายการค่าเสื่อมราคา</h2>
+  <p>ค่าตั้งต้นคือตัวอย่างที่ 3.2 ยอดปรับรวมตลอดอายุเป็นศูนย์ซึ่งเป็นลักษณะของผลแตกต่างชั่วคราว ทางปฏิบัติต้องคงมูลค่าไว้ 1 บาทตามมาตรา 8 ของ พ.ร.ฎ. ฉบับที่ 145 ตารางนี้ปัดเพื่อความชัดเจนเช่นเดียวกับในบท</p>
+  <div class="num">
+    <div><label for="d_cost">ราคาทุน (บาท)</label><input id="d_cost" type="number" value="3000000"></div>
+    <div><label for="d_life">อายุตามบัญชี (ปี)</label><input id="d_life" type="number" value="3"></div>
+    <div><label for="d_rate">อัตราสูงสุดทางภาษี (ร้อยละต่อปี)</label><input id="d_rate" type="number" value="20"></div>
+  </div>
+  <div class="tbl" style="margin-top:12px"><table><thead><tr><th>ปี</th><th class="n">บัญชี</th><th class="n">ภาษี</th><th class="n">ปรับใน ภ.ง.ด.50</th><th class="n">ผลแตกต่างสะสม</th><th class="n">DTA สิ้นปี</th></tr></thead><tbody id="d_rows"></tbody></table></div>
+</section>
+
+<section class="lab" id="quiz">
+  <span class="lab-tag">แบบทดสอบท้ายบท</span>
+  <h2>ทดสอบ 8 ข้อ</h2>
+  <div id="qbox"></div>
+  <div class="row"><span class="score" id="qscore"></span><button class="ghost" id="qreset">เริ่มใหม่</button></div>
+</section>
+
+<footer>
+  <p><b>ที่มาของตัวเลขและหลักเกณฑ์</b></p>
+  <ul>
+    <li>กรณีเปิดบท ตาราง 3.4 กระดาษทำการ 3.6 และตัวอย่างที่ 3.2 ถึง 3.3 ของบทที่ 3 (ตัวเลขตรวจด้วยโปรแกรมแล้ว)</li>
+    <li>ประมวลรัษฎากร มาตรา 65 ทวิ (2) (9) (10) และ 65 ตรี (1) (4) (5) (6), พ.ร.ฎ. ฉบับที่ 145, หนังสือตอบข้อหารือ กค 0702/1978 และ กค 0702/570</li>
+    <li>TAS 12, TAS 19, TAS 23 และ TFRS for NPAEs ฉบับปรับปรุง 2565 ย่อหน้า 15.1 15.2 16.14</li>
+  </ul>
+  <p><b>เรื่องที่ยังรอผู้เขียน</b> เลขบรรทัดของแบบ ภ.ง.ด.50 ปีภาษีปัจจุบัน และหนังสือตอบข้อหารือ กค 0702/5922 ซึ่งยังค้างตรวจในบทที่ 3</p>
+  <p>Dr VIT · Siam edu. · ใช้ประกอบตำราภาษีชั้นสูง</p>
+</footer>
+</main>
+<script>
+function r2(x){return Math.round(x*100)/100}
+function reconcile(o){ // book, rows[{amt,sign(+1/-1),type:'T'|'P'}], openTemp, rate
+  let temp=0,perm=0;
+  o.rows.forEach(r=>{const v=r.sign*r.amt; if(r.type==='T')temp+=v; else perm+=v;});
+  const taxable=o.book+temp+perm, current=r2(taxable*o.rate);
+  const closeTemp=o.openTemp+temp, dtaOpen=r2(o.openTemp*o.rate), dtaClose=r2(closeTemp*o.rate);
+  const deferred=r2(-(dtaClose-dtaOpen)), tfrs=r2(current+deferred);
+  return {temp,perm,taxable,current,closeTemp,dtaOpen,dtaClose,deferred,tfrs,npaes:current,
+    etrT:o.book?r2(tfrs/o.book*100):0,etrN:o.book?r2(current/o.book*100):0,
+    recon:{base:r2(o.book*o.rate),permEffect:r2(perm*o.rate)}};
+}
+function depr(o){ // cost, life, ratePct
+  const book=o.cost/o.life, taxMax=o.cost*o.ratePct/100; const out=[]; let bAcc=0,tAcc=0,y=0;
+  while((bAcc<o.cost-0.005||tAcc<o.cost-0.005)&&y<60){y++;
+    const b=Math.min(book,o.cost-bAcc), t=Math.min(taxMax,o.cost-tAcc); bAcc+=b;tAcc+=t;
+    out.push({y,b:r2(b),t:r2(t),adj:r2(b-t),cum:r2(bAcc-tAcc)});}
+  return out;
+}
+
+
+const $=id=>document.getElementById(id);
+const fmt=x=>x.toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const CASE=[
+ {k:'ก',t:'ตั้งค่าเผื่อผลขาดทุนด้านเครดิตเพิ่ม',amt:400000,sign:1,type:'T',why:'เงินสำรองตาม 65 ตรี (1) หักได้เมื่อจำหน่ายหนี้สูญ'},
+ {k:'ข',t:'ตั้งประมาณการผลประโยชน์พนักงานเพิ่ม',amt:600000,sign:1,type:'T',why:'หักได้เมื่อจ่ายจริง'},
+ {k:'ค',t:'จ่ายเงินชดเชยจริงจากประมาณการ',amt:150000,sign:-1,type:'T',why:'กลับรายการของ ข ในปีที่จ่าย'},
+ {k:'ง',t:'ค่าเสื่อมราคาส่วนที่เกินอัตราสูงสุด',amt:400000,sign:1,type:'T',why:'ทยอยหักได้ในปีต่อไปภายใต้อัตราสูงสุด'},
+ {k:'จ',t:'ดอกเบี้ยเงินกู้ซื้อที่ดินระหว่างก่อสร้าง',amt:300000,sign:1,type:'T',why:'ต้นทุนทรัพย์สินตาม 65 ตรี (5)'},
+ {k:'ฉ',t:'ค่ารับรองส่วนเกินเกณฑ์',amt:120000,sign:1,type:'P',why:'ต้องห้ามตาม 65 ตรี (4) ไม่มีวันหักได้'},
+ {k:'ช',t:'เบี้ยปรับและเงินเพิ่มภาษีมูลค่าเพิ่ม',amt:50000,sign:1,type:'P',why:'ต้องห้ามตาม 65 ตรี (6)'},
+ {k:'ซ',t:'เงินปันผลรับจากบริษัทที่ถือหุ้นร้อยละ 40',amt:800000,sign:-1,type:'P',why:'ไม่ต้องนำมารวมตาม 65 ทวิ (10) เมื่อครบเงื่อนไข'}];
+const Y2=[
+ {k:'1',t:'ตั้งประมาณการผลประโยชน์พนักงานเพิ่ม',amt:500000,sign:1,type:'T'},
+ {k:'2',t:'ตั้งค่าเผื่อ ECL เพิ่ม',amt:100000,sign:1,type:'T'},
+ {k:'3',t:'ค่าเสื่อมราคาส่วนเกินปีที่ 2',amt:400000,sign:1,type:'T'},
+ {k:'4',t:'ผลประโยชน์ที่จ่ายจริงจากประมาณการ',amt:700000,sign:-1,type:'T'},
+ {k:'5',t:'หนี้สูญที่จำหน่ายตามกฎกระทรวงฉบับที่ 186',amt:250000,sign:-1,type:'T'}];
+
+/* ใบงาน 1 */
+$('c_rows').innerHTML=CASE.map((c,i)=>`<tr><td>${c.k}</td><td>${c.t} ${fmt(c.amt)} บาท</td><td><select id="cs${i}" aria-label="บวกหรือหัก ${c.k}"><option value="">เลือก</option><option value="1">บวก</option><option value="-1">หัก</option></select></td><td><select id="ct${i}" aria-label="ประเภท ${c.k}"><option value="">เลือก</option><option value="T">ชั่วคราว</option><option value="P">ถาวร</option></select></td><td class="mark" id="cm${i}"></td></tr>`).join('');
+$('c_check').addEventListener('click',()=>{let ok=0;CASE.forEach((c,i)=>{const g=+$('cs'+i).value===c.sign&&$('ct'+i).value===c.type;if(g)ok++;const m=$('cm'+i);m.className='mark '+(g?'ok':'no');m.textContent=g?'ถูก':`${c.sign>0?'บวก':'หัก'} ${c.type==='T'?'ชั่วคราว':'ถาวร'}: ${c.why}`});$('c_score').textContent=`ถูก ${ok} จาก ${CASE.length} รายการ`});
+
+/* ใบงาน 2 */
+let rows=[];
+function load(set,book,open){rows=set.map(r=>({t:(r.k?r.k+' ':'')+r.t,amt:r.amt,sign:r.sign,type:r.type}));$('w_book').value=book;$('w_open').value=open;draw()}
+function draw(){
+  $('w_rows').innerHTML=rows.map((r,i)=>`<tr><td><input class="txt" data-i="${i}" data-f="t" value="${r.t.replace(/"/g,'&quot;')}" aria-label="ชื่อรายการ"></td><td class="n"><input class="amt" type="number" data-i="${i}" data-f="amt" value="${r.amt}" aria-label="จำนวน"></td><td><select data-i="${i}" data-f="sign" aria-label="บวกหรือหัก"><option value="1"${r.sign>0?' selected':''}>บวก</option><option value="-1"${r.sign<0?' selected':''}>หัก</option></select></td><td><select data-i="${i}" data-f="type" aria-label="ประเภท"><option value="T"${r.type==='T'?' selected':''}>ชั่วคราว</option><option value="P"${r.type==='P'?' selected':''}>ถาวร</option></select></td><td><button class="ghost" data-del="${i}" aria-label="ลบรายการ">ลบ</button></td></tr>`).join('');
+  calc();
+}
+$('w_rows').addEventListener('input',e=>{const i=e.target.dataset.i,f=e.target.dataset.f;if(i===undefined)return;rows[i][f]=f==='amt'?(+e.target.value||0):f==='sign'?+e.target.value:e.target.value;calc()});
+$('w_rows').addEventListener('change',e=>{const i=e.target.dataset.i,f=e.target.dataset.f;if(i===undefined)return;rows[i][f]=f==='amt'?(+e.target.value||0):f==='sign'?+e.target.value:e.target.value;calc()});
+$('w_rows').addEventListener('click',e=>{const d=e.target.dataset.del;if(d!==undefined){rows.splice(+d,1);draw()}});
+$('w_add').addEventListener('click',()=>{rows.push({t:'รายการใหม่',amt:0,sign:1,type:'P'});draw()});
+['w_book','w_open','w_rate'].forEach(id=>$(id).addEventListener('input',calc));
+function calc(){
+  const R=reconcile({book:+$('w_book').value||0,rows,openTemp:+$('w_open').value||0,rate:(+$('w_rate').value||0)/100});
+  $('kpi').innerHTML=[['กำไรสุทธิทางภาษีอากร',R.taxable],['ภาษีของงวดปัจจุบัน (ภ.ง.ด.50)',R.current],['DTA สิ้นปี',R.dtaClose],['ผลแตกต่างชั่วคราวสิ้นปี',R.closeTemp]].map(k=>`<div><small>${k[0]}</small><b>${fmt(k[1])}</b></div>`).join('');
+  $('cmp').innerHTML=`<tr><td>ภาษีของงวดปัจจุบัน</td><td class="n">${fmt(R.current)}</td><td class="n">${fmt(R.current)}</td></tr><tr><td>ภาษีเงินได้รอการตัดบัญชี (เปลี่ยนแปลง DTA)</td><td class="n">${fmt(R.deferred)}</td><td class="n">-</td></tr><tr class="total"><td>ค่าใช้จ่ายภาษีในงบกำไรขาดทุน</td><td class="n">${fmt(R.tfrs)}</td><td class="n">${fmt(R.npaes)}</td></tr><tr><td>อัตราภาษีที่แท้จริง</td><td class="n">${R.etrT.toFixed(2)}%</td><td class="n">${R.etrN.toFixed(2)}%</td></tr>`;
+  $('rec').innerHTML=`<tr><td>กำไรก่อนภาษี × อัตราภาษีทั่วไป</td><td class="n">${fmt(R.recon.base)}</td></tr><tr><td>ผลกระทบของผลแตกต่างถาวรสุทธิ (${fmt(R.perm)} × อัตรา)</td><td class="n">${fmt(R.recon.permEffect)}</td></tr><tr class="total"><td>ค่าใช้จ่ายภาษีตาม TAS 12</td><td class="n">${fmt(R.recon.base+R.recon.permEffect)}</td></tr><tr><td colspan="2"><small>${Math.abs(R.recon.base+R.recon.permEffect-R.tfrs)<0.01?'ตรงกับตารางซ้าย: เฉพาะผลแตกต่างถาวรที่ทำให้ ETR เบี่ยงจากอัตราภาษีทั่วไป':'ยังไม่ตรงกับตารางซ้าย เพราะ DTA ต้นปีไม่เท่ากับผลแตกต่างชั่วคราวต้นปีคูณอัตราปัจจุบัน'}</small></td></tr>`;
+}
+$('p1').addEventListener('click',()=>load(CASE,10000000,0));
+$('p2').addEventListener('click',()=>load(Y2,12000000,1550000));
+load(CASE,10000000,0);
+
+/* ใบงาน 3 */
+function dep(){const s=depr({cost:+$('d_cost').value||0,life:Math.max(1,+$('d_life').value||1),ratePct:Math.max(0.01,+$('d_rate').value||20)});
+  const rate=(+$('w_rate').value||20)/100;
+  $('d_rows').innerHTML=s.map(r=>`<tr><td>${r.y}</td><td class="n">${fmt(r.b)}</td><td class="n">${fmt(r.t)}</td><td class="n">${r.adj>=0?'บวก ':'หัก '}${fmt(Math.abs(r.adj))}</td><td class="n">${fmt(r.cum)}</td><td class="n">${fmt(r.cum*rate)}</td></tr>`).join('')+
+   `<tr class="total"><td>รวม</td><td class="n">${fmt(s.reduce((a,r)=>a+r.b,0))}</td><td class="n">${fmt(s.reduce((a,r)=>a+r.t,0))}</td><td class="n">${fmt(s.reduce((a,r)=>a+r.adj,0))}</td><td></td><td></td></tr>`}
+['d_cost','d_life','d_rate'].forEach(id=>$(id).addEventListener('input',dep));dep();
+
+/* แบบทดสอบ */
+const QS=[
+ {lo:'LO1',s:'เมื่อมาตรฐานการบัญชีกับประมวลรัษฎากรให้ผลต่างกัน การคำนวณกำไรสุทธิเพื่อเสียภาษีต้องยึดอะไร',o:['ประมวลรัษฎากร','มาตรฐานการบัญชี','ความเห็นของผู้สอบบัญชี','วิธีที่ให้ภาษีต่ำกว่า'],a:0,e:'คำพิพากษาศาลฎีกาที่ 3291/2547 วางหลักว่าการคำนวณกำไรสุทธิต้องเป็นไปตามประมวลรัษฎากร (หัวข้อ 3.2)'},
+ {lo:'LO2',s:'ค่ารับรองส่วนที่เกินเกณฑ์กฎกระทรวงเป็นผลแตกต่างประเภทใด',o:['ถาวร','ชั่วคราว','ไม่ใช่ผลแตกต่าง','ชั่วคราวที่ต้องเสียภาษี'],a:0,e:'ต้องห้ามตาม 65 ตรี (4) ไม่มีวันหักได้ในรอบใด'},
+ {lo:'LO2',s:'ค่าเผื่อการลดมูลค่าสินค้าคงเหลือที่ตั้งเพิ่มเป็นผลแตกต่างประเภทใด',o:['ชั่วคราว เพราะต้นทุนจะหักได้เมื่อขายหรือทำลายสินค้า','ถาวร เพราะเป็นเงินสำรอง','ไม่ต้องปรับ','ถาวร เพราะเป็นรายจ่ายลงทุน'],a:0,e:'ตัวอย่างที่ 3.1: เงินสำรองตาม 65 ตรี (1) ที่จะหักได้ในอนาคต'},
+ {lo:'LO3',s:'กรณีเปิดบท กำไรก่อนภาษี 10,000,000 บาท กำไรสุทธิทางภาษีอากรเท่าใด',o:['10,920,000 บาท','10,000,000 บาท','11,720,000 บาท','9,200,000 บาท'],a:0,e:'บวกชั่วคราวสุทธิ 1,550,000 และถาวรสุทธิ −630,000 ได้ 10,920,000 บาท (หัวข้อ 3.6)'},
+ {lo:'LO4',s:'ผลแตกต่างชั่วคราวสิ้นปี 1,550,000 บาท ไม่มียอดยกมา อัตรา 20% DTA เท่าใด',o:['310,000 บาท','155,000 บาท','2,184,000 บาท','0 บาท'],a:0,e:'1,550,000 × 20% = 310,000 บาท'},
+ {lo:'LO4',s:'ภายใต้ TAS 12 อะไรทำให้อัตราภาษีที่แท้จริงต่างจากอัตราภาษีทั่วไป',o:['ผลแตกต่างถาวร','ผลแตกต่างชั่วคราว','ภาษีชำระล่วงหน้าตาม ภ.ง.ด.51','การกลับรายการค่าเสื่อมราคา'],a:0,e:'ผลแตกต่างชั่วคราวถูกหักล้างด้วย DTA และ DTL ส่วนที่เหลือคือผลแตกต่างถาวร (หัวข้อ 3.5)'},
+ {lo:'LO5',s:'บริษัทใช้ TFRS for NPAEs และไม่เลือก TAS 12 ค่าใช้จ่ายภาษีในงบกำไรขาดทุนของกรณีเปิดบทเท่าใด',o:['2,184,000 บาท (ETR 21.84%)','1,874,000 บาท (ETR 18.74%)','2,000,000 บาท (ETR 20%)','310,000 บาท'],a:0,e:'วิธีภาษีเงินได้ค้างจ่ายตามย่อหน้า 15.1 บันทึกเท่าภาษีที่ต้องจ่าย'},
+ {lo:'LO5',s:'ข้อใดอธิบาย ETR 21.84% ของ NPAEs ในกรณีเปิดบทได้ถูกต้อง',o:['บริษัทจ่ายภาษีล่วงหน้าสำหรับรายจ่ายที่จะหักได้ในอนาคต','บริษัทเสียภาษีสูงกว่าอัตราตามกฎหมาย','บริษัทคำนวณภาษีผิด','มาตรฐาน NPAEs ใช้อัตราภาษีต่างกัน'],a:0,e:'ภาระภาษีเท่ากันทั้งสองมาตรฐาน ต่างกันเฉพาะการรายงาน (ความเห็นผู้เขียนในหัวข้อ 3.5)'}];
+function quiz(){
+  $('qbox').innerHTML=QS.map((q,i)=>{const ord=q.o.map((_,j)=>j).sort(()=>Math.random()-0.5);return `<div class="q"><span class="lo">ข้อ ${i+1} · ${q.lo}</span><div class="stem">${q.s}</div>${ord.map(j=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"> ${q.o[j]}</label>`).join('')}<div class="fb" id="fb${i}"></div></div>`}).join('');
+  QS.forEach((q,i)=>document.querySelectorAll(`input[name=q${i}]`).forEach(r=>r.addEventListener('change',()=>{const ok=+r.value===q.a;const f=$('fb'+i);f.className='fb show '+(ok?'ok':'no');f.textContent=(ok?'ถูกต้อง ':'ยังไม่ถูก ')+q.e;score()})));
+  score();
+}
+function score(){let a=0,c=0;QS.forEach((q,i)=>{const s=document.querySelector(`input[name=q${i}]:checked`);if(s){a++;if(+s.value===q.a)c++}});$('qscore').textContent=`ตอบแล้ว ${a} ข้อ ถูก ${c} ข้อ`}
+$('qreset').addEventListener('click',quiz);quiz();
+</script>
+</body>
+</html>

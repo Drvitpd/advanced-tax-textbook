@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แอปบทที่ 12 VAT ระหว่างประเทศและเศรษฐกิจดิจิทัล</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#15233a; --muted:#5a6678; --line:#d5dbe3;
+  --accent:#0d6466; --accent-soft:#e1efef; --gate:#a86a12; --gate-soft:#f7ecd9;
+  --ok:#2f7d32; --stop:#b3261e; --stop-soft:#f8e3e1;
+  --display:"Noto Serif Thai",Georgia,serif; --body:"Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1620; --paper:#17212d; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2c3a4a;
+  --accent:#4fb8b4; --accent-soft:#163334; --gate:#e2a54a; --gate-soft:#3a2c14;
+  --ok:#74c27a; --stop:#f08a80; --stop-soft:#3c1d1b; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.brand img{height:40px;width:auto;display:block}
+.brand .org{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#15233a;border-left:2px solid #d5dbe3;padding-left:12px;line-height:1.2}
+header h1{font-family:var(--display);font-size:1.7rem;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+header p{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--gate);padding:4px 10px;background:var(--gate-soft);border-radius:0 6px 6px 0}
+section.lab{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.lab h2{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
+.lab-tag{font-size:.8rem;color:var(--accent);font-weight:700}
+.lab > p{margin:4px 0 14px;color:var(--muted);max-width:72ch}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+legend{font-weight:700;font-size:.92rem;padding:0 4px}
+label.opt{display:flex;gap:8px;align-items:flex-start;padding:2px 0;cursor:pointer;font-size:.95rem}
+.gate{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.gate .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--muted)}
+.gate.pass{border-color:var(--ok)} .gate.pass .dot{background:var(--ok)}
+.gate.stop{border-color:var(--stop);background:var(--stop-soft)} .gate.stop .dot{background:var(--stop)}
+.gate.skip{opacity:.45}
+.gate b{display:block} .gate small{color:var(--muted)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.num{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num label{display:block;font-size:.85rem;color:var(--muted)}
+.num input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.82rem;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.mark{font-weight:700;white-space:nowrap}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--stop)}
+button{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gate);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+textarea{width:100%;min-height:220px;font:inherit;font-size:.9rem;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.q .stem{font-weight:500;margin-bottom:6px}
+.q .lo{font-size:.78rem;color:var(--gate);font-weight:700}
+.q .fb{margin-top:6px;font-size:.92rem;padding:6px 10px;border-radius:6px;display:none}
+.q .fb.show{display:block}
+.q .fb.ok{background:var(--accent-soft)} .q .fb.no{background:var(--stop-soft)}
+.score{font-weight:700}
+footer{font-size:.85rem;color:var(--muted)}
+footer ul{padding-left:20px}
+.dim{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.dim div{border:1px solid var(--line);border-radius:8px;padding:8px;font-size:.88rem}
+.dim .pass{border-color:var(--ok)} .dim .fail{border-color:var(--stop);background:var(--stop-soft)} .dim .na{opacity:.6}
+.dim b{display:block}
+input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%}
+</style></head><body>
+<main>
+<header>
+  <div class="brand"><img src="logo.png" alt="Dr VIT"><span class="org">Siam edu.</span></div>
+  <h1>แอปบทที่ 12 VAT ระหว่างประเทศและเศรษฐกิจดิจิทัล</h1>
+  <p>แอปนี้ใช้คู่กับบทที่ 12 เรื่องภาษีมูลค่าเพิ่ม (Value Added Tax: VAT) ของธุรกรรมข้ามพรมแดน ฝึกจัดธุรกรรมเข้าแบบจำลองแปดช่อง คำนวณ ภ.พ.36 เมื่อผู้จ่ายออกภาษีแทน ใช้อัตราร้อยละ 0 เมื่อผลบางส่วนใช้ในไทย และคำนวณต้นทุนสินค้านำเข้ามูลค่าต่ำ ป้าย LO คือผลลัพธ์การเรียนรู้ (Learning Outcome: LO) ตามตารางหน้าเปิดบท</p>
+  <p class="note">ตัวเลขในแอปเป็นข้อมูลจำลองตามตัวอย่างในบท ใช้เพื่อการสอน ห้ามนำข้อมูลผู้เสียภาษีหรือผู้ตอบจริงใส่แอปหรือ GenAI สถานะกฎหมาย ณ 23 พฤศจิกายน 2569</p>
+</header>
+
+<section class="lab"><span class="lab-tag">ใบงาน 1 · LO2</span><h2>จัดธุรกรรมเข้าแบบจำลองแปดช่อง (ตาราง 12.2 และแผนภาพ 12.1)</h2>
+<p>ตอบคำถามตามลำดับของผังตัดสินใจ แอปแสดงช่องและหน้าที่ทางภาษี ค่าตั้งต้นคือประเด็นที่ 2 ของกรณีนำบท (โฆษณาออนไลน์ที่ซื้อโดยไม่แจ้งเลขประจำตัวผู้เสียภาษีอากร)</p>
+<div class="cols"><div>
+<fieldset><legend>1. ธุรกรรมเป็นสินค้าหรือบริการ</legend><label class="opt"><input type="radio" name="k" value="goods"> สินค้า</label><label class="opt"><input type="radio" name="k" value="service" checked> บริการ</label></fieldset>
+<fieldset id="gq"><legend>สินค้า</legend><label class="opt"><input type="radio" name="d" value="in" checked> เข้าไทย</label><label class="opt"><input type="radio" name="d" value="out"> ออกจากไทย หรือเข้าเขตปลอดอากร</label><label class="opt"><input type="checkbox" id="lv"> เป็นสินค้านำเข้ามูลค่าต่ำ (Low-Value Goods: LVG)</label></fieldset>
+<fieldset id="sq"><legend>บริการ</legend><label class="opt"><input type="radio" name="p" value="th"> ผู้ให้บริการอยู่ในไทย</label><label class="opt"><input type="radio" name="p" value="foreign" checked> ผู้ให้บริการอยู่ต่างประเทศ</label>
+<label class="opt"><input type="checkbox" id="ua"> (ผู้ให้บริการไทย) ผลใช้ในต่างประเทศทั้งหมด</label>
+<label class="opt"><input type="checkbox" id="ut" checked> (ผู้ให้บริการต่างประเทศ) บริการทำหรือใช้ผลในไทย</label>
+<label class="opt"><input type="checkbox" id="es" checked> เป็นบริการทางอิเล็กทรอนิกส์ (Electronic Service: e-Service)</label>
+<label class="opt"><input type="checkbox" id="bv"> ผู้ซื้อแจ้งว่าเป็นผู้ประกอบการจดทะเบียน</label></fieldset>
+</div><div><div class="verdict" id="v1"></div><p class="note">ใช้หลักทดสอบสถานที่ใช้ผลของบริการ (หัวข้อ 12.9) ตอบข้อ "ทำหรือใช้ผลในไทย" ก่อนเลือก: ผลผูกกับทรัพย์สินหรือเหตุการณ์ในไทยหรือไม่ และผู้ใช้ในไทยเข้าถึงผลได้หรือไม่</p></div></div></section>
+
+<section class="lab"><span class="lab-tag">ใบงาน 2 · LO3</span><h2>ฐาน ภ.พ.36 เมื่อผู้จ่ายออกภาษีหัก ณ ที่จ่ายแทน (ตัวอย่าง 12.3)</h2>
+<p>ฐาน ภ.พ.36 คือเงินได้ก่อนหักภาษี เมื่อผู้จ่ายออกภาษีแทนต้องคำนวณย้อนกลับ (gross-up) ก่อน</p>
+<div class="cols"><div class="num"><label>จำนวนที่โอนให้ผู้รับในต่างประเทศ (บาท)<input id="a1" type="number" value="850000"></label><label>อัตราภาษีหัก ณ ที่จ่าย (ร้อยละ)<input id="a2" type="number" value="15"></label><label>วิธีรับภาระภาษีหัก ณ ที่จ่าย<select id="a3"><option value="always" selected>ผู้จ่ายออกแทนให้ตลอดไป (ยอดที่โอนเป็นยอดสุทธิ)</option><option value="once">ผู้จ่ายออกแทนเพียงทอดเดียว</option><option value="gross">หักจากยอดจ่าย (ยอดที่กรอกเป็นยอดก่อนหัก)</option></select></label></div><div class="tbl"><table><tbody id="t2"></tbody></table><div class="verdict" id="v2"></div></div></div></section>
+
+<section class="lab"><span class="lab-tag">ใบงาน 3 · LO4 · LO6</span><h2>ร้อยละ 0 เมื่อผลบางส่วนใช้ในไทย และหลักปันส่วนสมมาตร (ตัวอย่าง 12.2 และ 12.5)</h2>
+<p>ด้านส่งออกใช้ร้อยละ 0 เฉพาะส่วนที่ใช้ในต่างประเทศ ด้านนำเข้าตัวอย่างในคำสั่ง ป.104/2544 เก็บจากค่าบริการทั้งหมด หลักปันส่วนสมมาตรเป็นข้อเสนอของผู้เขียน ยังไม่ใช่กฎหมาย</p>
+<div class="cols"><div class="num"><label>ค่าบริการ (บาท)<input id="z1" type="number" value="500000"></label><label>สัดส่วนที่ใช้ในต่างประเทศ (ร้อยละ)<input id="z2" type="number" value="60"></label></div><div class="tbl"><table><tbody id="t3"></tbody></table><div class="verdict" id="v3"></div></div></div></section>
+
+<section class="lab"><span class="lab-tag">ใบงาน 4 · LO3 · LO5</span><h2>ต้นทุนสินค้านำเข้ามูลค่าต่ำที่ด่าน (ตัวอย่าง 12.1)</h2>
+<p>ฐานภาษีตามมาตรา 79/2 (1) คือราคา CIF บวกอากรขาเข้า อัตราอากรร้อยละ 10 เป็นค่าสอน ไม่ใช่พิกัดจริงของสินค้า</p>
+<div class="cols"><div class="num"><label>ราคา CIF (บาท)<input id="l1" type="number" value="1200"></label><label>อัตราอากรขาเข้า (ร้อยละ ค่าสอน)<input id="l2" type="number" value="10"></label><label class="opt"><input type="checkbox" id="l3"> ใบเสร็จศุลกากรออกในนามบริษัท</label></div><div class="tbl"><table><tbody id="t4"></tbody></table><div class="verdict" id="v4"></div></div></div></section>
+
+<section class="lab"><span class="lab-tag">แบบทดสอบท้ายบท</span><h2>แบบทดสอบ 8 ข้อ</h2><p>เลือกคำตอบแล้วดูคำอธิบายทันที คะแนน <span class="score" id="score">0 / 8</span></p><div id="quiz"></div></section>
+<footer><p><b>ที่มาของตัวเลขตั้งต้น:</b> ตัวอย่าง 12.1 (CIF 1,200 บาท VAT 92.40 บาท), 12.2 (500,000 บาท ภาษีขาย 14,000 บาท), 12.3 (850,000 บาท ฐาน 1,000,000 บาท VAT 70,000 บาท นำส่งขาด 10,500 บาท), 12.4 (14,000 บาท) และ 12.5 (35,000 บาท เทียบกับ 14,000 บาท) ในบทที่ 12 ฉบับ 23 พ.ย. 2569 ใช้อัตรา VAT ร้อยละ 7 ตามพระราชกฤษฎีกา ฉบับที่ 807 ถึง 30 ก.ย. 2570</p>
+<p><b>เรื่องที่ยังรอผู้เขียนตัดสินหรือตรวจต้นฉบับ:</b></p><ul><li>อัตราอากรร้อยละ 10 ในใบงาน 4 เป็นค่าสอน ไม่ใช่พิกัดศุลกากรจริง</li><li>เลขประกาศกรมศุลกากรเรื่องเกณฑ์ยกเว้น 1 บาท ยังรอตรวจต้นฉบับ</li><li>ผลต่อภาษีเงินได้ของ VAT ที่แพลตฟอร์มเรียกเก็บแล้วใช้เป็นภาษีซื้อไม่ได้ ยังรอตรวจต้นฉบับ แอปจึงไม่คำนวณ</li><li>หลักปันส่วนสมมาตรและความรับผิดของแพลตฟอร์มเป็นข้อเสนอของผู้เขียน ยังไม่ใช่กฎหมาย</li></ul>
+<p>Dr VIT · Siam edu. ใช้คู่กับตำราภาษีชั้นสูง บทที่ 12</p></footer>
+</main>
+<script>
+function r2(x){return Math.round(x*100)/100}
+// ใบงาน 1: จัดธุรกรรมเข้าแปดช่อง (ตาราง 12.2 แผนภาพ 12.1)
+// t = {kind:'goods'|'service', dir:'in'|'out', lowValue, provider:'th'|'foreign', usedAbroadAll, eService, buyerVat, doneOrUsedTH}
+function classify(t){
+  if(t.kind==='goods'){
+    if(t.dir==='out') return {cell:3,name:'ส่งออกสินค้าและการนำเข้าเขตปลอดอากร',rule:'ร้อยละ 0 ตามมาตรา 80/1 (1) เมื่อมีหลักฐานการส่งออกตามที่กำหนด การนำเข้าเขตปลอดอากรถือเป็นการส่งออกตามมาตรา 77/1 (14) (ก)'};
+    if(t.lowValue) return {cell:2,name:'สินค้านำเข้ามูลค่าต่ำ',rule:'ตั้งแต่ 1 ม.ค. 2569 ยกเว้นเฉพาะสินค้ามูลค่าไม่เกิน 1 บาท ที่เหลือเสีย VAT ที่ด่าน'};
+    return {cell:1,name:'นำเข้าสินค้า',rule:'เสีย VAT ที่ด่านศุลกากร ฐานตามมาตรา 79/2 (1)'};
+  }
+  if(t.provider==='th') return t.usedAbroadAll
+    ? {cell:4,name:'ส่งออกบริการ',rule:'ร้อยละ 0 ตามมาตรา 80/1 (2) เมื่อใช้ผลในต่างประเทศทั้งหมด'}
+    : {cell:4,name:'ส่งออกบริการที่ใช้ผลบางส่วนในไทย',rule:'ร้อยละ 0 เฉพาะส่วนที่ใช้ในต่างประเทศ ส่วนที่ใช้ในไทยใช้อัตราภาษีทั่วไป'};
+  if(!t.doneOrUsedTH) return {cell:8,name:'บริการที่ไม่ได้ทำและไม่ได้ใช้ในไทย',rule:'อยู่นอกมาตรา 77/2 ผู้จ่ายไม่ต้องยื่น ภ.พ.36'};
+  if(!t.eService) return {cell:5,name:'บริการจากต่างประเทศที่ใช้ในไทย',rule:'ผู้จ่ายยื่น ภ.พ.36 ตามมาตรา 83/6 (2) (ข)'};
+  if(t.buyerVat) return {cell:6,name:'บริการทางอิเล็กทรอนิกส์ที่ผู้ซื้อเป็นผู้ประกอบการจดทะเบียน',rule:'ผู้ซื้อแจ้งเลขประจำตัวและยื่น ภ.พ.36 ตามมาตรา 83/6 (2) (ก)'};
+  return {cell:7,name:'บริการทางอิเล็กทรอนิกส์ที่ผู้ซื้อไม่ได้จดทะเบียน',rule:'ผู้ให้บริการต่างประเทศเสียภาษีเองตามมาตรา 82/13 วรรคสอง (จดทะเบียนเมื่อเกิน 1,800,000 บาท ผ่านกระบวนการทางอิเล็กทรอนิกส์ตามมาตรา 85/20) และไม่ออกใบกำกับภาษี ผู้ซื้อใช้ VAT ที่จ่ายเป็นภาษีซื้อไม่ได้'};
+}
+// ใบงาน 2: ฐาน ภ.พ.36 เมื่อผู้จ่ายออกภาษีหัก ณ ที่จ่ายแทน (ตัวอย่าง 12.3)
+function pp36(amount,whtRate,mode,vatRate){ // mode: 'gross' หักจากยอด | 'once' ออกแทนทอดเดียว | 'always' ออกให้ตลอดไป
+  let base,wht;
+  if(mode==='always'){base=r2(amount/(1-whtRate));wht=r2(base-amount);}
+  else if(mode==='once'){wht=r2(amount*whtRate);base=r2(amount+wht);}
+  else {base=amount;wht=r2(amount*whtRate);}
+  const vat=r2(base*vatRate), wrong=r2(amount*vatRate);
+  return {base,wht,vat,wrong,short:r2(vat-wrong)};
+}
+// ใบงาน 3: อัตราร้อยละ 0 เมื่อใช้ผลบางส่วนในไทย (ตัวอย่าง 12.2) และหลักปันส่วนสมมาตร (ตัวอย่าง 12.5)
+function zeroRate(fee,abroadShare,vatRate){
+  const abroad=r2(fee*abroadShare), dom=r2(fee-abroad);
+  return {abroad,dom,tax:r2(dom*vatRate),ifAllZero:0,ifNoSplit:r2(fee*vatRate)};
+}
+function symmetric(fee,thaiShare,vatRate){
+  const now=r2(fee*vatRate), prop=r2(fee*thaiShare*vatRate);
+  return {now,prop,diff:r2(now-prop)};
+}
+// ใบงาน 4: ต้นทุนสินค้านำเข้ามูลค่าต่ำ (ตัวอย่าง 12.1) อัตราอากรเป็นค่าสอน
+function lvg(cif,dutyRate,vatRate){
+  const duty=r2(cif*dutyRate), base=r2(cif+duty), vat=r2(base*vatRate);
+  return {duty,base,vat,landed:r2(base+vat)};
+}
+// module
+if(typeof module!=='undefined') module.exports={classify,pp36,zeroRate,symmetric,lvg};
+
+const $=id=>document.getElementById(id);
+const fmt=n=>Number(n).toLocaleString("th-TH",{minimumFractionDigits:0,maximumFractionDigits:2});
+const v=id=>Number($(id).value)||0;
+
+function renderQuiz(Q){const box=$('quiz');Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';
+d.innerHTML='<div class="lo">ข้อ '+(i+1)+' · '+q.lo+'</div><div class="stem">'+q.stem+'</div>'+q.opts.map((o,j)=>'<label class="opt"><input type="radio" name="q'+i+'" value="'+j+'"> '+'กขคง'[j]+'. '+o+'</label>').join('')+'<div class="fb"></div>';
+box.appendChild(d);d.querySelectorAll('input').forEach(inp=>inp.addEventListener('change',()=>{const fb=d.querySelector('.fb');const ok=Number(inp.value)===q.ans;fb.className='fb show '+(ok?'ok':'no');fb.textContent=(ok?'ถูกต้อง: ':'ยังไม่ถูก คำตอบคือ '+'กขคง'[q.ans]+': ')+q.why;d.dataset.ok=ok?1:0;let s=0;box.querySelectorAll('.q').forEach(x=>s+=Number(x.dataset.ok||0));$('score').textContent=s+' / '+Q.length;}))});}
+
+const RATE=0.07;
+const rv=n=>{const x=document.querySelector('input[name="'+n+'"]:checked');return x?x.value:null};
+function w1(){const k=rv('k');$('gq').style.display=k==='goods'?'':'none';$('sq').style.display=k==='service'?'':'none';
+const r=classify({kind:k,dir:rv('d'),lowValue:$('lv').checked,provider:rv('p'),usedAbroadAll:$('ua').checked,doneOrUsedTH:$('ut').checked,eService:$('es').checked,buyerVat:$('bv').checked});
+$('v1').innerHTML='<b>ช่อง '+r.cell+' '+r.name+'</b><br>'+r.rule;}
+function w2(){const r=pp36(v('a1'),v('a2')/100,$('a3').value,RATE);
+$('t2').innerHTML='<tr><td>ฐาน ภ.พ.36</td><td class="n">'+fmt(r.base)+'</td></tr><tr><td>ภาษีหัก ณ ที่จ่าย</td><td class="n">'+fmt(r.wht)+'</td></tr><tr class="total"><td>VAT ที่ต้องนำส่ง</td><td class="n">'+fmt(r.vat)+'</td></tr><tr><td>VAT ถ้าใช้ยอดที่โอนเป็นฐาน</td><td class="n">'+fmt(r.wrong)+'</td></tr>';
+$('v2').textContent=r.short>0?'ถ้าใช้ยอดที่โอนเป็นฐานจะนำส่งขาด '+fmt(r.short)+' บาท VAT ที่นำส่งถูกต้องใช้เป็นภาษีซื้อได้ในเดือนที่ยื่น ภ.พ.36':'ฐานเท่ากับจำนวนที่กรอก ไม่มีส่วนต่าง';}
+function w3(){const f=v('z1'),s=v('z2')/100;const r=zeroRate(f,s,RATE),q=symmetric(f,1-s,RATE);
+$('t3').innerHTML='<tr><td>ส่วนที่ใช้ในต่างประเทศ (ร้อยละ 0)</td><td class="n">'+fmt(r.abroad)+'</td></tr><tr><td>ส่วนที่ใช้ในไทย</td><td class="n">'+fmt(r.dom)+'</td></tr><tr class="total"><td>ภาษีขายด้านส่งออก</td><td class="n">'+fmt(r.tax)+'</td></tr><tr><td>ด้านนำเข้า: ตามตัวอย่าง ป.104/2544</td><td class="n">'+fmt(q.now)+'</td></tr><tr><td>ด้านนำเข้า: ตามหลักปันส่วนสมมาตร (ข้อเสนอ)</td><td class="n">'+fmt(q.prop)+'</td></tr>';
+$('v3').textContent='ผู้ให้บริการที่ใช้ร้อยละ 0 ทั้งจำนวนจะเสียภาษีขาด '+fmt(r.tax)+' บาท ด้านนำเข้า ข้อเสนอลดภาระ '+fmt(q.diff)+' บาท ซึ่งเป็นต้นทุนจริงเฉพาะผู้จ่ายที่เครดิตภาษีซื้อได้ไม่เต็ม';}
+const f2=n=>Number(n).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+function w4(){const r=lvg(v('l1'),v('l2')/100,RATE);
+$('t4').innerHTML='<tr><td>อากรขาเข้า</td><td class="n">'+f2(r.duty)+'</td></tr><tr><td>ฐาน VAT</td><td class="n">'+f2(r.base)+'</td></tr><tr><td>VAT ร้อยละ 7</td><td class="n">'+f2(r.vat)+'</td></tr><tr class="total"><td>ต้นทุนรวมที่ด่าน</td><td class="n">'+f2(r.landed)+'</td></tr>';
+$('v4').textContent=$('l3').checked?'บริษัทใช้ '+f2(r.vat)+' บาทเป็นภาษีซื้อได้ ถ้าเป็นผู้ประกอบการจดทะเบียนและใช้ในกิจการที่ต้องเสีย VAT':'ใบเสร็จออกในนามพนักงาน บริษัทใช้ '+f2(r.vat)+' บาทเป็นภาษีซื้อไม่ได้';}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>{w1();w2();w3();w4()}));
+document.querySelectorAll('input,select').forEach(i=>i.addEventListener('change',()=>{w1();w2();w3();w4()}));
+w1();w2();w3();w4();
+
+renderQuiz([{"lo": "LO1 · เข้าใจ", "stem": "หลักใดอธิบายว่าเหตุใดไทยเก็บ VAT จากบริการต่างประเทศที่ใช้ในไทย และให้อัตราร้อยละ 0 แก่การส่งออก", "opts": ["หลักถิ่นที่อยู่ของผู้ขาย", "หลักประเทศปลายทาง", "หลักแหล่งเงินได้", "หลักสัญชาติ"], "ans": 1, "why": "VAT เป็นภาษีการบริโภค เก็บในประเทศที่บริโภค (หัวข้อ 12.2)"}, {"lo": "LO1 · เข้าใจ", "stem": "ผู้ให้บริการทางอิเล็กทรอนิกส์ในต่างประเทศที่ให้บริการแก่ผู้ซื้อที่ไม่ได้จดทะเบียนในไทย จดทะเบียนผ่านกระบวนการทางอิเล็กทรอนิกส์ตามบทบัญญัติใด", "opts": ["มาตรา 83/6 (2)", "มาตรา 85/20", "มาตรา 80/1 (2)", "มาตรา 79/2 (1)"], "ans": 1, "why": "มาตรา 85/20 เป็นฐานของกระบวนการทางอิเล็กทรอนิกส์ ส่วนหน้าที่เสียภาษีอยู่ที่มาตรา 82/13 วรรคสอง (หัวข้อ 12.8)"}, {"lo": "LO2 · ประยุกต์", "stem": "บริษัทจดทะเบียนซื้อบริการคลาวด์จากต่างประเทศและแจ้งเลขประจำตัวผู้เสียภาษีอากร ธุรกรรมอยู่ช่องใด", "opts": ["ช่อง 4", "ช่อง 6", "ช่อง 7", "ช่อง 8"], "ans": 1, "why": "ผู้ซื้อจดทะเบียนยื่น ภ.พ.36 ตามมาตรา 83/6 (2) (ก) (ตาราง 12.2)"}, {"lo": "LO3 · ประยุกต์", "stem": "จ่ายค่าสิทธิสุทธิ 425,000 บาท และออกภาษีหัก ณ ที่จ่ายร้อยละ 15 แทนให้ตลอดไป VAT ตาม ภ.พ.36 เท่าใด", "opts": ["29,750 บาท", "31,500 บาท", "35,000 บาท", "37,500 บาท"], "ans": 2, "why": "425,000 หารด้วย 0.85 ได้ฐาน 500,000 บาท คูณร้อยละ 7 เท่ากับ 35,000 บาท (ตัวอย่าง 12.3)"}, {"lo": "LO3 · ประยุกต์", "stem": "สินค้าราคา CIF 1,200 บาท อากรขาเข้าร้อยละ 10 (ค่าสอน) VAT ที่ด่านเท่าใด", "opts": ["84.00 บาท", "92.40 บาท", "120.00 บาท", "0 บาท เพราะมูลค่าต่ำ"], "ans": 1, "why": "ฐาน 1,320 บาท คูณร้อยละ 7 เท่ากับ 92.40 บาท ตั้งแต่ 1 ม.ค. 2569 ยกเว้นเฉพาะสินค้าไม่เกิน 1 บาท (ตัวอย่าง 12.1)"}, {"lo": "LO4 · วิเคราะห์", "stem": "บริษัทไทยตรวจปริมาณสินค้าส่งออกที่ท่าเรือไทยแล้วส่งรายงานให้ผู้ซื้อในต่างประเทศ ได้อัตราร้อยละ 0 หรือไม่", "opts": ["ได้ เพราะส่งรายงานไปต่างประเทศ", "ได้ เพราะผู้ว่าจ้างอยู่ต่างประเทศ", "ไม่ได้ เพราะผลผูกกับสินค้าในไทย", "ไม่ได้ เพราะเป็นการขายสินค้า"], "ans": 2, "why": "หนังสือตอบข้อหารือ กค 0811/พ./6176 ถือว่าใช้ผลในไทย (คำถามที่ 2 ของหลักทดสอบ หัวข้อ 12.9)"}, {"lo": "LO5 · ประเมิน", "stem": "บริษัทซื้อโฆษณาออนไลน์โดยไม่แจ้งเลขประจำตัว แพลตฟอร์มเรียก VAT 14,000 บาท ข้อใดถูก", "opts": ["บันทึกเป็นภาษีซื้อได้ทันที", "ต้องยื่น ภ.พ.36 ซ้ำอีก 14,000 บาท", "ใช้เป็นภาษีซื้อไม่ได้ เพราะไม่มีใบกำกับภาษี", "ขอคืนจากแพลตฟอร์มได้ทุกกรณี"], "ans": 2, "why": "ผู้ให้บริการตามมาตรา 85/20 ไม่ออกใบกำกับภาษี ครั้งต่อไปให้แจ้งเลขประจำตัวเพื่อเข้าช่อง 6 (ตัวอย่าง 12.4)"}, {"lo": "LO6 · สร้างสรรค์", "stem": "หลักปันส่วนสมมาตรที่ผู้เขียนเสนอ ต้องการเปลี่ยนสิ่งใด", "opts": ["ยกเลิก ภ.พ.36", "ให้ฐาน ภ.พ.36 เป็นเฉพาะส่วนที่ใช้ในไทย เมื่อแยกสัดส่วนได้", "ให้อัตราร้อยละ 0 แก่บริการนำเข้าทุกกรณี", "เก็บ VAT ด้านส่งออกเต็มจำนวน"], "ans": 1, "why": "ให้ด้านนำเข้าปันส่วนแบบเดียวกับด้านส่งออกตามประกาศฉบับที่ 105 (หัวข้อ 12.12.1) เป็นข้อเสนอ ยังไม่ใช่กฎหมาย"}]);
+</script>
+</body></html>

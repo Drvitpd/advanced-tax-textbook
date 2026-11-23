@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แอปบทที่ 10 VAT: ขอบเขต ความรับผิด และฐานภาษี</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#15233a; --muted:#5a6678; --line:#d5dbe3;
+  --accent:#0d6466; --accent-soft:#e1efef; --gate:#a86a12; --gate-soft:#f7ecd9;
+  --ok:#2f7d32; --stop:#b3261e; --stop-soft:#f8e3e1;
+  --display:"Noto Serif Thai",Georgia,serif; --body:"Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1620; --paper:#17212d; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2c3a4a;
+  --accent:#4fb8b4; --accent-soft:#163334; --gate:#e2a54a; --gate-soft:#3a2c14;
+  --ok:#74c27a; --stop:#f08a80; --stop-soft:#3c1d1b; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.brand img{height:40px;width:auto;display:block}
+.brand .org{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#15233a;border-left:2px solid #d5dbe3;padding-left:12px;line-height:1.2}
+header h1{font-family:var(--display);font-size:1.7rem;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+header p{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--gate);padding:4px 10px;background:var(--gate-soft);border-radius:0 6px 6px 0}
+section.lab{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.lab h2{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
+.lab-tag{font-size:.8rem;color:var(--accent);font-weight:700}
+.lab > p{margin:4px 0 14px;color:var(--muted);max-width:72ch}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+legend{font-weight:700;font-size:.92rem;padding:0 4px}
+label.opt{display:flex;gap:8px;align-items:flex-start;padding:2px 0;cursor:pointer;font-size:.95rem}
+.gate{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.gate .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--muted)}
+.gate.pass{border-color:var(--ok)} .gate.pass .dot{background:var(--ok)}
+.gate.stop{border-color:var(--stop);background:var(--stop-soft)} .gate.stop .dot{background:var(--stop)}
+.gate.skip{opacity:.45}
+.gate b{display:block} .gate small{color:var(--muted)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.num{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num label{display:block;font-size:.85rem;color:var(--muted)}
+.num input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.82rem;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.mark{font-weight:700;white-space:nowrap}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--stop)}
+button{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gate);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+textarea{width:100%;min-height:220px;font:inherit;font-size:.9rem;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.q .stem{font-weight:500;margin-bottom:6px}
+.q .lo{font-size:.78rem;color:var(--gate);font-weight:700}
+.q .fb{margin-top:6px;font-size:.92rem;padding:6px 10px;border-radius:6px;display:none}
+.q .fb.show{display:block}
+.q .fb.ok{background:var(--accent-soft)} .q .fb.no{background:var(--stop-soft)}
+.score{font-weight:700}
+footer{font-size:.85rem;color:var(--muted)}
+footer ul{padding-left:20px}
+.dim{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.dim div{border:1px solid var(--line);border-radius:8px;padding:8px;font-size:.88rem}
+.dim .pass{border-color:var(--ok)} .dim .fail{border-color:var(--stop);background:var(--stop-soft)} .dim .na{opacity:.6}
+.dim b{display:block}
+input[type=date]{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%}
+</style></head><body>
+<main>
+<header>
+  <div class="brand"><img src="logo.png" alt="Dr VIT"><span class="org">Siam edu.</span></div>
+  <h1>แอปบทที่ 10 VAT: ขอบเขต ความรับผิด และฐานภาษี</h1>
+  <p>แอปนี้ใช้คู่กับบทที่ 10 เรื่องภาษีมูลค่าเพิ่ม (Value Added Tax: VAT) ฝึกแบบจำลองห้าคำถามของภาษีขาย: เกณฑ์จดทะเบียน จุดเวลาความรับผิด ฐานภาษี และความต่างระหว่างอัตราร้อยละ 0 กับการยกเว้น ป้าย LO คือผลลัพธ์การเรียนรู้ (Learning Outcome: LO) ตามตารางหน้าเปิดบท</p>
+  <p class="note">ตัวเลขในแอปเป็นข้อมูลจำลองตามตัวอย่างในบท ใช้เพื่อการสอน ห้ามนำข้อมูลผู้เสียภาษีหรือผู้ตอบจริงใส่แอปหรือ GenAI สถานะกฎหมาย ณ 20 พฤศจิกายน 2569</p>
+</header>
+
+<section class="lab"><span class="lab-tag">ใบงาน 1 · LO1</span><h2>เกณฑ์จดทะเบียน 1,800,000 บาท (ตัวอย่าง 10.1)</h2>
+<p>ใส่ยอดขายต่อเดือนและเดือนที่เริ่มกิจการ แอปหาเดือนที่ยอดสะสมเกิน 1,800,000 บาท ซึ่งเป็นวันเริ่มนับ 30 วันในการยื่นคำขอจดทะเบียนตามมาตรา 85/1</p>
+<div class="cols"><div class="num"><label>ยอดขายต่อเดือน (บาท)<input id="h1" type="number" value="160000"></label><label>เดือนที่เริ่ม (1–12)<input id="h2" type="number" min="1" max="12" value="1"></label></div><div class="verdict" id="v1"></div></div></section>
+
+<section class="lab"><span class="lab-tag">ใบงาน 2 · LO3</span><h2>เงินมัดจำและหลักเหตุการณ์แรกสุด (ตัวอย่าง 10.2)</h2>
+<p>เงินมัดจำที่รวมภาษีแล้ว ความรับผิดเกิดเมื่อได้รับชำระตามมาตรา 78/1 (1) ถ้าคืนเงินบางส่วน ผู้ประกอบการออกใบลดหนี้</p>
+<div class="cols"><div><div class="num"><label>เงินมัดจำรวมภาษี (บาท)<input id="d1" type="number" value="107000"></label><label>สัดส่วนที่คืนลูกค้า (0–1)<input id="d2" type="number" step="0.1" min="0" max="1" value="0.5"></label></div></div><div class="tbl"><table><tbody id="t2"></tbody></table><div class="verdict" id="v2"></div></div></div></section>
+
+<section class="lab"><span class="lab-tag">ใบงาน 3 · LO4</span><h2>หลักทดสอบความเชื่อมโยงของค่าตอบแทน (ตัวอย่าง 10.3)</h2>
+<p>แยกเงินที่ได้เพราะการขายออกจากเงินที่ได้เพราะผิดนัดหรือความเสียหาย แล้วคำนวณฐานภาษีตามมาตรา 79</p>
+<div class="cols"><div class="num">
+<label>ราคาตามสัญญา<input id="b1" type="number" value="1000000"></label><label>ส่วนลดขณะขาย<input id="b2" type="number" value="50000"></label>
+<label>ค่าขนส่งที่เรียกจากผู้ซื้อ<input id="b3" type="number" value="20000"></label><label>ค่าปรับที่ผู้ซื้อหักไว้<input id="b4" type="number" value="30000"></label>
+<label>ดอกเบี้ยผิดนัดที่ได้รับ<input id="b5" type="number" value="15000"></label></div>
+<div class="tbl"><table><tbody id="t3"></tbody></table><div class="verdict" id="v3"></div></div></div></section>
+
+<section class="lab"><span class="lab-tag">ใบงาน 4 · LO5</span><h2>อัตราร้อยละ 0 กับการยกเว้น (ตัวอย่าง 10.5)</h2>
+<p>ผู้ส่งออก (ร้อยละ 0) กับผู้ขายพืชผลที่ได้รับยกเว้น มีภาษีซื้อเท่ากัน</p>
+<div class="cols"><div class="num"><label>ภาษีซื้อ (บาท)<input id="z1" type="number" value="70000"></label></div><div class="tbl"><table><thead><tr><th>รายการ</th><th class="n">ร้อยละ 0</th><th class="n">ยกเว้น</th></tr></thead><tbody id="t4"></tbody></table><div class="verdict" id="v4"></div></div></div></section>
+
+<section class="lab"><span class="lab-tag">แบบทดสอบท้ายบท</span><h2>แบบทดสอบ 8 ข้อ</h2><p>เลือกคำตอบแล้วดูคำอธิบายทันที คะแนน <span class="score" id="score">0 / 8</span></p><div id="quiz"></div></section>
+<footer><p><b>ที่มาของตัวเลขตั้งต้น:</b> ตัวอย่าง 10.1 (1,760,000 / 1,920,000 บาท), 10.2 (107,000 / 7,000 / 3,500 บาท), 10.3 (970,000 / 67,900 / 1,022,900 บาท), 10.4 (14,000 บาท), 10.5 (70,000 บาท) ในบทที่ 10 ฉบับ 20 พ.ย. 2569 อัตรารวมร้อยละ 7 ตามพระราชกฤษฎีกา (ฉบับที่ 807) ใช้ถึง 30 กันยายน 2570</p>
+<p><b>เรื่องที่ยังรอผู้เขียนตัดสินหรือตรวจต้นฉบับ:</b></p><ul><li>คำพิพากษาศาลฎีกาที่ 5706/2555 ฉบับเต็ม (ค่าปรับที่ผู้ซื้อหัก)</li><li>รายการที่เลือกเข้าระบบได้ตามมาตรา 81/3</li></ul>
+<p>Dr VIT · Siam edu. ใช้คู่กับตำราภาษีชั้นสูง บทที่ 10</p></footer>
+</main>
+<script>
+function r2(x){return Math.round(x*100)/100}
+const TH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+// ใบงาน 1: เกณฑ์จดทะเบียน 1,800,000 บาท (ตัวอย่าง 10.1)
+function threshold(monthly,startMonth,limit){
+  let cum=0;
+  for(let m=startMonth;m<=12;m++){const prev=cum;cum+=monthly;if(cum>limit) return {month:m,name:TH[m-1],prev,cum};}
+  return {month:null,cum};
+}
+// ใบงาน 2: เงินมัดจำ (ตัวอย่าง 10.2)
+function deposit(gross,rate,refundShare){
+  const value=r2(gross/(1+rate)), vat=r2(gross-value);
+  return {value,vat,credit:r2(vat*refundShare)};
+}
+// ใบงาน 3: ฐานภาษี (ตัวอย่าง 10.3)
+function base(b){
+  const val=b.price-b.discount+b.freight; const vat=r2(val*b.rate);
+  return {val,vat,cash:r2(val+vat-b.penalty+b.interest)};
+}
+// ใบงาน 4: ร้อยละ 0 เทียบยกเว้น (ตัวอย่าง 10.5)
+function zeroVsExempt(input){return {zero:{credit:input,cost:0},exempt:{credit:0,cost:input},diff:input}}
+// module
+if(typeof module!=='undefined') module.exports={threshold,deposit,base,zeroVsExempt,TH};
+
+const $=id=>document.getElementById(id);
+const fmt=n=>Number(n).toLocaleString("th-TH",{minimumFractionDigits:0,maximumFractionDigits:2});
+const v=id=>Number($(id).value)||0;
+
+function renderQuiz(Q){const box=$('quiz');Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';
+d.innerHTML='<div class="lo">ข้อ '+(i+1)+' · '+q.lo+'</div><div class="stem">'+q.stem+'</div>'+q.opts.map((o,j)=>'<label class="opt"><input type="radio" name="q'+i+'" value="'+j+'"> '+'กขคง'[j]+'. '+o+'</label>').join('')+'<div class="fb"></div>';
+box.appendChild(d);d.querySelectorAll('input').forEach(inp=>inp.addEventListener('change',()=>{const fb=d.querySelector('.fb');const ok=Number(inp.value)===q.ans;fb.className='fb show '+(ok?'ok':'no');fb.textContent=(ok?'ถูกต้อง: ':'ยังไม่ถูก คำตอบคือ '+'กขคง'[q.ans]+': ')+q.why;d.dataset.ok=ok?1:0;let s=0;box.querySelectorAll('.q').forEach(x=>s+=Number(x.dataset.ok||0));$('score').textContent=s+' / '+Q.length;}))});}
+
+function w1(){const r=threshold(v('h1'),Math.min(12,Math.max(1,v('h2'))),1800000);
+$('v1').textContent=r.month?('ยอดสะสมเกิน 1,800,000 บาทในเดือน'+r.name+' (สะสมก่อนหน้า '+fmt(r.prev)+' บาท เป็น '+fmt(r.cum)+' บาท) ต้องยื่นคำขอจดทะเบียนภายใน 30 วันนับแต่วันที่ยอดเกิน ให้ตรวจวันที่จากรายงานขายรายวัน'):('ทั้งปีสะสม '+fmt(r.cum)+' บาท ไม่เกินเกณฑ์');}
+function w2(){const r=deposit(v('d1'),.07,Math.min(1,Math.max(0,v('d2'))));
+$('t2').innerHTML='<tr><td>มูลค่าก่อนภาษี</td><td class="n">'+fmt(r.value)+'</td></tr><tr><td>ภาษีขายในเดือนที่รับมัดจำ</td><td class="n">'+fmt(r.vat)+'</td></tr><tr class="total"><td>ภาษีขายที่ลดได้ด้วยใบลดหนี้</td><td class="n">'+fmt(r.credit)+'</td></tr>';
+$('v2').textContent=r.credit===0?'ริบเงินทั้งจำนวน ไม่มีการลดภาษีขาย (แนวคำพิพากษาศาลฎีกาที่ 7129/2540)':'คืนเงินบางส่วน ออกใบลดหนี้ในเดือนที่คืนเงิน';}
+function w3(){const r=base({price:v('b1'),discount:v('b2'),freight:v('b3'),penalty:v('b4'),interest:v('b5'),rate:.07});
+$('t3').innerHTML='<tr><td>มูลค่าของฐานภาษี</td><td class="n">'+fmt(r.val)+'</td></tr><tr><td>ภาษีขายร้อยละ 7</td><td class="n">'+fmt(r.vat)+'</td></tr><tr class="total"><td>เงินสดที่ได้รับ (ไม่ใช่ฐานภาษี)</td><td class="n">'+fmt(r.cash)+'</td></tr>';
+$('v3').textContent='ค่าปรับที่ผู้ซื้อหักไม่ลดฐาน และดอกเบี้ยผิดนัดอยู่นอกฐาน ผู้ที่คำนวณจากเงินเข้าบัญชีจะผิดทั้งสองทาง';}
+function w4(){const r=zeroVsExempt(v('z1'));$('t4').innerHTML='<tr><td>ภาษีซื้อที่ใช้สิทธิได้</td><td class="n">'+fmt(r.zero.credit)+'</td><td class="n">0</td></tr><tr><td>ภาษีซื้อที่กลายเป็นต้นทุน</td><td class="n">0</td><td class="n">'+fmt(r.exempt.cost)+'</td></tr>';
+$('v4').textContent='ผลต่าง '+fmt(r.diff)+' บาทเกิดจากสถานะของธุรกรรม ไม่ใช่จากอัตรา';}
+['h1','h2'].forEach(i=>$(i).addEventListener('input',w1));['d1','d2'].forEach(i=>$(i).addEventListener('input',w2));['b1','b2','b3','b4','b5'].forEach(i=>$(i).addEventListener('input',w3));$('z1').addEventListener('input',w4);
+w1();w2();w3();w4();
+
+renderQuiz([{"lo": "LO1 · เข้าใจ", "stem": "บริษัทเริ่มกิจการ 1 มกราคม ขายเดือนละ 160,000 บาท ยอดสะสมเกินเกณฑ์จดทะเบียนในเดือนใด", "opts": ["พฤศจิกายน", "ธันวาคม", "ตุลาคม", "ไม่เกินเกณฑ์"], "ans": 1, "why": "สิ้นพฤศจิกายน 1,760,000 บาท สิ้นธันวาคม 1,920,000 บาท เกิน 1,800,000 บาทในเดือนธันวาคม (ตัวอย่าง 10.1)"}, {"lo": "LO2 · วิเคราะห์", "stem": "ข้อใดอยู่นอกฐานภาษีมูลค่าเพิ่มตามหลักทดสอบความเชื่อมโยงของค่าตอบแทน", "opts": ["ค่าขนส่งที่เรียกจากผู้ซื้อ", "เงินมัดจำค่าบริการ", "ดอกเบี้ยผิดนัดชำระ", "ดอกเบี้ยตามเงื่อนไขขยายเวลาชำระราคา"], "ans": 2, "why": "ดอกเบี้ยผิดนัดได้รับเพราะผิดนัด ไม่ใช่เพราะการขาย (หนังสือตอบข้อหารือ กค 0811/พ.17063)"}, {"lo": "LO3 · ประยุกต์", "stem": "รับเงินมัดจำค่าบริการ 107,000 บาท (รวมภาษี) วันที่ 10 กรกฎาคม ความรับผิดเกิดในเดือนใด", "opts": ["เดือนที่ให้บริการเสร็จ", "เดือนกรกฎาคม", "เดือนที่ออกใบกำกับภาษี", "เดือนที่ลูกค้ายกเลิก"], "ans": 1, "why": "มาตรา 78/1 (1) ความรับผิดเกิดเมื่อได้รับชำระราคา เงินมัดจำเป็นราคาของสิทธิที่จะได้รับบริการ (ตัวอย่าง 10.2)"}, {"lo": "LO3 · ประยุกต์", "stem": "ตามข้อ 3 ถ้าคืนเงินมัดจำครึ่งหนึ่ง ภาษีขายลดได้เท่าใด", "opts": ["7,000 บาท", "3,500 บาท", "3,745 บาท", "0 บาท"], "ans": 1, "why": "ภาษีขาย 7,000 บาท คืนครึ่งหนึ่ง ออกใบลดหนี้ลดภาษีขาย 3,500 บาท"}, {"lo": "LO4 · ประยุกต์", "stem": "ราคา 1,000,000 ส่วนลดขณะขาย 50,000 ค่าขนส่ง 20,000 ผู้ซื้อหักค่าปรับ 30,000 ฐานภาษีเท่าใด", "opts": ["940,000 บาท", "970,000 บาท", "1,000,000 บาท", "1,020,000 บาท"], "ans": 1, "why": "1,000,000 − 50,000 + 20,000 = 970,000 บาท ค่าปรับที่ผู้ซื้อหักไม่ลดฐาน (ตัวอย่าง 10.3)"}, {"lo": "LO4 · ประยุกต์", "stem": "ขายให้บริษัทในเครือ 600,000 บาท ราคาตลาด 800,000 บาท ไม่มีเหตุอันสมควร ภาษีที่ต้องเสียเพิ่มเท่าใด", "opts": ["14,000 บาท", "42,000 บาท", "56,000 บาท", "0 บาท"], "ans": 0, "why": "ภาษีตามราคาตลาด 56,000 ลบที่เสียแล้ว 42,000 เท่ากับ 14,000 บาท (ตัวอย่าง 10.4)"}, {"lo": "LO5 · ประเมิน", "stem": "ผู้ส่งออก (ร้อยละ 0) กับผู้ขายสินค้าที่ได้รับยกเว้น มีภาษีซื้อ 70,000 บาทเท่ากัน ข้อใดถูก", "opts": ["ทั้งสองรายขอคืนได้", "ผู้ส่งออกขอคืนได้ ผู้ได้รับยกเว้นต้องรับเป็นต้นทุน", "ทั้งสองรายรับเป็นต้นทุน", "ผู้ได้รับยกเว้นขอคืนได้"], "ans": 1, "why": "อัตราร้อยละ 0 ยังอยู่ในระบบ เครดิตภาษีซื้อได้ ส่วนการยกเว้นอยู่นอกระบบ (ตัวอย่าง 10.5)"}, {"lo": "LO6 · สร้างสรรค์", "stem": "บันทึกความเห็นทางภาษีเรื่องเงินที่ได้รับนอกราคาสินค้า ควรตั้งคำถามแรกว่าอะไร", "opts": ["เงินนั้นเข้าบัญชีธนาคารเมื่อใด", "เงินนั้นได้รับเพราะการขาย บริการ หรือสิทธิที่จะได้รับ หรือเพราะผิดนัดหรือความเสียหาย", "ผู้จ่ายเป็นใคร", "สัญญาเรียกเงินนั้นว่าอะไร"], "ans": 1, "why": "หลักทดสอบความเชื่อมโยงของค่าตอบแทน ดูเหตุที่ได้รับเงิน ไม่ว่าใครจ่ายหรือเรียกว่าอะไร (หัวข้อ 10.7)"}]);
+</script>
+</body></html>

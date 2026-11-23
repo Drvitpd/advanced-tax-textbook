@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แอปบทที่ 4 สถานะผู้เสียภาษี ฐานภาษี และ ภ.ง.ด.51</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700&family=Noto+Serif+Thai:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#ffffff; --ink:#15233a; --muted:#5a6678; --line:#d5dbe3;
+  --accent:#0d6466; --accent-soft:#e1efef; --gate:#a86a12; --gate-soft:#f7ecd9;
+  --ok:#2f7d32; --stop:#b3261e; --stop-soft:#f8e3e1;
+  --display:"Noto Serif Thai",Georgia,serif; --body:"Noto Sans Thai",system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f1620; --paper:#17212d; --ink:#e6ebf2; --muted:#9aa6b6; --line:#2c3a4a;
+  --accent:#4fb8b4; --accent-soft:#163334; --gate:#e2a54a; --gate-soft:#3a2c14;
+  --ok:#74c27a; --stop:#f08a80; --stop-soft:#3c1d1b; color-scheme:dark;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:24px 16px 48px;display:grid;gap:24px}
+.brand{display:inline-flex;align-items:center;gap:12px;background:#ffffff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;margin-bottom:14px}
+.brand img{height:40px;width:auto;display:block}
+.brand .org{font-family:var(--display);font-weight:700;font-size:1.15rem;color:#15233a;border-left:2px solid #d5dbe3;padding-left:12px;line-height:1.2}
+header h1{font-family:var(--display);font-size:1.7rem;line-height:1.3;margin:0 0 6px;text-wrap:balance}
+header p{margin:0 0 10px;color:var(--muted);max-width:70ch}
+.note{font-size:.88rem;color:var(--muted);border-left:3px solid var(--gate);padding:4px 10px;background:var(--gate-soft);border-radius:0 6px 6px 0}
+section.lab{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.lab h2{font-family:var(--display);font-size:1.25rem;margin:0 0 4px}
+.lab-tag{font-size:.8rem;color:var(--accent);font-weight:700}
+.lab > p{margin:4px 0 14px;color:var(--muted);max-width:72ch}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:20px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px}
+legend{font-weight:700;font-size:.92rem;padding:0 4px}
+label.opt{display:flex;gap:8px;align-items:flex-start;padding:2px 0;cursor:pointer;font-size:.95rem}
+.gate{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:8px;border:1px solid var(--line);margin-bottom:8px}
+.gate .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#fff;background:var(--muted)}
+.gate.pass{border-color:var(--ok)} .gate.pass .dot{background:var(--ok)}
+.gate.stop{border-color:var(--stop);background:var(--stop-soft)} .gate.stop .dot{background:var(--stop)}
+.gate.skip{opacity:.45}
+.gate b{display:block} .gate small{color:var(--muted)}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent-soft);font-size:.95rem}
+.num{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.num label{display:block;font-size:.85rem;color:var(--muted)}
+.num input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:.82rem;color:var(--muted)}
+td.n,th.n{text-align:right}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+select{font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);max-width:100%}
+.mark{font-weight:700;white-space:nowrap}
+.mark.ok{color:var(--ok)} .mark.no{color:var(--stop)}
+button{font:inherit;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gate);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+textarea{width:100%;min-height:220px;font:inherit;font-size:.9rem;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.q{border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.q .stem{font-weight:500;margin-bottom:6px}
+.q .lo{font-size:.78rem;color:var(--gate);font-weight:700}
+.q .fb{margin-top:6px;font-size:.92rem;padding:6px 10px;border-radius:6px;display:none}
+.q .fb.show{display:block}
+.q .fb.ok{background:var(--accent-soft)} .q .fb.no{background:var(--stop-soft)}
+.score{font-weight:700}
+footer{font-size:.85rem;color:var(--muted)}
+footer ul{padding-left:20px}
+input.amt{width:130px;text-align:right;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.chips button{font-size:.85rem;padding:5px 10px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:12px}
+.kpi div{background:var(--accent-soft);border-radius:8px;padding:10px 12px}
+.kpi b{display:block;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.kpi small{color:var(--muted)}
+.num{align-content:start}
+.num label.opt{display:flex;color:var(--ink);font-size:.92rem}
+td.n{white-space:nowrap}
+input.amt{width:130px;text-align:right;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font-variant-numeric:tabular-nums}
+input.txt{width:100%;font:inherit;padding:4px 6px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink)}
+</style><style>.atx-nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.9rem;margin:0 0 4px}.atx-nav a{color:var(--accent,#0d6466);font-weight:700;text-decoration:none}.atx-nav a:hover{text-decoration:underline}main>*{min-width:0}.tbl,table{max-width:100%}</style>
+<script src="gate.js"></script>
+</head>
+<body>
+<main>
+<nav class="atx-nav" aria-label="นำทาง"><a href="./">สารบัญแอปประจำเล่ม</a> · <a href="ch03.html">บทที่ 3</a> · <a href="ch05.html">บทที่ 5</a></nav>
+<header>
+  <div class="brand"><img src="brand/logo.png" alt="Dr VIT" data-atx-logo><span class="org">Siam edu.</span></div>
+  <h1>แอปบทที่ 4 สถานะผู้เสียภาษี ฐานภาษี และการยื่นแบบ</h1>
+  <p>แอปนี้ใช้คู่กับบทที่ 4 ของตำราภาษีชั้นสูง ผู้เรียนจำแนกสถานะของกระแสเงินได้ทีละกระแสตามผังการตัดสินใจในหัวข้อ 4.6 เลือกฐานและอัตราภาษี คำนวณเงินเพิ่มตามมาตรา 67 ตรี และเทียบภาษีจากฐานกำไรสุทธิกับการประเมินตามมาตรา 71 (1)</p>
+  <p class="note">ตัวเลขตั้งต้นมาจากกรณีบริษัท สยามแพ็กเกจจิ้ง จำกัด และบริษัท นอร์ดฮาฟน์ แมชชีนเนอรี (ชื่อสมมติ) ในบท เกณฑ์สถานประกอบการถาวร 6 เดือนเป็นข้อสมมติเพื่อการศึกษา เกณฑ์จริงต่างกันตามอนุสัญญาแต่ละฉบับ แอปใช้เพื่อการเรียนรู้ ไม่ใช่คำปรึกษาภาษีสำหรับกรณีจริง และห้ามนำข้อมูลลูกค้าจริงใส่แอปหรือเครื่องมือปัญญาประดิษฐ์</p>
+</header>
+
+<section class="lab" id="w1">
+  <span class="lab-tag">ใบงาน 1 · LO1 LO2 LO5 LO6</span>
+  <h2>จำแนกสถานะทีละกระแสเงินได้</h2>
+  <p>เลือกกรณีตัวอย่างหรือตอบคำถามเอง แอปไล่คำถามตามลำดับ กฎหมายภายในสร้างหน้าที่ก่อน แล้วอนุสัญญาจึงจำกัดหน้าที่</p>
+  <div class="chips" id="presets"></div>
+  <div class="cols">
+    <div>
+      <fieldset><legend>คำถามที่ 1 บริษัทตั้งขึ้นตามกฎหมายไทยหรือไม่</legend>
+        <label class="opt"><input type="radio" name="q1" value="th"> ใช่ ตั้งตามกฎหมายไทย</label>
+        <label class="opt"><input type="radio" name="q1" value="fx" checked> ไม่ใช่ ตั้งตามกฎหมายต่างประเทศ</label>
+      </fieldset>
+      <fieldset id="f2"><legend>คำถามที่ 2 ประกอบกิจการในไทยตามกฎหมายภายในหรือไม่</legend>
+        <label class="opt"><input type="radio" name="q2" value="branch"> ใช่ ผ่านสาขาหรือสำนักงาน หรืองานที่ทำในไทย (มาตรา 66)</label>
+        <label class="opt"><input type="radio" name="q2" value="agent"> ใช่ ผ่านลูกจ้าง ผู้ทำการแทน หรือผู้ทำการติดต่อที่มีส่วนก่อรายได้ (มาตรา 76 ทวิ)</label>
+        <label class="opt"><input type="radio" name="q2" value="transport"> ใช่ ประกอบกิจการขนส่งระหว่างประเทศ (มาตรา 67 (1))</label>
+        <label class="opt"><input type="radio" name="q2" value="none" checked> ไม่ใช่</label>
+      </fieldset>
+      <fieldset id="f3"><legend>คำถามที่ 3 อนุสัญญาภาษีซ้อนตัดสิทธิไทยหรือไม่ (ไม่มีสถานประกอบการถาวร)</legend>
+        <label class="opt"><input type="radio" name="q3" value="yes"> ใช่ มีอนุสัญญาและไม่มีสถานประกอบการถาวร</label>
+        <label class="opt"><input type="radio" name="q3" value="no" checked> ไม่ใช่ ไม่มีอนุสัญญา หรือมีสถานประกอบการถาวร</label>
+      </fieldset>
+      <fieldset id="f4"><legend>คำถามที่ 4 เป็นเงินได้ตามมาตรา 40 (2) ถึง (6) หรือไม่</legend>
+        <label class="opt"><input type="radio" name="q4" value="40"> ใช่ เช่น ค่าสิทธิ ดอกเบี้ย ค่าบริการวิชาชีพ</label>
+        <label class="opt"><input type="radio" name="q4" value="div"> ใช่ เป็นเงินปันผล</label>
+        <label class="opt"><input type="radio" name="q4" value="none" checked> ไม่ใช่ เช่น ขายสินค้าที่ส่งมอบนอกประเทศ</label>
+      </fieldset>
+    </div>
+    <div>
+      <div id="flow" aria-live="polite"></div>
+      <div class="verdict" id="res"></div>
+      <p style="margin:12px 0 4px;font-size:.88rem;color:var(--muted)">ร่างย่อหน้าสำหรับบันทึกความเห็นทางภาษี (Tax Memo) ผู้เรียนต้องเติมข้อเท็จจริงและข้ออนุสัญญาที่ใช้จริงเอง</p>
+      <textarea id="memo" readonly style="min-height:150px"></textarea>
+    </div>
+  </div>
+</section>
+
+<section class="lab" id="w2">
+  <span class="lab-tag">ใบงาน 2 · LO3</span>
+  <h2>ฐานภาษีและอัตราภาษี</h2>
+  <p>ค่าตั้งต้นตรงกับตารางตัวอย่างคำนวณสั้นในหัวข้อ 4.4.5 แก้จำนวนเงินหรือเปลี่ยนประเภทได้ สองบรรทัดที่ได้ภาษีเท่ากันมีลักษณะต่างกัน ดูคอลัมน์ลักษณะ</p>
+  <div class="tbl"><table><thead><tr><th>ประเภทเงินได้</th><th class="n">ฐาน (บาท)</th><th class="n">อัตรา</th><th class="n">ภาษี (บาท)</th><th>ลักษณะ</th></tr></thead><tbody id="bases"></tbody></table></div>
+</section>
+
+<section class="lab" id="w3">
+  <span class="lab-tag">ใบงาน 3 · LO4</span>
+  <h2>ภ.ง.ด.51 และเงินเพิ่มตามมาตรา 67 ตรี</h2>
+  <p>ค่าตั้งต้นตรงกับตัวอย่าง 4.5 ลองลดกำไรสุทธิจริงเพื่อดูว่าเมื่อใดส่วนที่ประมาณการขาดไม่เกินร้อยละ 25</p>
+  <div class="cols">
+    <div class="num">
+      <div><label for="s_est">กำไรสุทธิที่ประมาณการทั้งปี</label><input id="s_est" type="number" value="8000000" step="100000"></div>
+      <div><label for="s_act">กำไรสุทธิจริงตาม ภ.ง.ด.50</label><input id="s_act" type="number" value="12000000" step="100000"></div>
+      <div><label for="s_rate">อัตราภาษี (ร้อยละ)</label><input id="s_rate" type="number" value="20" step="1"></div>
+      <div><label for="s_wht">ภาษีที่ถูกหัก ณ ที่จ่ายทั้งปี</label><input id="s_wht" type="number" value="0" step="10000"></div>
+      <div style="grid-column:1/-1"><label class="opt"><input id="s_rc" type="checkbox"> มีเหตุอันสมควร และมีหลักฐานที่เกิดก่อนวันยื่น ภ.ง.ด.51</label></div>
+    </div>
+    <div class="tbl"><table><tbody id="sur"></tbody></table></div>
+  </div>
+  <div class="kpi" id="surk"></div>
+</section>
+
+<section class="lab" id="w4">
+  <span class="lab-tag">ใบงาน 4 · LO3 LO5</span>
+  <h2>ฐานกำไรสุทธิเทียบกับการประเมินตามมาตรา 71 (1)</h2>
+  <p>ค่าตั้งต้นตรงกับหัวข้อ 4.7.2 และ 4.7.3 งานติดตั้งของนอร์ดฮาฟน์ 3,000,000 บาท ภาษีร้อยละ 5 ของรายรับเท่ากับภาษีร้อยละ 20 ของกำไรสุทธิเมื่ออัตรากำไรต่อรายรับเท่ากับร้อยละ 25</p>
+  <div class="cols">
+    <div class="num">
+      <div><label for="c_rev">ยอดรายรับ</label><input id="c_rev" type="number" value="3000000" step="100000"></div>
+      <div><label for="c_exp">รายจ่ายที่หักได้</label><input id="c_exp" type="number" value="2100000" step="100000"></div>
+      <div><label for="c_wht">ภาษีหัก ณ ที่จ่ายร้อยละ 5 ตาม ท.ป.4/2528</label><input id="c_wht" type="number" value="150000" step="10000"></div>
+      <div><label for="c_rate">อัตราภาษี (ร้อยละ)</label><input id="c_rate" type="number" value="20" step="1"></div>
+    </div>
+    <div class="tbl"><table><tbody id="cmp"></tbody></table></div>
+  </div>
+  <canvas id="chart" height="230" style="width:100%;margin-top:14px" aria-label="กราฟภาษีตามอัตรากำไรต่อรายรับ"></canvas>
+  <p class="note" style="margin-top:10px">มาตรา 71 (1) เป็นอำนาจของเจ้าพนักงานประเมินเมื่อไม่ยื่นรายการหรือไม่มีหลักฐาน ผู้เสียภาษีเลือกไม่ได้ และอาจมีเงินเพิ่มตามมาตรา 67 ตรี ซ้อนอีกตามหนังสือตอบข้อหารือ กค 0702/2171 ลงวันที่ 8 มีนาคม 2556</p>
+</section>
+
+<section class="lab" id="quiz">
+  <span class="lab-tag">แบบทดสอบท้ายบท · LO1–LO5</span>
+  <h2>แบบทดสอบ 8 ข้อ</h2>
+  <p>เลือกคำตอบแล้วอ่านคำอธิบายทันที</p>
+  <div id="qs"></div>
+  <p class="score" id="score"></p>
+</section>
+
+<footer>
+  <b>ที่มาของตัวเลขตั้งต้น</b>
+  <ul>
+    <li>ใบงาน 1: ตาราง 4.3.3 สถานะ ก. ถึง จ. ผังการตัดสินใจหัวข้อ 4.6 ตัวอย่าง 4.7.1 และกรณีนำบทรายการ ก. และ ข.</li>
+    <li>ใบงาน 2: ตาราง 4.4.2 4.4.3 และ 4.4.5</li>
+    <li>ใบงาน 3: ตัวอย่าง 4.5 เงินเพิ่ม 80,000 บาท ภาษีชำระเพิ่ม 1,600,000 บาท เงินสดรวม 1,680,000 บาท</li>
+    <li>ใบงาน 4: ตัวอย่าง 4.7.2 ภาษี 180,000 บาท ชำระเพิ่ม 30,000 บาท และตาราง 4.7.3</li>
+  </ul>
+  <b>เรื่องที่ยังรอผู้เขียน</b>
+  <ul>
+    <li>ผังในใบงาน 1 เป็นการจัดคำถามของแอปตามหัวข้อ 4.6 ควรตรวจให้ตรงกับแผนภาพ 4.1 ฉบับสุดท้าย</li>
+    <li>ประเด็นค้างของบท: คำสั่ง ท.ป.4/2528 ข้อ 7 ต้นฉบับ การขยายเวลายื่นแบบทางอินเทอร์เน็ต 8 วัน และหนังสือตอบข้อหารือ กค 0702/5077</li>
+  </ul>
+  <p>Dr VIT · Siam edu. แอปประกอบตำราภาษีชั้นสูง</p>
+</footer>
+</main>
+<script>
+// แอปบทที่ 4 ตรรกะบริสุทธิ์
+function status(a){
+  // a: {thai, business:'none'|'branch'|'agent'|'transport', limited:bool, income:'none'|'40'|'div'}
+  if(a.thai) return {code:'T',base:'กำไรสุทธิของกิจการทั้งหมด',rate:'อัตราภาษีทั่วไปร้อยละ 20 (หรืออัตราขั้นบันไดถ้าเข้าเกณฑ์)',form:'ภ.ง.ด.51 และ ภ.ง.ด.50',ref:'มาตรา 66 วรรคหนึ่ง หัวข้อ 4.3.3'};
+  if(a.business==='none'){
+    if(a.income==='40') return {code:'ค',base:'เงินได้ที่จ่าย ไม่หักรายจ่าย',rate:'ร้อยละ 15 ลดอัตราได้ตามอนุสัญญา',form:'ผู้จ่ายหักและยื่น ภ.ง.ด.54',ref:'มาตรา 70 หัวข้อ 4.4.3'};
+    if(a.income==='div') return {code:'ค',base:'เงินปันผลที่จ่าย',rate:'ร้อยละ 10',form:'ผู้จ่ายหักและยื่น ภ.ง.ด.54',ref:'มาตรา 70 บัญชีอัตรา (2) (ค)'};
+    return {code:'0',base:'ไม่มี',rate:'ไม่มี',form:'ไม่มีภาระภาษีเงินได้นิติบุคคลไทยสำหรับกระแสเงินได้นี้',ref:'หัวข้อ 4.7.1 รายการ 1'};
+  }
+  if(a.limited) return {code:'DTA',base:'กฎหมายภายในก่อหน้าที่ แต่อนุสัญญาตัดสิทธิไทยเก็บภาษีจากกำไรจากธุรกิจ',rate:'ไม่มีภาษีเงินได้นิติบุคคลต้องชำระ',form:'ผู้จ่ายยังต้องตรวจหน้าที่หักภาษีตามคำสั่ง ท.ป.4/2528 ภาษีที่หักไว้ผู้รับต้องขอคืน',ref:'หัวข้อ 4.3.5 และ 4.6'};
+  if(a.business==='transport') return {code:'จ',base:'ค่าโดยสารที่เรียกเก็บในไทยและค่าระวางขนส่งสินค้าออก',rate:'ร้อยละ 3 ของยอดรายรับก่อนหักรายจ่าย',form:'บริษัทขนส่งยื่นตามมาตรา 67 (1)',ref:'มาตรา 67 (1) หัวข้อ 4.4.2'};
+  if(a.business==='agent') return {code:'ข',base:'กำไรสุทธิจากเงินได้ที่ได้รับในไทย',rate:'อัตราภาษีทั่วไปร้อยละ 20',form:'ลูกจ้าง ผู้ทำการแทน หรือผู้ทำการติดต่อยื่นและเสียภาษีแทน',ref:'มาตรา 76 ทวิ คำพิพากษาศาลฎีกาที่ 3238/2532'};
+  return {code:'ก',base:'กำไรสุทธิจากกิจการในไทย',rate:'อัตราภาษีทั่วไปร้อยละ 20',form:'สาขาในไทยยื่น ภ.ง.ด.51 และ ภ.ง.ด.50 พร้อมงบการเงินที่ผู้สอบบัญชีรับรอง',ref:'มาตรา 66 วรรคสอง คำสั่ง ป.13/2529'};
+}
+const BASES={
+  roy:{label:'ค่าสิทธิจ่ายให้บริษัทต่างประเทศที่ไม่ได้ประกอบกิจการในไทย (มาตรา 70)',rate:0.15,note:'ผู้จ่ายหักและยื่น ภ.ง.ด.54 เป็นภาษีสุดท้าย'},
+  div:{label:'เงินปันผลจ่ายให้บริษัทต่างประเทศ (มาตรา 70)',rate:0.10,note:'ผู้จ่ายหักและยื่น ภ.ง.ด.54'},
+  rem:{label:'สาขาในไทยจำหน่ายกำไรกลับสำนักงานใหญ่ (มาตรา 70 ทวิ)',rate:0.10,note:'บริษัทที่จำหน่ายกำไรยื่น ภ.ง.ด.54'},
+  air:{label:'สายการบินต่างประเทศ ค่าโดยสารที่เรียกเก็บในไทย (มาตรา 67 (1))',rate:0.03,note:'ฐานยอดรายรับก่อนหักรายจ่าย'},
+  tp4:{label:'ค่าติดตั้งจ่ายให้บริษัทต่างประเทศไม่มีสาขาถาวร (ท.ป.4/2528 ข้อ 7)',rate:0.05,note:'ภาษีหักไว้ล่วงหน้า นำไปเครดิตใน ภ.ง.ด.50 ได้'},
+  s71:{label:'ประเมินตามมาตรา 71 (1) จากยอดรายรับ',rate:0.05,note:'อำนาจของเจ้าพนักงานประเมิน ไม่ใช่ทางเลือกของผู้เสียภาษี'},
+  fdn:{label:'มูลนิธิหรือสมาคมที่มีรายได้ (มาตรา 67 (2))',rate:0.10,note:'รายได้ก่อนหักรายจ่าย ยกเว้นรายได้ตามมาตรา 65 ทวิ (13)'}
+};
+function baseTax(type,amt){const b=BASES[type];return Math.round(amt*b.rate*100)/100;}
+function surcharge({est,actual,rate=0.20,reasonable=false}){
+  const paid=est/2*rate, due=actual/2*rate;
+  const shortPct=actual>0?(actual-est)/actual*100:0;
+  const short=Math.max(0,due-paid);
+  const hit=!reasonable && shortPct>25;
+  const s=hit?short*0.20:0;
+  const annual=actual*rate, payable=annual-paid;
+  return {paid,due,shortPct,short,hit,surcharge:s,annual,payable,cash:payable+s};
+}
+function compare71({rev,exp,wht=0,rate=0.20}){
+  const np=rev-exp, npTax=Math.max(0,np)*rate, s71=rev*0.05;
+  return {np,npTax,s71,margin:rev>0?np/rev*100:0,breakeven:0.05/rate*100,payNP:npTax-wht,pay71:s71-wht};
+}
+if(typeof module!=='undefined') module.exports={status,BASES,baseTax,surcharge,compare71};
+const $=s=>document.querySelector(s);
+const fmt=n=>(Math.round(n*100)/100).toLocaleString('th-TH',{maximumFractionDigits:2});
+const val=n=>document.querySelector(`input[name=${n}]:checked`).value;
+const setR=(n,v)=>{const e=document.querySelector(`input[name=${n}][value="${v}"]`);if(e)e.checked=true;};
+
+/* ใบงาน 1 */
+const PRESETS=[
+  {k:'4.7.1 รายการ 1',d:'เจแปน ทูลส์ ขายเครื่องมือ ส่งมอบที่ท่าเรือโอซากา ไม่มีบุคคลในไทยช่วยหาลูกค้า',a:{q1:'fx',q2:'none',q3:'no',q4:'none'}},
+  {k:'4.7.1 รายการ 2',d:'เจแปน ทูลส์ ได้ค่าสิทธิใช้ซอฟต์แวร์ 1,000,000 บาท จากลูกค้าไทย',a:{q1:'fx',q2:'none',q3:'no',q4:'40'}},
+  {k:'4.7.1 รายการ 3',d:'เจแปน ทูลส์ ขายผ่านพนักงานขายที่จ้างประจำในไทย (สมมติว่าอนุสัญญาถือว่าตัวแทนนี้ก่อสถานประกอบการถาวร)',a:{q1:'fx',q2:'agent',q3:'no',q4:'none'}},
+  {k:'กรณีนำบท ข.',d:'นอร์ดฮาฟน์ส่งวิศวกรติดตั้งเครื่องจักร 7 เดือน เกินเกณฑ์ 6 เดือนตามข้อสมมติของอนุสัญญา',a:{q1:'fx',q2:'branch',q3:'no',q4:'none'}},
+  {k:'กรณีนำบท ก.',d:'นอร์ดฮาฟน์ขายเครื่องจักรผ่านไทยเอเจนซีที่มีบทบาทในการขายแต่ไม่มีอำนาจทำสัญญา อนุสัญญาก่อนปี 2560',a:{q1:'fx',q2:'agent',q3:'yes',q4:'none'}},
+  {k:'สาขาสายการบิน',d:'สายการบินต่างประเทศขายตั๋วในไทย (สมมติว่าไม่มีอนุสัญญาที่ตัดสิทธิ)',a:{q1:'fx',q2:'transport',q3:'no',q4:'none'}}
+];
+let curDesc='กระแสเงินได้ที่ผู้เรียนกำหนดเอง';
+PRESETS.forEach((p,i)=>{const b=document.createElement('button');b.className='ghost';b.textContent=p.k;b.title=p.d;b.onclick=()=>{for(const q in p.a)setR(q,p.a[q]);curDesc=p.d;run1();};$('#presets').appendChild(b);});
+document.querySelectorAll('#w1 input').forEach(e=>e.addEventListener('change',()=>{curDesc='กระแสเงินได้ที่ผู้เรียนกำหนดเอง';run1();}));
+function run1(){
+  const thai=val('q1')==='th', business=val('q2'), limited=val('q3')==='yes', income=val('q4');
+  $('#f2').disabled=thai; $('#f3').disabled=thai||business==='none'; $('#f4').disabled=thai||business!=='none';
+  const r=status({thai,business,limited,income});
+  const steps=[];
+  steps.push({t:'คำถามที่ 1 ตั้งตามกฎหมายไทย',s:thai?'ใช่ ไปที่ผล':'ไม่ใช่ ไปคำถามที่ 2',c:thai?'stop':'pass'});
+  if(!thai){
+    steps.push({t:'คำถามที่ 2 ประกอบกิจการในไทย',s:business==='none'?'ไม่ใช่ ข้ามคำถามที่ 3 ไปคำถามที่ 4':'ใช่ กฎหมายภายในก่อหน้าที่แล้ว ไปตรวจอนุสัญญา',c:business==='none'?'pass':'pass'});
+    if(business!=='none') steps.push({t:'คำถามที่ 3 อนุสัญญาตัดสิทธิ',s:limited?'ใช่ อนุสัญญาจำกัดหน้าที่':'ไม่ใช่ ไทยเก็บภาษีได้',c:limited?'stop':'pass'});
+    else steps.push({t:'คำถามที่ 3 อนุสัญญาตัดสิทธิ',s:'ข้าม เพราะยังไม่มีหน้าที่ตามกฎหมายภายใน',c:'skip'});
+    if(business==='none') steps.push({t:'คำถามที่ 4 เงินได้ตามมาตรา 40 (2) ถึง (6)',s:income==='none'?'ไม่ใช่':'ใช่',c:income==='none'?'stop':'pass'});
+    else steps.push({t:'คำถามที่ 4 เงินได้ตามมาตรา 40 (2) ถึง (6)',s:'ข้าม เพราะผลออกที่คำถามที่ 3',c:'skip'});
+  }
+  $('#flow').innerHTML=steps.map((s,i)=>`<div class="gate ${s.c}"><span class="dot">${i+1}</span><div><b>${s.t}</b><small>${s.s}</small></div></div>`).join('');
+  const label=r.code==='T'?'บริษัทไทย':r.code==='0'?'ไม่มีภาระ':r.code==='DTA'?'อนุสัญญาตัดสิทธิ':'สถานะ '+r.code+'.';
+  $('#res').innerHTML=`<b>${label}</b><br>ฐาน: ${r.base}<br>อัตรา: ${r.rate}<br>ผู้ยื่นและนำส่ง: ${r.form}<br><small>อ้างอิง: ${r.ref}</small>`;
+  $('#memo').value=`ข้อเท็จจริง: ${curDesc}\n\nประเด็น: บริษัทผู้รับเงินมีหน้าที่เสียภาษีเงินได้นิติบุคคลไทยสำหรับกระแสเงินได้นี้หรือไม่ ในฐานะใด และจากฐานใด\n\nหลักกฎหมาย: ${r.ref}\n\nความเห็น: ผู้จัดทำบันทึกเห็นว่ากรณีนี้เป็น "${label}" ฐานภาษีคือ${r.base} อัตรา${r.rate} โดย${r.form}\n\nข้อที่ต้องตรวจเพิ่ม: ข้อ 5 และข้อ 7 ของอนุสัญญาฉบับที่ใช้จริง หลักฐานถิ่นที่อยู่ และหน้าที่หักภาษีของผู้จ่ายตามกรอบแกนกลาง 4 ชั้น (บทที่ 2)`;
+}
+
+/* ใบงาน 2 */
+const ROWS=[['roy',1000000],['rem',2000000],['air',10000000],['tp4',3000000],['s71',3000000]];
+function draw2(){
+  $('#bases').innerHTML=ROWS.map((r,i)=>`<tr><td><select data-i="${i}" class="bt">${Object.keys(BASES).map(k=>`<option value="${k}" ${k===r[0]?'selected':''}>${BASES[k].label}</option>`).join('')}</select></td><td class="n"><input class="amt ba" data-i="${i}" type="number" value="${r[1]}" step="100000"></td><td class="n">ร้อยละ ${BASES[r[0]].rate*100}</td><td class="n"><b>${fmt(baseTax(r[0],r[1]))}</b></td><td><small>${BASES[r[0]].note}</small></td></tr>`).join('');
+  document.querySelectorAll('.bt').forEach(s=>s.onchange=()=>{ROWS[s.dataset.i][0]=s.value;draw2();});
+  document.querySelectorAll('.ba').forEach(s=>s.onchange=()=>{ROWS[s.dataset.i][1]=+s.value||0;draw2();});
+}
+
+/* ใบงาน 3 */
+function run3(){
+  const rate=(+$('#s_rate').value||0)/100, wht=+$('#s_wht').value||0;
+  const r=surcharge({est:+$('#s_est').value||0,actual:+$('#s_act').value||0,rate,reasonable:$('#s_rc').checked});
+  const rows=[
+    ['1. ภาษีที่ชำระตาม ภ.ง.ด.51 (ประมาณการ ÷ 2 × อัตรา)',fmt(r.paid)],
+    ['2. ส่วนที่ประมาณการขาดเทียบกำไรสุทธิจริง','ร้อยละ '+fmt(r.shortPct)+(r.shortPct>25?' (เกินร้อยละ 25)':' (ไม่เกินร้อยละ 25)')],
+    ['3. ภาษีครึ่งปีที่ควรชำระ (กำไรจริง ÷ 2 × อัตรา)',fmt(r.due)],
+    ['4. ภาษีที่ชำระไว้ขาด',fmt(r.short)],
+    ['5. เงินเพิ่มตามมาตรา 67 ตรี (ร้อยละ 20 ของข้อ 4)',fmt(r.surcharge)+(r.hit?'':' (ไม่ต้องเสีย)')],
+    ['6. ภาษีทั้งปีตาม ภ.ง.ด.50',fmt(r.annual)],
+    ['7. หัก ภาษีที่ชำระตาม ภ.ง.ด.51','('+fmt(r.paid)+')'],
+    ['8. ภาษีที่ต้องชำระเพิ่มก่อนหักภาษีที่ถูกหัก ณ ที่จ่าย',fmt(r.payable)]
+  ];
+  $('#sur').innerHTML=rows.map(x=>`<tr><td>${x[0]}</td><td class="n">${x[1]}</td></tr>`).join('');
+  $('#surk').innerHTML=`<div><small>เงินเพิ่มตามมาตรา 67 ตรี</small><b>${fmt(r.surcharge)}</b></div><div><small>ชำระพร้อม ภ.ง.ด.50 (ภาษี + เงินเพิ่ม − ภาษีที่ถูกหัก)</small><b>${fmt(r.cash-wht)}</b></div><div><small>ปรับกำไรสุทธิทางบัญชี บวกกลับ (65 ตรี (6) ผลแตกต่างถาวร)</small><b>${fmt(r.surcharge)}</b></div>`;
+}
+
+/* ใบงาน 4 */
+function run4(){
+  const rate=(+$('#c_rate').value||0)/100, rev=+$('#c_rev').value||0;
+  const r=compare71({rev,exp:+$('#c_exp').value||0,wht:+$('#c_wht').value||0,rate});
+  const pay=x=>x>=0?fmt(x):'ขอคืน '+fmt(-x);
+  $('#cmp').innerHTML=[
+    ['กำไรสุทธิจากกิจการในไทย',fmt(r.np)],
+    ['อัตรากำไรต่อรายรับ','ร้อยละ '+fmt(r.margin)],
+    ['ภาษีฐานกำไรสุทธิ',fmt(r.npTax)],
+    ['ชำระเพิ่มกับ ภ.ง.ด.50 หลังเครดิตภาษีหัก ณ ที่จ่าย',pay(r.payNP)],
+    ['ภาษีตามมาตรา 71 (1) ร้อยละ 5 ของรายรับ',fmt(r.s71)],
+    ['จุดเท่ากัน (5 ÷ อัตราภาษี)','ร้อยละ '+fmt(r.breakeven)],
+    ['ผล',r.npTax>r.s71?'ฐานกำไรสุทธิให้ภาษีสูงกว่า':r.npTax<r.s71?'มาตรา 71 (1) ให้ภาษีสูงกว่า':'เท่ากัน']
+  ].map(x=>`<tr><td>${x[0]}</td><td class="n"><b>${x[1]}</b></td></tr>`).join('');
+  drawChart(rev,rate,r.margin);
+}
+function drawChart(rev,rate,m){
+  const c=$('#chart'),dpr=window.devicePixelRatio||1,W=c.clientWidth,H=230;c.width=W*dpr;c.height=H*dpr;
+  const g=c.getContext('2d');g.scale(dpr,dpr);g.clearRect(0,0,W,H);
+  const cs=getComputedStyle(document.documentElement),col=v=>cs.getPropertyValue(v).trim();
+  const L=70,R=W-16,T=14,B=H-34,maxM=60,maxT=Math.max(rev*rate*maxM/100,rev*0.05)*1.05||1;
+  const x=v=>L+(R-L)*v/maxM,y=v=>B-(B-T)*v/maxT;
+  g.strokeStyle=col('--line');g.fillStyle=col('--muted');g.font='12px '+col('--body');g.lineWidth=1;
+  for(let v=0;v<=maxM;v+=10){g.beginPath();g.moveTo(x(v),T);g.lineTo(x(v),B);g.stroke();g.fillText(v+'%',x(v)-10,B+16);}
+  g.fillText('อัตรากำไรต่อรายรับ',R-110,H-4);g.fillText(fmt(maxT/1.05),4,T+10);g.fillText('0',L-14,B);
+  g.lineWidth=2.5;g.strokeStyle=col('--accent');g.beginPath();g.moveTo(x(0),y(0));g.lineTo(x(maxM),y(rev*rate*maxM/100));g.stroke();
+  g.strokeStyle=col('--gate');g.beginPath();g.moveTo(x(0),y(rev*0.05));g.lineTo(x(maxM),y(rev*0.05));g.stroke();
+  if(m>=0&&m<=maxM){g.fillStyle=col('--ink');g.beginPath();g.arc(x(m),y(rev*rate*m/100),5,0,7);g.fill();}
+  g.font='13px '+col('--body');g.fillStyle=col('--accent');g.fillText('ฐานกำไรสุทธิ',L+8,T+14);g.fillStyle=col('--gate');g.fillText('มาตรา 71 (1)',L+8,T+32);
+}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',run4);
+addEventListener('resize',run4);
+['#s_est','#s_act','#s_rate','#s_wht','#s_rc'].forEach(s=>$(s).addEventListener('input',run3));
+['#c_rev','#c_exp','#c_wht','#c_rate'].forEach(s=>$(s).addEventListener('input',run4));
+
+/* แบบทดสอบ */
+const Q=[
+ {lo:'LO1',s:'กิจการร่วมค้าตามมาตรา 39 เกิดขึ้นเมื่อใด',o:['เมื่อดำเนินกิจการร่วมกันเป็นทางค้าหรือหากำไร ซึ่งพิจารณาจากสิ่งที่ปรากฏต่อบุคคลภายนอก แม้ไม่จดทะเบียนเป็นนิติบุคคล','เฉพาะเมื่อจดทะเบียนกิจการร่วมค้ากับกรมพัฒนาธุรกิจการค้า','เฉพาะเมื่อคู่สัญญาทุกรายเป็นบริษัทต่างประเทศ','เมื่อได้รับเลขประจำตัวผู้เสียภาษีแยกจากผู้ร่วมค้าเท่านั้น'],a:0,e:'หลักการข้อ 1 ในหัวข้อ 4.11.1 หน่วยภาษีเกิดจากนิยามในมาตรา 39 ไม่ใช่จากการจดทะเบียนนิติบุคคล'},
+ {lo:'LO2',s:'บริษัทญี่ปุ่นไม่มีสำนักงานในไทย ได้รับค่าสิทธิใช้ซอฟต์แวร์ 1,000,000 บาท จากลูกค้าไทย ผู้จ่ายต้องทำอย่างไรตามกฎหมายภายใน',o:['หักภาษีร้อยละ 15 เท่ากับ 150,000 บาท ยื่น ภ.ง.ด.54','หักภาษีร้อยละ 5 ตามคำสั่ง ท.ป.4/2528 ข้อ 7','ไม่ต้องหัก เพราะบริษัทญี่ปุ่นไม่ได้ประกอบกิจการในไทย','หักภาษีร้อยละ 3 แล้วยื่น ภ.ง.ด.53'],a:0,e:'สถานะ ค. ตามมาตรา 70 ฐานเงินได้ที่จ่าย อัตราภาษีทั่วไปร้อยละ 15 ลดอัตราได้ตามอนุสัญญาเมื่อมีหลักฐานถิ่นที่อยู่ (หัวข้อ 4.7.1)'},
+ {lo:'LO2',s:'ตัวแทนในไทยสำรวจงาน คิดราคา และส่งใบสั่งซื้อให้ผู้ขายต่างประเทศ แต่ไม่มีอำนาจทำสัญญาแทน ตามคำพิพากษาศาลฎีกาที่ 3238/2532 ผลเป็นอย่างไร',o:['ตัวแทนเป็นผู้ทำการติดต่อตามมาตรา 76 ทวิ บริษัทต่างประเทศถือว่าประกอบกิจการในไทย','ไม่เข้ามาตรา 76 ทวิ เพราะไม่มีอำนาจลงนาม','บริษัทต่างประเทศเสียภาษีตามมาตรา 70 ร้อยละ 15','ตัวแทนเสียภาษีเฉพาะจากค่านายหน้าของตนเท่านั้น'],a:0,e:'หลักทดสอบที่ผู้เขียนสรุปคือบทบาทในการก่อรายได้โดยไม่ได้ทำงานอย่างเป็นอิสระ ไม่ใช่อำนาจลงนามเพียงอย่างเดียว (หัวข้อ 4.3.4)'},
+ {lo:'LO3',s:'สาขาในไทยของบริษัทต่างประเทศจำหน่ายกำไร 2,000,000 บาท กลับสำนักงานใหญ่ ต้องเสียภาษีเท่าใด',o:['200,000 บาท ตามมาตรา 70 ทวิ ร้อยละ 10','300,000 บาท ตามมาตรา 70 ร้อยละ 15','400,000 บาท ร้อยละ 20 ของกำไรสุทธิ','ไม่ต้องเสีย เพราะสาขาเสียภาษีจากกำไรสุทธิแล้ว'],a:0,e:'บัญชีอัตราภาษีเงินได้ (2) (ง) ร้อยละ 10 ของจำนวนที่จำหน่าย ยื่น ภ.ง.ด.54 (หัวข้อ 4.4.3 และ 4.4.5)'},
+ {lo:'LO4',s:'บริษัทประมาณการกำไรสุทธิทั้งปี 9,500,000 บาท กำไรสุทธิจริง 12,000,000 บาท ไม่มีเหตุอันสมควร ต้องเสียเงินเพิ่มตามมาตรา 67 ตรี หรือไม่',o:['ไม่ต้อง เพราะประมาณการขาดร้อยละ 20.83 ไม่เกินร้อยละ 25','ต้องเสีย 50,000 บาท','ต้องเสีย 80,000 บาท','ต้องเสียร้อยละ 1.5 ต่อเดือนของภาษีที่ขาด'],a:0,e:'(12,000,000 − 9,500,000) ÷ 12,000,000 เท่ากับร้อยละ 20.83 ยังไม่ถึงเงื่อนไขข้อ 2 ของมาตรา 67 ตรี ลองตัวเลขนี้ในใบงาน 3'},
+ {lo:'LO4',s:'บริษัทมีภาษีที่ถูกหัก ณ ที่จ่ายไว้มาก ภาษีที่ถูกหักนี้ทำให้เงินเพิ่มตามมาตรา 67 ตรี ลดลงหรือไม่',o:['ไม่ลดลง เงินเพิ่มคำนวณจากภาษีครึ่งปีที่ชำระขาดโดยไม่คำนึงถึงภาษีที่ถูกหัก ณ ที่จ่าย','ลดลงตามจำนวนภาษีที่ถูกหักทั้งหมด','ลดลงครึ่งหนึ่งของภาษีที่ถูกหัก','ไม่ต้องเสียเงินเพิ่มเลยถ้าภาษีที่ถูกหักมากกว่าภาษีครึ่งปี'],a:0,e:'กรมสรรพากรวินิจฉัยตามหนังสือตอบข้อหารือ กค 0702/2171 ลงวันที่ 8 มีนาคม 2556 (หัวข้อ 4.5.3)'},
+ {lo:'LO5',s:'บริษัทต่างประเทศมีอัตรากำไรสุทธิต่อรายรับร้อยละ 15 ถ้าเจ้าพนักงานประเมินตามมาตรา 71 (1) ภาษีเทียบกับฐานกำไรสุทธิร้อยละ 20 เป็นอย่างไร',o:['สูงขึ้น เพราะอัตรากำไรต่ำกว่าจุดเท่ากันร้อยละ 25','ต่ำลง เพราะร้อยละ 5 น้อยกว่าร้อยละ 20','เท่ากันเสมอ','ขึ้นกับภาษีหัก ณ ที่จ่ายเท่านั้น'],a:0,e:'ร้อยละ 5 ของรายรับเท่ากับร้อยละ 20 ของกำไรสุทธิเมื่ออัตรากำไรต่อรายรับเท่ากับร้อยละ 25 พอดี กิจการที่กำไรต่ำกว่านี้เสียภาษีมากขึ้น (หัวข้อ 4.7.3)'},
+ {lo:'LO5',s:'วิศวกรต่างประเทศติดตั้งเครื่องจักรในไทย 7 เดือน ซึ่งเป็นสถานประกอบการถาวรตามอนุสัญญา ผู้จ่ายค่าติดตั้งยังต้องหักภาษีร้อยละ 5 ตามคำสั่ง ท.ป.4/2528 ข้อ 7 หรือไม่',o:['ต้องหัก เพราะงานติดตั้งชั่วคราวไม่ใช่สาขาถาวรตามคำสั่ง ป.8/2528 แม้เป็นสถานประกอบการถาวร','ไม่ต้องหัก เพราะมีสถานประกอบการถาวรแล้ว','ต้องหักร้อยละ 15 ตามมาตรา 70','ไม่ต้องหัก ถ้าบริษัทต่างประเทศยื่น ภ.ง.ด.50 เอง'],a:0,e:'"สาขาถาวร" กับ "สถานประกอบการถาวร" เป็นคนละแนวคิด ผู้จ่ายที่ไม่หักยังมีความรับผิดเมื่อไม่หักและนำส่ง (หัวข้อ 4.4.4)'}
+];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+let done=0,right=0;
+$('#qs').innerHTML=Q.map((q,i)=>{const ord=shuffle(q.o.map((t,k)=>k));return `<div class="q" data-i="${i}"><div class="lo">ข้อ ${i+1} · ${q.lo}</div><div class="stem">${q.s}</div>${ord.map(k=>`<label class="opt"><input type="radio" name="qq${i}" value="${k}"> ${q.o[k]}</label>`).join('')}<div class="fb"></div></div>`;}).join('');
+document.querySelectorAll('.q').forEach(d=>d.addEventListener('change',e=>{
+  const q=Q[d.dataset.i],ok=+e.target.value===q.a,fb=d.querySelector('.fb');
+  if(!d.dataset.done){d.dataset.done=1;done++;if(ok)right++;}
+  fb.className='fb show '+(ok?'ok':'no');fb.innerHTML=(ok?'<b>ถูกต้อง</b> ':'<b>ยังไม่ใช่</b> ')+q.e;
+  $('#score').textContent=`ตอบแล้ว ${done} จาก ${Q.length} ข้อ ถูกในครั้งแรก ${right} ข้อ`;
+}));
+
+run1();draw2();run3();run4();
+</script></body></html>
