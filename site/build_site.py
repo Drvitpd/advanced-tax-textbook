@@ -18,7 +18,8 @@ SRC_SERIES = "Dr VIT · Siam edu."
 NAV_CSS = ("<style>.atx-nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.9rem;margin:0 0 4px}"
            ".atx-nav a{color:var(--accent,#0d6466);font-weight:700;text-decoration:none}"
            ".atx-nav a:hover{text-decoration:underline}"
-           "main>*{min-width:0}.tbl,table{max-width:100%}</style>")
+           "main>*{min-width:0}.tbl,table{max-width:100%}"
+           ".brand img{height:56px;max-width:100%}@media (max-width:480px){.brand img{height:44px}}</style>")
 
 
 def title_of(s):
@@ -38,7 +39,7 @@ def build():
             if s.count(needle) != want:
                 errors.append(f"{p.name}: '{needle}' พบ {s.count(needle)} ครั้ง")
         s = s.replace(SRC_LOGO, f'<img src="{B["logo"]}" alt="{B["logo_alt"]}" data-atx-logo>')
-        s = s.replace(SRC_ORG, f'<span class="org">{B["org"]}</span>')
+        s = s.replace(SRC_ORG, f'<span class="org">{B["org"]}</span>' if B["org"] else "")
         s = s.replace(SRC_SERIES, B["series"])
         s = s.replace("</head>", f'{NAV_CSS}\n<script src="gate.js"></script>\n</head>', 1)
         links = ['<a href="./">สารบัญแอปประจำเล่ม</a>']
@@ -53,7 +54,8 @@ def build():
         print("\n".join(errors)); sys.exit(1)
 
     gate = (SITE / "gate.template.js").read_text(encoding="utf-8")
-    gate = gate.replace("__GATE_HASH__", B["gate_hash"]).replace("__BOOK__", B["book"]).replace("__ORG__", B["org"])
+    gate = (gate.replace("__GATE_HASH__", B["gate_hash"]).replace("__BOOK__", B["book"])
+            .replace("__GATE_LOGO__", B.get("logo_stacked", B["logo"])).replace("__ALT__", B["logo_alt"]))
     (DOCS / "gate.js").write_text(gate, encoding="utf-8")
 
     rows = "\n".join(
@@ -61,7 +63,7 @@ def build():
         for n, t in chapters)
     idx = (SITE / "index.template.html").read_text(encoding="utf-8")
     idx = (idx.replace("__ROWS__", rows).replace("__LOGO__", B["logo"]).replace("__ALT__", B["logo_alt"])
-              .replace("__ORG__", B["org"]).replace("__SERIES__", B["series"]).replace("__BOOK__", B["book"])
+              .replace("__ORG_SPAN__", f'<span class="org">{B["org"]}</span>' if B["org"] else "").replace("__SERIES__", B["series"]).replace("__BOOK__", B["book"])
               .replace("__AUTHOR__", B["author"]))
     (DOCS / "index.html").write_text(idx, encoding="utf-8")
     (DOCS / ".nojekyll").write_text("", encoding="utf-8")

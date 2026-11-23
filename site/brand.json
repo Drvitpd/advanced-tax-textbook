@@ -1,11 +1,12 @@
 {
-  "_note": "เปลี่ยนแบรนด์: แทนไฟล์ docs/brand/logo.png แล้วแก้ค่าด้านล่าง จากนั้นรัน python3 site/build_site.py",
+  "_note": "เปลี่ยนแบรนด์: แทนไฟล์ docs/brand/logo.png (แนวนอน แถบหัวแอป) และ logo-stacked.png (แนวตั้ง หน้ากั้นรหัส) แล้วแก้ค่าด้านล่าง จากนั้นรัน python3 site/build_site.py; org ว่าง = ไม่แสดงชื่อข้างโลโก้; โลโก้ Dr VIT เดิมเก็บไว้ที่ brand/logo-drvit.png",
   "logo": "brand/logo.png",
-  "logo_alt": "Dr VIT",
-  "org": "Siam edu.",
-  "series": "Dr VIT · Siam edu.",
+  "logo_alt": "Dr.VIT & PD | TaxBiz Clear",
+  "org": "",
+  "series": "Dr.VIT & PD | TaxBiz Clear",
   "book": "ตำราภาษีชั้นสูง",
   "author": "ดร.วิทยา อรุณศิริเพ็ชร",
   "site_url": "https://drvitpd.github.io/advanced-tax-textbook/",
-  "gate_hash": "1d94962852d6990bcb6d65e5de56f091d9a6aaef5494a979013e6f7311c1eca3"
+  "gate_hash": "1d94962852d6990bcb6d65e5de56f091d9a6aaef5494a979013e6f7311c1eca3",
+  "logo_stacked": "brand/logo-stacked.png"
 }

@@ -16,9 +16,9 @@
     "html.atx-locked body>*:not(#atx-lock){display:none!important}" +
     "#atx-lock{position:fixed;inset:0;display:grid;place-items:center;padding:16px;background:#f3f5f7;z-index:9999;font-family:'Noto Sans Thai',system-ui,sans-serif;color:#15233a}" +
     "#atx-lock .box{background:#fff;border:1px solid #d5dbe3;border-radius:12px;padding:24px;max-width:420px;width:100%}" +
-    "#atx-lock .brandbar{display:flex;align-items:center;gap:12px;margin-bottom:14px}" +
-    "#atx-lock .brandbar img{height:36px}" +
-    "#atx-lock .brandbar span{font-weight:700;border-left:2px solid #d5dbe3;padding-left:12px}" +
+    "#atx-lock .brandbar{text-align:center;margin:0 0 16px}" +
+    "#atx-lock .brandbar img{width:220px;max-width:70%;height:auto}" +
+    "#atx-lock h1,#atx-lock p{text-align:center}" +
     "#atx-lock h1{font-family:'Noto Serif Thai',Georgia,serif;font-size:1.3rem;margin:0 0 6px}" +
     "#atx-lock p{margin:0 0 14px;color:#5a6678;font-size:.95rem}" +
     "#atx-lock .row{display:flex;gap:8px}" +
@@ -37,13 +37,11 @@
     });
   }
   function build() {
-    var logo = document.querySelector("img[data-atx-logo]");
-    var logoSrc = logo ? logo.getAttribute("src") : "brand/logo.png";
     var d = document.createElement("div");
     d.id = "atx-lock";
     d.innerHTML =
       '<form class="box" autocomplete="off">' +
-      '<div class="brandbar"><img src="' + logoSrc + '" alt="Dr VIT"><span>Siam edu.</span></div>' +
+      '<div class="brandbar"><img src="brand/logo-stacked.png" alt="Dr.VIT & PD | TaxBiz Clear"></div>' +
       "<h1>แอปประจำเล่ม " + BOOK + "</h1>" +
       "<p>สำหรับผู้ซื้อตำรา ใส่รหัสเข้าแอปที่พิมพ์ไว้ในตำรา</p>" +
       '<div class="row"><input id="atx-code" type="password" aria-label="รหัสเข้าแอป" placeholder="รหัสเข้าแอป">' +
